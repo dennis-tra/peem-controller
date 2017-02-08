@@ -39,7 +39,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
 	@Override
 	public String getVersion() {
-		return null;
+		return "v0.0.1";
 	}
 
 	@Override
