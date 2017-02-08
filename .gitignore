@@ -48,3 +48,6 @@ buildNumber.properties
 
 # Exclude maven wrapper
 !/.mvn/wrapper/maven-wrapper.jar
+
+# Exclude RXTX library
+!/lib/RXTXcomm.jar
