@@ -44,6 +44,6 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
 	@Override
 	public String getCopyright() {
-		return null;
+		return "Christian-Albrechts-Universität zu Kiel, Germany, 2017. Author: Dennis Trautwein";
 	}
 }
