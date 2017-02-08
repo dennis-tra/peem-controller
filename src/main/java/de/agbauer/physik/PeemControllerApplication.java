@@ -13,7 +13,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
     @Override
     public String getSubMenu() {
-        return "PEEM Controller";
+        return "";
     }
 
     @Override
@@ -29,7 +29,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
 	@Override
 	public String getName() {
-		return null;
+		return "PEEM Controller";
 	}
 
 	@Override
