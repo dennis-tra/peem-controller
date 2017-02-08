@@ -5,6 +5,7 @@ import org.micromanager.Studio;
 
 import org.scijava.plugin.Plugin;
 import org.scijava.plugin.SciJavaPlugin;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
