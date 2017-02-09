@@ -11,22 +11,26 @@ public class LogManager {
         this.parent = parent;
     }
 
-    public void inform(String message) {
-        this.inform(message, true, true);
-    }
-
-    public void inform(String message, boolean writeToUi) {
-        this.inform(message, writeToUi, false);
-    }
-
     public void inform(String message, boolean writeToUi, boolean writeToConsole) {
-        if (writeToUi && parent != null) {
+        if (writeToUi) {
             parent.setText(message);
         }
 
-        if (writeToConsole && logManager != null) {
-            logManager.showMessage(message);
+        logManager.logDebugMessage(message);
+    }
+
+    public void error(String message, Exception exception, boolean writeToUi) {
+        if (writeToUi) {
+            parent.setText(message);
         }
+
+        logManager.logDebugMessage(message + exception.getMessage());
+        exception.printStackTrace();
+
+    }
+
+    public void showDialog(String message) {
+        logManager.showMessage(message);
     }
 
 }
