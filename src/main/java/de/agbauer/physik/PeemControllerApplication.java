@@ -12,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Plugin(type = MenuPlugin.class)
 public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
+    private Studio studio;
     @Override
     public String getSubMenu() {
         return "";
@@ -24,9 +25,9 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
 	@Override
 	public void setContext(Studio studio) {
-        System.out.println("Hello");
+		this.studio = studio;
 
-	}
+    }
 
 	@Override
 	public String getName() {
