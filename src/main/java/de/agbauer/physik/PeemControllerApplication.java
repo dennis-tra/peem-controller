@@ -7,6 +7,7 @@ import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicatorDummy;
 import de.agbauer.physik.PEEMCommunicator.RxTxConnectionHandler;
 import de.agbauer.physik.PEEMCommunicator.SerialConnectionHandler;
+import de.agbauer.physik.PEEMState.PEEMStateController;
 import de.agbauer.physik.QuickAcquisition.QuickAcquisitonController;
 import de.agbauer.physik.QuickAcquisition.QuickAcquistionForm;
 import org.micromanager.MenuPlugin;
@@ -33,6 +34,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private PEEMCommunicator peemCommunicator;
     private OptimisationSeriesController optimisationSeriesController;
     private QuickAcquisitonController quickAcquisitonController;
+    private PEEMStateController peemStateController;
 
 	public static void main(String[] args) {
 		SpringApplication.run(PeemControllerApplication.class, args);
@@ -50,8 +52,8 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         initLogManager();
         initPEEMConnection();
         initOptimisationSeries();
-
         initQuickAcquisition();
+        initPeemState();
     }
 
     private void initLogManager() {
@@ -87,6 +89,8 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         quickAcquisitonController = new QuickAcquisitonController(studio, logManager, mainWindow.quickAcquistionForm);
     }
 
+    private void initPeemState() {
+        peemStateController = new PEEMStateController(peemCommunicator, logManager, mainWindow.peemStatePanel);
     }
 
 	@Override
