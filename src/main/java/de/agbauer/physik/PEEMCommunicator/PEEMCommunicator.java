@@ -1,5 +1,7 @@
 package de.agbauer.physik.PEEMCommunicator;
 
+import de.agbauer.physik.Generic.LogManager;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,25 +11,34 @@ import java.util.Locale;
  * Created by dennis on 02/02/2017.
  */
 public class PEEMCommunicator {
-    private InputStream inputStream;
-    private OutputStream outputStream;
+    InputStream inputStream;
+    OutputStream outputStream;
+    LogManager logManager;
 
-    public PEEMCommunicator(InputStream inputStream, OutputStream outputStream) {
+    public PEEMCommunicator(InputStream inputStream, OutputStream outputStream, LogManager logManager) {
+        this.logManager = logManager;
         this.inputStream = inputStream;
         this.outputStream = outputStream;
     }
 
     public void setProperty(PEEMProperty property, Float value) throws IOException {
-        this.sendCommand("set " + property.cmdString() + " " + String.format(Locale.ROOT, "%.2f", value) + "\r");
+        String valueStr = String.format(Locale.ROOT, "%.2f", value);
+        String commandStr = "set " + property.cmdString() + " " + valueStr + "\r";
+
+        this.sendCommand(commandStr);
     }
 
     public String getProperty(PEEMProperty property, PEEMQuantity quantity) throws IOException {
         this.flushInputStream();
-        this.sendCommand("get " + property.cmdString() + " " + quantity.toString()+"\r");
+
+        String commandStr = "get " + property.cmdString() + " " + quantity.toString()+"\r";
+        this.sendCommand(commandStr);
         return this.readPeemBlockingUntilMessageReceived();
     }
 
     private void sendCommand(String commandStr) throws IOException {
+        logManager.inform("Sending command: '" + commandStr + "'", true, true);
+
         byte[] command = commandStr.getBytes();
         this.outputStream.write(command);
     }
@@ -57,6 +68,7 @@ public class PEEMCommunicator {
             }
         }
 
+        logManager.inform("Received message: '" + inputString + "'", true, true);
         return inputString;
     }
 }
