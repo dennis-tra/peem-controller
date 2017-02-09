@@ -2,6 +2,8 @@ package de.agbauer.physik;
 
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesForm;
 import de.agbauer.physik.PEEMCommunicator.RxTxConnectionHandler;
+import de.agbauer.physik.PEEMState.PEEMStatePanel;
+import de.agbauer.physik.QuickAcquisition.QuickAcquistionForm;
 import gnu.io.CommPortIdentifier;
 
 import javax.swing.*;
@@ -14,6 +16,9 @@ public class MainWindow extends JFrame {
     private JPanel rootPanel;
     JLabel statusBarLabel;
     OptimisationSeriesForm optimisationSeriesForm;
+    private JTextField textField1;
+    PEEMStatePanel peemStatePanel;
+    QuickAcquistionForm quickAcquistionForm;
 
     MainWindow() {
         super();
