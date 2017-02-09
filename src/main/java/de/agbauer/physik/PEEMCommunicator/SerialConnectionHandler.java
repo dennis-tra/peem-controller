@@ -7,7 +7,7 @@ import java.io.OutputStream;
 /**
  * Created by dennis on 09/02/2017.
  */
-public interface SerialCommunicator {
+public interface SerialConnectionHandler {
     boolean isConnected();
     void connectTo(String portName) throws IOException;
     void closePort();

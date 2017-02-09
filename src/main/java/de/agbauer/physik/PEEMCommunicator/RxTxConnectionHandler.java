@@ -10,23 +10,23 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 
-public class RxTxCommunicator implements SerialCommunicator {
+public class RxTxConnectionHandler implements SerialConnectionHandler {
 
     private LogManager logManager;
     private SerialPort openedPort;
 
-    RxTxCommunicator(LogManager logManager) {
+    public RxTxConnectionHandler(LogManager logManager) {
         this.logManager = logManager;
     }
 
     public void closePort() {
         if (openedPort != null) {
-            logManager.inform("Closing serial connection...");
+            logManager.inform("Closing serial connection...", true, true);
 
             openedPort.close();
             openedPort = null;
 
-            logManager.inform("Closed serial connection.");
+            logManager.inform("Closed serial connection.", true,true);
         } else {
             logManager.inform("Warning: Attempted to close serial connection, but was already closed.", false, true);
         }
@@ -38,7 +38,7 @@ public class RxTxCommunicator implements SerialCommunicator {
 
     public void connectTo(String portName) throws IOException {
         try {
-            logManager.inform("Opening port " + portName + "...");
+            logManager.inform("Opening port " + portName + "...", true, true);
 
             CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
 
@@ -55,13 +55,13 @@ public class RxTxCommunicator implements SerialCommunicator {
             openedPort = (SerialPort) commPort;
             openedPort.setSerialPortParams(9600, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 
-            logManager.inform("Port '" + portName +  "' opened!");
+            logManager.inform("Port '" + portName +  "' opened!", true, true);
         } catch (NoSuchPortException | PortInUseException | UnsupportedCommOperationException exception) {
             throw new IOException(exception);
         }
     }
 
-    List<CommPortIdentifier> getAvailablePorts() {
+    public static List<CommPortIdentifier> getAvailablePorts() {
         Enumeration<CommPortIdentifier> portEnum = CommPortIdentifier.getPortIdentifiers();
         return Collections.list(portEnum);
     }
