@@ -14,6 +14,7 @@ import org.micromanager.data.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dennis on 03/02/2017.
@@ -48,6 +49,7 @@ public class OptimisationSeriesExecuter {
         final String currentBinning = setCameraBinningReturnCurrentBinning(1);
         final double currentExposureTimeInSeconds = setExposureAndReturnCurrentExposure(exposureTimeInSeconds);
 
+        Map<PEEMProperty, String> peemProperties = peemCommunicator.getAllProperties();
 
         Datastore store = studio.data().createRAMDatastore();
         studio.displays().createDisplay(store);
@@ -71,6 +73,10 @@ public class OptimisationSeriesExecuter {
 
             PropertyMap.PropertyMapBuilder propertyMapBuilder = studio.data().getPropertyMapBuilder();
             propertyMapBuilder.putDouble(property.cmdString(), Double.valueOf(value));
+
+            for (Map.Entry<PEEMProperty, String> entry : peemProperties.entrySet()) {
+                propertyMapBuilder.putString(entry.getKey().displayName(), entry.getValue());
+            }
 
             Metadata.MetadataBuilder metadataBuilder = studio.data().getMetadataBuilder();
             metadataBuilder.positionName(property.cmdString() + " = " + value);
