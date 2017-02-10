@@ -1,7 +1,5 @@
 package de.agbauer.physik.PEEMCommunicator;
 
-import de.agbauer.physik.Generic.LogManager;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,8 +10,8 @@ import java.util.Locale;
  */
 public class PEEMCommunicatorDummy extends PEEMCommunicator {
 
-    public PEEMCommunicatorDummy(InputStream inputStream, OutputStream outputStream, LogManager logManager) {
-        super(inputStream, outputStream, logManager);
+    public PEEMCommunicatorDummy() {
+        super(null, null);
     }
 
 

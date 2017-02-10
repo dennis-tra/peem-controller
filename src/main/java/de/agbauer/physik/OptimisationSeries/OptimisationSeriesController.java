@@ -1,12 +1,10 @@
 package de.agbauer.physik.OptimisationSeries;
 
-import de.agbauer.physik.Generic.LogManager;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
 import de.agbauer.physik.PEEMCommunicator.PEEMQuantity;
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.micromanager.Studio;
-import org.micromanager.data.Datastore;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -15,21 +13,20 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 /**
  * Created by dennis on 29/01/2017.
  */
 public class OptimisationSeriesController implements DocumentListener {
-    private final LogManager logManager;
+    private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private final OptimisationSeriesForm form;
     private PEEMCommunicator peemCommunicator;
     private Studio studio;
     private OptimisationSeriesExecuter optimisationSeriesExecuter;
 
 
-    public OptimisationSeriesController(Studio studio, PEEMCommunicator peemCommunicator, LogManager logManager, OptimisationSeriesForm form) {
-        this.logManager = logManager;
+    public OptimisationSeriesController(Studio studio, PEEMCommunicator peemCommunicator, OptimisationSeriesForm form) {
         this.form = form;
         this.studio = studio;
         this.peemCommunicator = peemCommunicator;
@@ -51,9 +48,9 @@ public class OptimisationSeriesController implements DocumentListener {
         new Thread(() -> {
             try {
                 String propertyVal = peemCommunicator.getProperty(property, PEEMQuantity.VOLTAGE);
-                logManager.inform("Current value: "+ property.displayName()+" = " + propertyVal + " V", true, false);
+                logger.info("Current value: "+ property.displayName()+" = " + propertyVal + " V");
             } catch (IOException exc) {
-                logManager.error("", exc, false);
+                logger.severe(exc.getMessage());
             }
         }).run();
     }
@@ -78,10 +75,10 @@ public class OptimisationSeriesController implements DocumentListener {
 
             String totalTimeStr = String.format("%.0f:%02.0f", fullMinutes, restSeconds);
 
-            logManager.inform("Images: " + values.size() + " - Total time: " + totalTimeStr + " min", true, false);
+            logger.info("Images: " + values.size() + " - Total time: " + totalTimeStr + " min");
 
         } catch (NumberFormatException | ValueException exception) {
-            logManager.inform("Warning: " + exception.getMessage(), true, false);
+            logger.warning(exception.getMessage());
         }
     }
 
@@ -146,7 +143,7 @@ public class OptimisationSeriesController implements DocumentListener {
 
                 OptimisationSeriesParameters optimisationSeriesParameters = new OptimisationSeriesParameters(values, exposureTimeInSeconds, saveImages, sendNotification, property);
 
-                optimisationSeriesExecuter = new OptimisationSeriesExecuter(studio, peemCommunicator, logManager);
+                optimisationSeriesExecuter = new OptimisationSeriesExecuter(studio, peemCommunicator);
 
                 CompletableFuture.runAsync(() -> {
                     try {
@@ -157,7 +154,7 @@ public class OptimisationSeriesController implements DocumentListener {
 
                     seriesEnded();
                 }).exceptionally((exc) -> {
-                    logManager.error("Optimisation series failed", (Exception) exc, true);
+                    logger.severe("Optimisation series failed: " + exc.getMessage());
                     seriesEnded();
                     return null;
                 });
@@ -165,9 +162,9 @@ public class OptimisationSeriesController implements DocumentListener {
                 form.setGUIToMeasuringState();
 
             } catch (NumberFormatException | ValueException exception) {
-                logManager.inform("Could not read parameters: " + exception.getMessage(), true, true);
+                logger.info("Could not read parameters: " + exception.getMessage());
             } catch (Exception exception) {
-                logManager.error("Error in optimisation series", exception, true);
+                logger.severe("Error in optimisation series: "+ exception.getMessage());
             }
         }
     }
@@ -210,7 +207,7 @@ public class OptimisationSeriesController implements DocumentListener {
         } else if (this.form.extraktorRadioButton.isSelected()) {
             return PEEMProperty.EXTRACTOR;
         } else {
-            logManager.inform("Warning: Tried to access optimisation property selection. Nothing selected.", false, true);
+            logger.warning("Tried to access optimisation property selection. Nothing selected.");
             return null;
         }
 

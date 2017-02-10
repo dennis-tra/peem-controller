@@ -1,31 +1,29 @@
 package de.agbauer.physik.PEEMCommunicator;
 
-import de.agbauer.physik.Generic.LogManager;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * Created by dennis on 10/02/2017.
  */
 public class PEEMBulkReader {
-    LogManager logManager;
+    private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     PEEMCommunicator peemCommunicator;
 
-    public PEEMBulkReader(PEEMCommunicator peemCommunicator, LogManager logManager) {
+    public PEEMBulkReader(PEEMCommunicator peemCommunicator) {
         this.peemCommunicator = peemCommunicator;
-        this.logManager = logManager;
     }
 
 
     public Map<PEEMProperty, String> getAllVoltages() throws IOException {
-        logManager.inform("Reading all voltages...", true, true);
+        logger.info("Reading all voltages...");
         return getAllPropertiesForQuantity(PEEMQuantity.VOLTAGE);
     }
 
     public Map<PEEMProperty, String> getAllCurrents() throws IOException{
-        logManager.inform("Reading all currents...", true, true);
+        logger.info("Reading all currents...");
         return getAllPropertiesForQuantity(PEEMQuantity.CURRENT);
     }
 

@@ -1,22 +1,17 @@
 package de.agbauer.physik.PEEMCommunicator;
 
-import de.agbauer.physik.Generic.LogManager;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Locale;
+import java.util.logging.Logger;
 
-/**
- * Created by dennis on 02/02/2017.
- */
 public class PEEMCommunicator implements PEEMCommunicatorInterface {
     private InputStream inputStream;
     private OutputStream outputStream;
-    private LogManager logManager;
+    private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    public PEEMCommunicator(InputStream inputStream, OutputStream outputStream, LogManager logManager) {
-        this.logManager = logManager;
+    public PEEMCommunicator(InputStream inputStream, OutputStream outputStream) {
         this.inputStream = inputStream;
         this.outputStream = outputStream;
     }
@@ -37,8 +32,7 @@ public class PEEMCommunicator implements PEEMCommunicatorInterface {
     }
 
     private void sendCommand(String commandStr) throws IOException {
-        logManager.inform("Sending command: '" + commandStr + "'", false, true);
-
+        logger.info("Sending command: '" + commandStr + "'");
         byte[] command = commandStr.getBytes();
         this.outputStream.write(command);
     }
@@ -68,7 +62,7 @@ public class PEEMCommunicator implements PEEMCommunicatorInterface {
             }
         }
 
-        logManager.inform("Received message: '" + inputString + "'", false, true);
+        logger.info("Received message: '" + inputString + "'");
         return inputString;
     }
 }

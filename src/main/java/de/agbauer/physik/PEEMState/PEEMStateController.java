@@ -1,6 +1,5 @@
 package de.agbauer.physik.PEEMState;
 
-import de.agbauer.physik.Generic.LogManager;
 import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
@@ -10,17 +9,17 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.logging.Logger;
 
 /**
  * Created by dennis on 09/02/2017.
  */
 public class PEEMStateController {
     private PEEMCommunicator peemCommunicator;
-    private LogManager logManager;
+    private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private PEEMStatePanel peemStatePanel;
-    public PEEMStateController(PEEMCommunicator peemCommunicator, LogManager logManager, PEEMStatePanel peemStatePanel) {
+    public PEEMStateController(PEEMCommunicator peemCommunicator, PEEMStatePanel peemStatePanel) {
         this.peemCommunicator = peemCommunicator;
-        this.logManager = logManager;
         this.peemStatePanel = peemStatePanel;
 
         this.peemStatePanel.readAllButton.addActionListener(this::readAllButtonClicked);
@@ -30,7 +29,7 @@ public class PEEMStateController {
 
             CompletableFuture.runAsync(() -> {
                 try {
-                    PEEMBulkReader bulkReader = new PEEMBulkReader(peemCommunicator, logManager);
+                    PEEMBulkReader bulkReader = new PEEMBulkReader(peemCommunicator);
                     Map<PEEMProperty, String> peemProperties = bulkReader.getAllVoltages();
 
                     peemStatePanel.extTextField.setText(peemProperties.get(PEEMProperty.EXTRACTOR));
@@ -45,13 +44,13 @@ public class PEEMStateController {
                     peemStatePanel.mcpTextfield.setText(peemProperties.get(PEEMProperty.MCP));
                     peemStatePanel.scrTextField.setText(peemProperties.get(PEEMProperty.SCREEN));
 
-                    logManager.inform("Read all properties!", true, true);
+                    logger.info("Read all properties!");
 
                 } catch (IOException e) {
                     throw new CompletionException(e);
                 }
             }).exceptionally((e) -> {
-                logManager.error("Couldn't read all params", (Exception) e, true);
+                logger.severe("Couldn't read all params: " + e.getMessage());
                 return null;
             });
 
