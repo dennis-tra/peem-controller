@@ -10,6 +10,7 @@ import java.util.Locale;
 /**
  * Created by dennis on 02/02/2017.
  */
+public class PEEMCommunicator implements PEEMCommunicatorInterface {
     private InputStream inputStream;
     private OutputStream outputStream;
     private LogManager logManager;
