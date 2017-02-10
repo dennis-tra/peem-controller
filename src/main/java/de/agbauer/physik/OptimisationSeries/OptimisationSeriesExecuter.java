@@ -2,11 +2,11 @@ package de.agbauer.physik.OptimisationSeries;
 
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.Generic.LogManager;
+import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
 
 import mmcorej.CMMCore;
-import org.joda.time.DateMidnight;
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
 import org.micromanager.data.*;
@@ -49,7 +49,8 @@ public class OptimisationSeriesExecuter {
         final String currentBinning = setCameraBinningReturnCurrentBinning(1);
         final double currentExposureTimeInSeconds = setExposureAndReturnCurrentExposure(exposureTimeInSeconds);
 
-        Map<PEEMProperty, String> peemProperties = peemCommunicator.getAllProperties();
+        PEEMBulkReader bulkReader = new PEEMBulkReader(peemCommunicator, logManager);
+        Map<PEEMProperty, String> peemProperties = bulkReader.getAllVoltages();
 
         Datastore store = studio.data().createRAMDatastore();
         studio.displays().createDisplay(store);

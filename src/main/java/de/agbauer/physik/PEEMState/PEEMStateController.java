@@ -1,11 +1,10 @@
 package de.agbauer.physik.PEEMState;
 
 import de.agbauer.physik.Generic.LogManager;
+import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
-import de.agbauer.physik.PEEMCommunicator.PEEMQuantity;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.Map;
@@ -31,7 +30,8 @@ public class PEEMStateController {
 
             CompletableFuture.runAsync(() -> {
                 try {
-                    Map<PEEMProperty, String> peemProperties = peemCommunicator.getAllProperties();
+                    PEEMBulkReader bulkReader = new PEEMBulkReader(peemCommunicator, logManager);
+                    Map<PEEMProperty, String> peemProperties = bulkReader.getAllVoltages();
 
                     peemStatePanel.extTextField.setText(peemProperties.get(PEEMProperty.EXTRACTOR));
                     peemStatePanel.focusTextField.setText(peemProperties.get(PEEMProperty.FOCUS));

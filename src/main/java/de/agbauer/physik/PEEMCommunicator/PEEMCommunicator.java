@@ -5,48 +5,19 @@ import de.agbauer.physik.Generic.LogManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Created by dennis on 02/02/2017.
  */
-public class PEEMCommunicator {
-    InputStream inputStream;
-    OutputStream outputStream;
-    LogManager logManager;
+    private InputStream inputStream;
+    private OutputStream outputStream;
+    private LogManager logManager;
 
     public PEEMCommunicator(InputStream inputStream, OutputStream outputStream, LogManager logManager) {
         this.logManager = logManager;
         this.inputStream = inputStream;
         this.outputStream = outputStream;
-    }
-
-    public Map<PEEMProperty, String> getAllProperties() throws IOException{
-        logManager.inform("Reading all properties...", true, true);
-
-        PEEMProperty[] peemProperties = {
-                PEEMProperty.EXTRACTOR,
-                PEEMProperty.FOCUS,
-                PEEMProperty.COLUMN,
-                PEEMProperty.PROJECTIVE_1,
-                PEEMProperty.PROJECTIVE_2,
-                PEEMProperty.DEFLECTOR_X,
-                PEEMProperty.DEFLECTOR_Y,
-                PEEMProperty.STIGMATOR_X,
-                PEEMProperty.STIGMATOR_Y,
-                PEEMProperty.MCP,
-                PEEMProperty.SCREEN
-        };
-
-        Map<PEEMProperty, String> map = new HashMap<PEEMProperty, String>();
-        for (PEEMProperty property: peemProperties) {
-            String val = getProperty(property, PEEMQuantity.VOLTAGE);
-            map.put(property, val);
-        }
-
-        return map;
     }
 
     public void setProperty(PEEMProperty property, Float value) throws IOException {
@@ -65,7 +36,7 @@ public class PEEMCommunicator {
     }
 
     private void sendCommand(String commandStr) throws IOException {
-        logManager.inform("Sending command: '" + commandStr + "'", true, true);
+        logManager.inform("Sending command: '" + commandStr + "'", false, true);
 
         byte[] command = commandStr.getBytes();
         this.outputStream.write(command);
@@ -96,7 +67,7 @@ public class PEEMCommunicator {
             }
         }
 
-        logManager.inform("Received message: '" + inputString + "'", true, true);
+        logManager.inform("Received message: '" + inputString + "'", false, true);
         return inputString;
     }
 }
