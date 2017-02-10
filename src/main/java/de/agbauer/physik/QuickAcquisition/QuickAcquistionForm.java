@@ -16,6 +16,7 @@ public class QuickAcquistionForm {
     JButton snapPlusButton;
     JComboBox snapPlusComboBox;
     JTextField snapPlusTextField;
+    JButton stopButton;
 
     public QuickAcquistionForm() {
         addBinningValues(liveComboBox);
