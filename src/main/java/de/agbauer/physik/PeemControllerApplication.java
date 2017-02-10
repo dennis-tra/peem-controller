@@ -2,6 +2,8 @@ package de.agbauer.physik;
 
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.Generic.LogManager;
+import de.agbauer.physik.Logging.LabelLogHandler;
+import de.agbauer.physik.Logging.LogInitialiser;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesController;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicatorDummy;
@@ -9,7 +11,6 @@ import de.agbauer.physik.PEEMCommunicator.RxTxConnectionHandler;
 import de.agbauer.physik.PEEMCommunicator.SerialConnectionHandler;
 import de.agbauer.physik.PEEMState.PEEMStateController;
 import de.agbauer.physik.QuickAcquisition.QuickAcquisitonController;
-import de.agbauer.physik.QuickAcquisition.QuickAcquistionForm;
 import org.micromanager.MenuPlugin;
 import org.micromanager.Studio;
 
@@ -18,6 +19,7 @@ import org.scijava.plugin.SciJavaPlugin;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -35,6 +37,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private OptimisationSeriesController optimisationSeriesController;
     private QuickAcquisitonController quickAcquisitonController;
     private PEEMStateController peemStateController;
+    private PersistenceHandler persistenceHandler;
 
 	public static void main(String[] args) {
 		SpringApplication.run(PeemControllerApplication.class, args);
@@ -50,15 +53,24 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 		mainWindow = new MainWindow();
 
         initLogManager();
+        initPersistenceHandler();
         initPEEMConnection();
         initOptimisationSeries();
         initQuickAcquisition();
         initPeemState();
     }
 
+    private void initPersistenceHandler() {
+        GeneralInformation generalInformation = new GeneralInformationGUIHandler(mainWindow.probeNameTextField, mainWindow.excitationTextField, mainWindow.apertureComboBox);
+        persistenceHandler = new PersistenceHandler(generalInformation);
+    }
+
     private void initLogManager() {
         logManager = new LogManager(studio.getLogManager(), mainWindow.statusBarLabel);
         logManager.inform("Start PEEM controller plugin", false, true);
+
+        LabelLogHandler labelLogHandler = new LabelLogHandler(mainWindow.statusBarLabel);
+        new LogInitialiser(labelLogHandler);
     }
 
     private void initPEEMConnection() {
@@ -86,7 +98,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     }
 
     private void initQuickAcquisition() {
-        quickAcquisitonController = new QuickAcquisitonController(studio, logManager, mainWindow.quickAcquistionForm);
+        quickAcquisitonController = new QuickAcquisitonController(studio, persistenceHandler, peemCommunicator, logManager, mainWindow.quickAcquistionForm);
     }
 
     private void initPeemState() {
