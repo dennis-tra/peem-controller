@@ -7,6 +7,7 @@ import de.agbauer.physik.OptimisationSeries.OptimisationSeriesController;
 import de.agbauer.physik.PEEMCommunicator.*;
 import de.agbauer.physik.PEEMState.PEEMStateController;
 import de.agbauer.physik.QuickAcquisition.QuickAcquisitonController;
+import org.apache.tomcat.util.bcel.Const;
 import org.micromanager.MenuPlugin;
 import org.micromanager.Studio;
 
@@ -119,7 +120,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
 	@Override
 	public String getVersion() {
-		return "v0.0.1";
+		return Constants.version;
 	}
 
 	@Override

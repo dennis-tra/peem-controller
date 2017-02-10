@@ -36,10 +36,10 @@ public class OptimisationSeriesExecuter {
         String deviceLabel = Constants.cameraDevice;
 
         double exposureTimeInSeconds = optimisationSeriesParameters.exposureTimeInS;
-        ArrayList<Float> values =optimisationSeriesParameters.values;
+        ArrayList<Float> values = optimisationSeriesParameters.values;
         PEEMProperty property = optimisationSeriesParameters.property;
 
-        logger.info("Starting optimisation series with exposure "+ exposureTimeInSeconds +" s and the following values: " +values.toString());
+        logger.info("Starting optimisation series with exposure " + exposureTimeInSeconds + " s and the following values: " +values.toString());
 
         if (mmCore.deviceBusy(deviceLabel)) {
             throw new IOException("Can't start series, camera is busy.");

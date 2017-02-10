@@ -1,14 +1,12 @@
 package de.agbauer.physik;
 
+import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesForm;
-import de.agbauer.physik.PEEMCommunicator.RxTxConnectionHandler;
 import de.agbauer.physik.PEEMHistory.PEEMHistoryForm;
 import de.agbauer.physik.PEEMState.PEEMStatePanel;
 import de.agbauer.physik.QuickAcquisition.QuickAcquistionForm;
-import gnu.io.CommPortIdentifier;
 
 import javax.swing.*;
-import java.util.List;
 
 /**
  * Created by dennis on 09/02/2017.
@@ -45,6 +43,7 @@ public class MainWindow extends JFrame {
             System.out.print("Couldn't load system look and feel for ");
         }
 
+        setTitle("PEEM Controller " + Constants.version);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
     }

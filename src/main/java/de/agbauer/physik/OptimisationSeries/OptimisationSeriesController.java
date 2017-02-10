@@ -10,17 +10,14 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.logging.Logger;
 
-/**
- * Created by dennis on 29/01/2017.
- */
 public class OptimisationSeriesController implements DocumentListener {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    private final OptimisationSeriesForm form;
+
+    private OptimisationSeriesForm form;
     private PEEMCommunicator peemCommunicator;
     private Studio studio;
     private OptimisationSeriesExecuter optimisationSeriesExecuter;
@@ -56,26 +53,16 @@ public class OptimisationSeriesController implements DocumentListener {
     }
 
     private void aTextFieldChanged(DocumentEvent e) {
-        String startingValueStr = form.startingValueTextField.getText();
-        String endingValueStr = form.endingValueTextField.getText();
-        String stepSizeStr = form.stepSizeTextField.getText();
-        String exposureValueStr = form.exposureTextField.getText();
-
         try {
-            float startingValue = Float.parseFloat(startingValueStr);
-            float endingValue = Float.parseFloat(endingValueStr);
-            float stepSizeValue = Float.parseFloat(stepSizeStr);
-            float exposureTimeInSeconds = Float.parseFloat(exposureValueStr);
+            OptimisationSeriesParameters optimisationSeriesParameters = getCurrentOptimisationParameters();
 
-            ArrayList<Float> values = generateMeasurementValuesFrom(startingValue, endingValue, stepSizeValue);
-
-            double totalTimeInMinutes = (((float)values.size()) * exposureTimeInSeconds / 60.0);
-            double fullMinutes = Math.floor(totalTimeInMinutes);
-            double restSeconds = (totalTimeInMinutes - Math.floor(totalTimeInMinutes)) * 60;
+            double fullMinutes = optimisationSeriesParameters.getTotalFullMinutes();
+            double restSeconds = optimisationSeriesParameters.getRestSeconds();
+            int imageCount = optimisationSeriesParameters.values.size();
 
             String totalTimeStr = String.format("%.0f:%02.0f", fullMinutes, restSeconds);
 
-            logger.info("Images: " + values.size() + " - Total time: " + totalTimeStr + " min");
+            logger.info("Images: " + imageCount + " - Total time: " + totalTimeStr + " min");
 
         } catch (NumberFormatException | ValueException exception) {
             logger.warning(exception.getMessage());
@@ -118,83 +105,65 @@ public class OptimisationSeriesController implements DocumentListener {
 
     private void startButtonClicked(ActionEvent e) {
         if (isMeasuring()) {
-            optimisationSeriesExecuter.cancelSeries();
-            form.setGUIToCancelledSeriesState();
+            stopMeasuring();
         } else {
+            startMeasuring();
+        }
+    }
 
-            String startingValueStr = form.startingValueTextField.getText();
-            String endingValueStr = form.endingValueTextField.getText();
-            String stepSizeStr = form.stepSizeTextField.getText();
-            String exposureValueStr = form.exposureTextField.getText();
+    private void stopMeasuring() {
+        optimisationSeriesExecuter.cancelSeries();
+        form.setGUIToCancelledSeriesState();
+    }
 
-            boolean saveImages = form.saveSeriesCheckBox.isSelected();
-            boolean sendNotification = form.sendNotificationCheckBox.isSelected();
+    private void startMeasuring() {
+        try {
+            OptimisationSeriesParameters optimisationSeriesParameters = getCurrentOptimisationParameters();
 
-            try {
-                float startingValue = Float.parseFloat(startingValueStr);
-                float endingValue = Float.parseFloat(endingValueStr);
-                float stepSizeValue = Float.parseFloat(stepSizeStr);
-                float exposureTimeInSeconds = Float.parseFloat(exposureValueStr);
+            optimisationSeriesExecuter = new OptimisationSeriesExecuter(studio, peemCommunicator);
 
-                PEEMProperty property = getPropertyToOptimiseSelection();
+            CompletableFuture.runAsync(() -> {
+                try {
+                    optimisationSeriesExecuter.startSeries(optimisationSeriesParameters);
+                } catch (Exception e1) {
+                    throw new CompletionException(e1);
+                }
 
-                ArrayList<Float> values = generateMeasurementValuesFrom(startingValue, endingValue, stepSizeValue);
+                seriesEnded();
+            }).exceptionally((exc) -> {
+                seriesEnded();
 
+                logger.severe("Optimisation series failed: " + exc.getMessage());
+                return null;
+            });
 
-                OptimisationSeriesParameters optimisationSeriesParameters = new OptimisationSeriesParameters(values, exposureTimeInSeconds, saveImages, sendNotification, property);
+            form.setGUIToMeasuringState();
 
-                optimisationSeriesExecuter = new OptimisationSeriesExecuter(studio, peemCommunicator);
+        } catch (NumberFormatException | ValueException exception) {
+            logger.info("Could not read parameters: " + exception.getMessage());
 
-                CompletableFuture.runAsync(() -> {
-                    try {
-                        optimisationSeriesExecuter.startSeries(optimisationSeriesParameters);
-                    } catch (Exception e1) {
-                        throw new CompletionException(e1);
-                    }
-
-                    seriesEnded();
-                }).exceptionally((exc) -> {
-                    logger.severe("Optimisation series failed: " + exc.getMessage());
-                    seriesEnded();
-                    return null;
-                });
-
-                form.setGUIToMeasuringState();
-
-            } catch (NumberFormatException | ValueException exception) {
-                logger.info("Could not read parameters: " + exception.getMessage());
-            } catch (Exception exception) {
-                logger.severe("Error in optimisation series: "+ exception.getMessage());
-            }
+        } catch (Exception exception) {
+            logger.severe("Error in optimisation series: "+ exception.getMessage());
         }
     }
 
     private void seriesEnded() {
+        logger.info("Optimisation series ended");
+
         optimisationSeriesExecuter = null;
         form.setGUIToInputState();
     }
 
-    private ArrayList<Float> generateMeasurementValuesFrom(float startingValue, float endingValue, float stepSizeValue) throws ValueException {
-
-        if (stepSizeValue <= 0) {
-            throw new ValueException("Step size can't be less than zero");
-        }
-
-        if (endingValue < startingValue) {
-            throw new ValueException("Ending value can't be less than starting value");
-        }
-
-        if ((endingValue - startingValue) <= stepSizeValue) {
-            throw new ValueException("Step size can't be bigger than measurement interval");
-        }
-
-        ArrayList<Float> measurementValues = new ArrayList<>();
-        for (float value = startingValue; value < endingValue; value += stepSizeValue) {
-            measurementValues.add(value);
-        }
-        measurementValues.add(endingValue);
-
-        return measurementValues;
+    private OptimisationSeriesParameters getCurrentOptimisationParameters() {
+        return new OptimisationSeriesParameters(
+                form.startingValueTextField.getText(),
+                form.endingValueTextField.getText(),
+                form.stepSizeTextField.getText(),
+                form.exposureTextField.getText(),
+                form.saveSeriesCheckBox.isSelected(),
+                form.sendNotificationCheckBox.isSelected(),
+                getPropertyToOptimiseSelection()
+        );
     }
 
     private PEEMProperty getPropertyToOptimiseSelection() {
@@ -210,7 +179,6 @@ public class OptimisationSeriesController implements DocumentListener {
             logger.warning("Tried to access optimisation property selection. Nothing selected.");
             return null;
         }
-
     }
 
     @Override
