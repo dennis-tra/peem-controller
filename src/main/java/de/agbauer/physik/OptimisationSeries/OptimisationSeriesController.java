@@ -10,11 +10,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.util.Observable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.logging.Logger;
 
-public class OptimisationSeriesController implements DocumentListener {
+public class OptimisationSeriesController extends Observable implements DocumentListener {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private OptimisationSeriesForm form;
@@ -117,6 +118,8 @@ public class OptimisationSeriesController implements DocumentListener {
     }
 
     private void startMeasuring() {
+        notifyObservers("started-acquisition");
+
         try {
             OptimisationSeriesParameters optimisationSeriesParameters = getCurrentOptimisationParameters();
 
@@ -144,12 +147,15 @@ public class OptimisationSeriesController implements DocumentListener {
 
         } catch (Exception exception) {
             logger.severe("Error in optimisation series: "+ exception.getMessage());
+        } finally {
+            seriesEnded();
         }
     }
 
     private void seriesEnded() {
         logger.info("Optimisation series ended");
 
+        notifyObservers("finished-acquisition");
         optimisationSeriesExecuter = null;
         form.setGUIToInputState();
     }

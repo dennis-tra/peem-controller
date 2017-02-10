@@ -1,28 +1,27 @@
 package de.agbauer.physik;
 
+import de.agbauer.physik.Generic.ActivatableForm;
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesForm;
 import de.agbauer.physik.PEEMHistory.PEEMHistoryForm;
 import de.agbauer.physik.PEEMState.PEEMStatePanel;
-import de.agbauer.physik.QuickAcquisition.QuickAcquistionForm;
+import de.agbauer.physik.QuickAcquisition.QuickAcquisitionForm;
 
 import javax.swing.*;
 
 /**
  * Created by dennis on 09/02/2017.
  */
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements ActivatableForm {
     private JPanel rootPanel;
     JLabel statusBarLabel;
-    OptimisationSeriesForm optimisationSeriesForm;
+    public OptimisationSeriesForm optimisationSeriesForm;
     JTextField probeNameTextField;
     PEEMStatePanel peemStatePanel;
-    QuickAcquistionForm quickAcquistionForm;
+    QuickAcquisitionForm quickAcquisitionForm;
     JComboBox apertureComboBox;
-    private PEEMHistoryForm PEEMHistoryForm1;
     JTextField excitationTextField;
-    private JTextArea textArea1;
-    private JTabbedPane tabbedPane1;
+    PEEMHistoryForm peemHistoryForm;
 
     MainWindow() {
         super();
@@ -46,5 +45,12 @@ public class MainWindow extends JFrame {
         setTitle("PEEM Controller " + Constants.version);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setVisible(true);
+    }
+
+    @Override
+    public void setEnabledState(boolean enabled) {
+        apertureComboBox.setEnabled(enabled);
+        excitationTextField.setEnabled(enabled);
+        probeNameTextField.setEnabled(enabled);
     }
 }

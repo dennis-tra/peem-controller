@@ -105,7 +105,7 @@
               </component>
             </children>
           </grid>
-          <nested-form id="4a86b" form-file="de/agbauer/physik/QuickAcquisition/QuickAcquistionForm.form" binding="quickAcquistionForm">
+          <nested-form id="4a86b" form-file="de/agbauer/physik/QuickAcquisition/QuickAcquisitionForm.form" binding="quickAcquisitionForm">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -135,7 +135,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <nested-form id="4e083" form-file="de/agbauer/physik/PEEMHistory/PEEMHistoryForm.form" binding="PEEMHistoryForm1" default-binding="true">
+          <nested-form id="4e083" form-file="de/agbauer/physik/PEEMHistory/PEEMHistoryForm.form" binding="peemHistoryForm">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>

@@ -1,13 +1,15 @@
 package de.agbauer.physik;
 
+import de.agbauer.physik.Generic.ActivatableForm;
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.Logging.LabelLogHandler;
 import de.agbauer.physik.Logging.LogInitialiser;
+import de.agbauer.physik.Observers.AcquisitionObserver;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesController;
 import de.agbauer.physik.PEEMCommunicator.*;
 import de.agbauer.physik.PEEMState.PEEMStateController;
-import de.agbauer.physik.QuickAcquisition.QuickAcquisitonController;
-import org.apache.tomcat.util.bcel.Const;
+import de.agbauer.physik.QuickAcquisition.QuickAcquisitionController;
+import jdk.nashorn.internal.scripts.JO;
 import org.micromanager.MenuPlugin;
 import org.micromanager.Studio;
 
@@ -32,6 +34,8 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
     private PEEMCommunicator peemCommunicator;
     private PersistenceHandler persistenceHandler;
+    private QuickAcquisitionController quickAcquisitionController;
+    private OptimisationSeriesController optimisationSeriesController;
 
     public static void main(String[] args) {
 		SpringApplication.run(PeemControllerApplication.class, args);
@@ -52,6 +56,13 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         initOptimisationSeries();
         initQuickAcquisition();
         initPeemState();
+        initObservers();
+    }
+
+    private void initObservers() {
+        AcquisitionObserver acquisitionObserver = new AcquisitionObserver(new ActivatableForm[]{ mainWindow, mainWindow.quickAcquisitionForm, mainWindow.optimisationSeriesForm });
+        quickAcquisitionController.addObserver(acquisitionObserver);
+        optimisationSeriesController.addObserver(acquisitionObserver);
     }
 
     private void initLogManager() {
@@ -78,18 +89,17 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
             logger.severe(errorMessage);
             JOptionPane.showConfirmDialog(null, errorMessage, "Port connection error", JOptionPane.OK_OPTION);
-
-            System.exit(1);
+            //System.exit(1);
         }
 
     }
 
     private void initOptimisationSeries() {
-        new OptimisationSeriesController(studio, peemCommunicator, mainWindow.optimisationSeriesForm);
+        optimisationSeriesController = new OptimisationSeriesController(studio, peemCommunicator, mainWindow.optimisationSeriesForm);
     }
 
     private void initQuickAcquisition() {
-        new QuickAcquisitonController(studio, persistenceHandler, peemCommunicator, mainWindow.quickAcquistionForm);
+        quickAcquisitionController = new QuickAcquisitionController(studio, persistenceHandler, mainWindow.quickAcquisitionForm);
     }
 
     private void initPeemState() {
@@ -99,7 +109,8 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private PEEMCommunicator getPeemCommunicatorFromSerialConnection(SerialConnectionHandler connectionHandler) throws IOException {
         InputStream inputStream = connectionHandler.getInputStream();
         OutputStream outputStream = connectionHandler.getOutputStream();
-        return new PEEMCommunicator(inputStream, outputStream);
+        return new PEEMCommunicatorDummy();
+        //return new PEEMCommunicator(inputStream, outputStream);
     }
 
 	@Override

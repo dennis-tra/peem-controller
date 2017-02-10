@@ -1,11 +1,13 @@
 package de.agbauer.physik.QuickAcquisition;
 
+import de.agbauer.physik.Generic.ActivatableForm;
+
 import javax.swing.*;
 
 /**
  * Created by dennis on 09/02/2017.
  */
-public class QuickAcquistionForm {
+public class QuickAcquisitionForm implements ActivatableForm {
     private JPanel quickAcquisitionPanel;
     JButton liveButton;
     JTextField liveTextField;
@@ -18,7 +20,7 @@ public class QuickAcquistionForm {
     JTextField snapPlusTextField;
     JButton stopButton;
 
-    public QuickAcquistionForm() {
+    public QuickAcquisitionForm() {
         addBinningValues(liveComboBox);
         addBinningValues(snapComboBox);
         addBinningValues(snapPlusComboBox);
@@ -37,5 +39,19 @@ public class QuickAcquistionForm {
         comboBox.addItem("2");
         comboBox.addItem("4");
         comboBox.addItem("8");
+    }
+
+    @Override
+    public void setEnabledState(boolean enabled) {
+        liveButton.setEnabled(enabled);
+        liveTextField.setEnabled(enabled);
+        liveComboBox.setEnabled(enabled);
+        snapButton.setEnabled(enabled);
+        snapTextField.setEnabled(enabled);
+        snapComboBox.setEnabled(enabled);
+        snapPlusButton.setEnabled(enabled);
+        snapPlusTextField.setEnabled(enabled);
+        snapPlusComboBox.setEnabled(enabled);
+        stopButton.setEnabled(enabled);
     }
 }

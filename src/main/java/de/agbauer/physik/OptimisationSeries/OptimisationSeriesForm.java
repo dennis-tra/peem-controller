@@ -1,12 +1,14 @@
 package de.agbauer.physik.OptimisationSeries;
 
+import de.agbauer.physik.Generic.ActivatableForm;
+
 import javax.swing.*;
 
 
 /**
  * Created by dennis on 29/01/2017.
  */
-public class OptimisationSeriesForm {
+public class OptimisationSeriesForm implements ActivatableForm {
     JPanel optimisationSeriesPanel;
     JRadioButton focusRadioButton;
     JRadioButton stigmatorXRadioButton;
@@ -75,7 +77,7 @@ public class OptimisationSeriesForm {
         this.exposureLabel.setEnabled(enabled);
     }
 
-    public void setGUIToEnabledState(boolean enabled) {
+    public void setEnabledState(boolean enabled) {
         enableRadioButtons(enabled);
         enableTextFields(enabled);
         this.startSeriesButton.setEnabled(enabled);

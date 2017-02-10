@@ -14,23 +14,17 @@ import java.awt.event.ActionEvent;
 import java.util.*;
 import java.util.logging.Logger;
 
-/**
- * Created by dennis on 09/02/2017.
- */
-public class QuickAcquisitonController {
+public class QuickAcquisitionController extends Observable {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    private final QuickAcquistionForm form;
+    private final QuickAcquisitionForm form;
     private Studio studio;
-    private PEEMCommunicator peemCommunicator;
     private PersistenceHandler persistenceHandler;
-
     private SnapLiveManager snapLiveManager;
 
-    public QuickAcquisitonController(Studio studio, PersistenceHandler generalInformation, PEEMCommunicator peemCommunicator, QuickAcquistionForm form) {
+    public QuickAcquisitionController(Studio studio, PersistenceHandler persistenceHandler, QuickAcquisitionForm form) {
         this.form = form;
         this.studio = studio;
-        this.peemCommunicator = peemCommunicator;
-        this.persistenceHandler = generalInformation;
+        this.persistenceHandler = persistenceHandler;
         this.snapLiveManager = studio.getSnapLiveManager();
 
         this.form.liveButton.addActionListener(this::liveMode);
@@ -46,6 +40,9 @@ public class QuickAcquisitonController {
         }
 
         logger.info("Acquiring image...");
+
+        notifyObservers("started-acquisition");
+
         turnOffLiveMode();
 
         String exposureStr = this.form.snapPlusTextField.getText();
@@ -57,10 +54,10 @@ public class QuickAcquisitonController {
             setExposure(exposureInMs);
             setCameraBinning(binning);
 
-            PEEMBulkReader bulkReader = new PEEMBulkReader(peemCommunicator);
-
-            Map<PEEMProperty, String> peemVoltages = bulkReader.getAllVoltages();
-            Map<PEEMProperty, String> peemCurrents = bulkReader.getAllCurrents();
+//            PEEMBulkReader bulkReader = new PEEMBulkReader(peemCommunicator);
+//
+//            Map<PEEMProperty, String> peemVoltages = bulkReader.getAllVoltages();
+//            Map<PEEMProperty, String> peemCurrents = bulkReader.getAllCurrents();
 
             snapLiveManager.snap(true).get(0);
             ImagePlus imagePlus = snapLiveManager.getDisplay().getImagePlus();
@@ -69,19 +66,24 @@ public class QuickAcquisitonController {
 
             if(dialogResult == JOptionPane.YES_OPTION) {
                 logger.info("Saving image...");
-                persistenceHandler.saveImage(imagePlus);
+
+                notifyObservers(imagePlus);
             } else {
                 logger.info("User denied saving image");
             }
 
         } catch (Exception e1) {
             logger.severe("Couldn't snap an image: " + e1.getMessage());
+        } finally {
+            notifyObservers("finished-acquisition");
         }
-
     }
 
     private void snapImage(ActionEvent actionEvent) {
         logger.info("Acquiring image...");
+        setChanged();
+        notifyObservers("started-acquisition");
+
         turnOffLiveMode();
 
         String exposureStr = this.form.snapTextField.getText();
@@ -98,6 +100,9 @@ public class QuickAcquisitonController {
             logger.warning("Couldn't read your quick acquisition input values");
         } catch (Exception e1) {
             logger.severe("Couldn't snap an image : " + e1.getMessage());
+        } finally {
+            setChanged();
+            notifyObservers("finished-acquisition");
         }
     }
 
