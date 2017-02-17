@@ -3,7 +3,7 @@ package de.agbauer.physik;
 import de.agbauer.physik.GeneralInformation.GeneralInformationChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationController;
 import de.agbauer.physik.Generic.Constants;
-import de.agbauer.physik.Logging.LabelLogHandler;
+import de.agbauer.physik.Logging.LabelLogger;
 import de.agbauer.physik.Logging.LogInitialiser;
 import de.agbauer.physik.Observers.GeneralInformationObserver;
 import de.agbauer.physik.Observers.SingleAcquisition;
@@ -53,6 +53,8 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
     @Override
     public void onPluginSelected() {
+        System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT %4$s %2$s %5$s%6$s%n");
+
 		mainWindow = new MainWindow();
 
         initLogManager();
@@ -90,7 +92,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     }
 
     private void initLogManager() {
-        LabelLogHandler labelLogHandler = new LabelLogHandler(mainWindow.statusBarLabel);
+        LabelLogger labelLogHandler = new LabelLogger(mainWindow.statusBarLabel);
         new LogInitialiser(labelLogHandler);
 
         logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
