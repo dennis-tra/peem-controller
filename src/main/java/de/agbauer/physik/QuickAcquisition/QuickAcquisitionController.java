@@ -22,6 +22,10 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
     private SnapLiveManager snapLiveManager;
     private GeneralInformationData generalInformationData;
 
+    private interface AcquisitionAction {
+        void acquire(float exposureInMs, int binning);
+    }
+
     public QuickAcquisitionController(Studio studio, FileSaver fileSaver, QuickAcquisitionForm form) {
         this.fileSaver = fileSaver;
         this.form = form;
@@ -30,9 +34,23 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
 
         this.form.stopButton.addActionListener(e -> turnOffLiveMode());
 
-        this.form.liveButton.addActionListener(e -> acquireImage(form.liveTextField, form.liveComboBox, new LiveAcquisition()));
-        this.form.snapButton.addActionListener(e -> acquireImage(form.snapTextField, form.snapComboBox, new SnapAcquisition()));
-        this.form.snapPlusButton.addActionListener(e -> acquireImage(form.snapPlusTextField, form.snapPlusComboBox, new SnapPlusAcquisition()));
+        this.form.liveButton.addActionListener(e -> acquireImage(form.liveTextField, form.liveComboBox, (exposureInMs, binning) -> {
+            snapLiveManager.setLiveMode(true);
+            logger.info("Started live mode... ");
+        }));
+
+        this.form.snapButton.addActionListener(e -> acquireImage(form.snapTextField, form.snapComboBox, (exposureInMs, binning) -> {
+            snapLiveManager.snap(true);
+            logger.info("Successfully snapped image!");
+        }));
+
+        this.form.snapPlusButton.addActionListener(e -> acquireImage(form.snapPlusTextField, form.snapPlusComboBox, (exposureInMs, binning) -> {
+            snapLiveManager.snap(true).get(0);
+            logger.info("Successfully snapped image!");
+
+            ImagePlus imagePlus = snapLiveManager.getDisplay().getImagePlus();
+            askToSaveImage(imagePlus, exposureInMs);
+        }));
 
     }
 
@@ -67,56 +85,22 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
         }
     }
 
-    private interface AcquisitionAction {
-        void acquire(float exposureInMs, int binning);
-    }
+    private void askToSaveImage(ImagePlus imagePlus, double exposureInMs) {
 
-    private class SnapAcquisition implements AcquisitionAction {
+        int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want to save this image?", "Save image dialog", JOptionPane.YES_NO_OPTION);
 
-        @Override
-        public void acquire(float exposureInMs, int binning) {
-            logger.info("Snapping image with t = " + exposureInMs/1000 +" s and binning " + binning);
-            snapLiveManager.snap(true);
-            logger.info("Successfully snapped image!");
+        if(dialogResult != JOptionPane.YES_OPTION) {
+            logger.info("User denied saving image");
+            return;
         }
-    }
 
-    private class LiveAcquisition implements AcquisitionAction {
-
-        @Override
-        public void acquire(float exposureInMs, int binning) {
-            snapLiveManager.setLiveMode(true);
-            logger.info("Started live mode... ");
-        }
-    }
-
-    private class SnapPlusAcquisition implements AcquisitionAction {
-
-        @Override
-        public void acquire(float exposureInMs, int binning) {
-
-            logger.info("Snapping image with t = " + exposureInMs/1000 +" s and binning " + binning);
-            snapLiveManager.snap(true).get(0);
-            logger.info("Successfully snapped image!");
-
-            ImagePlus imagePlus = snapLiveManager.getDisplay().getImagePlus();
-
-            int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want to save this image?", "Save image dialog", JOptionPane.YES_NO_OPTION);
-
-            if(dialogResult == JOptionPane.YES_OPTION) {
-
-                try {
-                    fileSaver.save(generalInformationData, imagePlus, "" + exposureInMs);
-                } catch (IOException exc) {
-                    JOptionPane.showMessageDialog(null, "Failed saving acquisition: " + exc.getMessage(), "Failed saving", JOptionPane.OK_OPTION);
-                }
-
-                setChanged();
-                notifyObservers(imagePlus);
-
-            } else {
-                logger.info("User denied saving image");
-            }
+        try {
+            fileSaver.save(generalInformationData, imagePlus, "" + exposureInMs);
+        } catch (IOException exc) {
+            JOptionPane.showMessageDialog(null, "Failed saving acquisition: " + exc.getMessage(), "Failed saving", JOptionPane.OK_OPTION);
+        } finally {
+            setChanged();
+            notifyObservers(imagePlus);
         }
     }
 
