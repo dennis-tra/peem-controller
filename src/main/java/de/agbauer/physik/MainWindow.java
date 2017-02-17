@@ -1,7 +1,6 @@
 package de.agbauer.physik;
 
 import de.agbauer.physik.GeneralInformation.GeneralInformationForm;
-import de.agbauer.physik.Generic.ActivatableForm;
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesForm;
 import de.agbauer.physik.PEEMHistory.PEEMHistoryForm;
@@ -13,7 +12,7 @@ import javax.swing.*;
 /**
  * Created by dennis on 09/02/2017.
  */
-public class MainWindow extends JFrame implements ActivatableForm {
+public class MainWindow extends JFrame {
     private JPanel rootPanel;
     JLabel statusBarLabel;
     public OptimisationSeriesForm optimisationSeriesForm;
@@ -40,8 +39,4 @@ public class MainWindow extends JFrame implements ActivatableForm {
         setVisible(true);
     }
 
-    @Override
-    public void setEnabledState(boolean enabled) {
-
-    }
 }

@@ -1,13 +1,11 @@
 package de.agbauer.physik.GeneralInformation;
 
-import de.agbauer.physik.Generic.ActivatableForm;
-
 import javax.swing.*;
 
 /**
  * Created by dennis on 13/02/2017.
  */
-public class GeneralInformationForm implements ActivatableForm {
+public class GeneralInformationForm {
     private JPanel generalInformationPanel;
     JComboBox apertureComboBox;
     JTextField excitationTextField;
@@ -22,16 +20,6 @@ public class GeneralInformationForm implements ActivatableForm {
         apertureComboBox.addItem("500");
         apertureComboBox.addItem("1500");
         apertureComboBox.setSelectedItem("500");
-    }
-
-    @Override
-    public void setEnabledState(boolean enabled) {
-        apertureComboBox.setEnabled(enabled);
-        apertureLabel.setEnabled(enabled);
-        excitationTextField.setEnabled(enabled);
-        excitationLabel.setEnabled(enabled);
-        probeNameTextField.setEnabled(enabled);
-        probeNameLabel.setEnabled(enabled);
     }
 
 }

@@ -1,7 +1,5 @@
 package de.agbauer.physik.QuickAcquisition;
 
-import de.agbauer.physik.Generic.ActivatableForm;
-
 import javax.swing.*;
 
 /**

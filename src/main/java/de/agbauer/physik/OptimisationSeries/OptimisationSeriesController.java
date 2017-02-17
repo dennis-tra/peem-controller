@@ -2,7 +2,6 @@ package de.agbauer.physik.OptimisationSeries;
 
 import de.agbauer.physik.GeneralInformation.GeneralInformationChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationData;
-import de.agbauer.physik.Generic.ActivatableForm;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
 import de.agbauer.physik.PEEMCommunicator.PEEMQuantity;

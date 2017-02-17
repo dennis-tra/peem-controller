@@ -1,14 +1,9 @@
 package de.agbauer.physik.PEEMHistory;
 
-import de.agbauer.physik.Generic.ActivatableForm;
-
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Created by dennis on 10/02/2017.
- */
-public class PEEMHistoryForm implements ActivatableForm{
+public class PEEMHistoryForm {
     private JPanel peemHistoryPanel;
     private JScrollPane historyScrollPane;
     JTable historyTable;
@@ -25,9 +20,5 @@ public class PEEMHistoryForm implements ActivatableForm{
 
         Font font2 = directoryLabel.getFont();
         directoryLabel.setFont(new Font(font2.getName(), font2.getStyle(), 8));
-    }
-
-    @Override
-    public void setEnabledState(boolean enabled) {
     }
 }
