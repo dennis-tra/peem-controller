@@ -9,5 +9,6 @@ public class LogInitialiser {
     public LogInitialiser(LabelLogHandler labelLogHandler) {
         logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
         logger.addHandler(labelLogHandler);
+        logger.addHandler(new SlackLogger());
     }
 }

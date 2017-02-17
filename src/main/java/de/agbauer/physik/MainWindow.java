@@ -1,5 +1,6 @@
 package de.agbauer.physik;
 
+import de.agbauer.physik.GeneralInformation.GeneralInformationForm;
 import de.agbauer.physik.Generic.ActivatableForm;
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesForm;
@@ -16,11 +17,9 @@ public class MainWindow extends JFrame implements ActivatableForm {
     private JPanel rootPanel;
     JLabel statusBarLabel;
     public OptimisationSeriesForm optimisationSeriesForm;
-    JTextField probeNameTextField;
     PEEMStatePanel peemStatePanel;
     QuickAcquisitionForm quickAcquisitionForm;
-    JComboBox apertureComboBox;
-    JTextField excitationTextField;
+    GeneralInformationForm generalInformationForm;
     PEEMHistoryForm peemHistoryForm;
 
     MainWindow() {
@@ -28,12 +27,6 @@ public class MainWindow extends JFrame implements ActivatableForm {
 
         setContentPane(rootPanel);
         pack();
-
-        apertureComboBox.addItem("50");
-        apertureComboBox.addItem("75");
-        apertureComboBox.addItem("500");
-        apertureComboBox.addItem("1500");
-        apertureComboBox.setSelectedItem("500");
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -49,8 +42,6 @@ public class MainWindow extends JFrame implements ActivatableForm {
 
     @Override
     public void setEnabledState(boolean enabled) {
-        apertureComboBox.setEnabled(enabled);
-        excitationTextField.setEnabled(enabled);
-        probeNameTextField.setEnabled(enabled);
+
     }
 }

@@ -1,10 +1,9 @@
 package de.agbauer.physik.QuickAcquisition;
 
+import de.agbauer.physik.GeneralInformation.GeneralInformationChangeListener;
+import de.agbauer.physik.GeneralInformation.GeneralInformationData;
+import de.agbauer.physik.Generic.ActivatableForm;
 import de.agbauer.physik.Generic.Constants;
-import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
-import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
-import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
-import de.agbauer.physik.PersistenceHandler;
 import ij.ImagePlus;
 import org.micromanager.SnapLiveManager;
 import org.micromanager.Studio;
@@ -14,18 +13,19 @@ import java.awt.event.ActionEvent;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class QuickAcquisitionController extends Observable {
+public class QuickAcquisitionController extends Observable implements GeneralInformationChangeListener {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+    private FileSaver fileSaver;
     private final QuickAcquisitionForm form;
     private Studio studio;
-    private PersistenceHandler persistenceHandler;
     private SnapLiveManager snapLiveManager;
+    private GeneralInformationData generalInformationData;
 
-    public QuickAcquisitionController(Studio studio, PersistenceHandler persistenceHandler, QuickAcquisitionForm form) {
+    public QuickAcquisitionController(Studio studio, FileSaver fileSaver, QuickAcquisitionForm form) {
+        this.fileSaver = fileSaver;
         this.form = form;
         this.studio = studio;
-        this.persistenceHandler = persistenceHandler;
-        this.snapLiveManager = studio.getSnapLiveManager();
+        this.snapLiveManager = studio == null ? null : studio.getSnapLiveManager();
 
         this.form.liveButton.addActionListener(this::liveMode);
         this.form.snapButton.addActionListener(this::snapImage);
@@ -34,10 +34,6 @@ public class QuickAcquisitionController extends Observable {
     }
 
     private void snapPlusImage(ActionEvent actionEvent) {
-        if (!persistenceHandler.isAllInformationAvailable()) {
-            logger.info("Error: Please enter a name and excitation necessary information");
-            return;
-        }
 
         logger.info("Acquiring image...");
 
@@ -54,11 +50,6 @@ public class QuickAcquisitionController extends Observable {
             setExposure(exposureInMs);
             setCameraBinning(binning);
 
-//            PEEMBulkReader bulkReader = new PEEMBulkReader(peemCommunicator);
-//
-//            Map<PEEMProperty, String> peemVoltages = bulkReader.getAllVoltages();
-//            Map<PEEMProperty, String> peemCurrents = bulkReader.getAllCurrents();
-
             snapLiveManager.snap(true).get(0);
             ImagePlus imagePlus = snapLiveManager.getDisplay().getImagePlus();
 
@@ -66,7 +57,8 @@ public class QuickAcquisitionController extends Observable {
 
             if(dialogResult == JOptionPane.YES_OPTION) {
                 logger.info("Saving image...");
-
+                fileSaver.save(generalInformationData, imagePlus, exposureStr);
+                setChanged();
                 notifyObservers(imagePlus);
             } else {
                 logger.info("User denied saving image");
@@ -122,7 +114,7 @@ public class QuickAcquisitionController extends Observable {
         } catch(NumberFormatException exc) {
             logger.warning("Couldn't read your quick acquisition input values");
         } catch (Exception e1) {
-            logger.severe("Couldn't turn live mode on : " + e1.getMessage());
+            logger.severe("Couldn't turn on live mode: " + e1.getMessage());
         }
     }
 
@@ -142,5 +134,11 @@ public class QuickAcquisitionController extends Observable {
     private void setExposure(double exposureTimeInMs) throws Exception {
         logger.info("Set camera exposure to " + exposureTimeInMs/1000 + " s");
         studio.getCMMCore().setExposure(exposureTimeInMs);
+    }
+
+    @Override
+    public void generalInformationChanged(GeneralInformationData data) {
+        this.generalInformationData = data;
+        this.form.setGeneralInformationGiven(data.isValid());
     }
 }

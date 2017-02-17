@@ -81,5 +81,7 @@ public class OptimisationSeriesForm implements ActivatableForm {
         enableRadioButtons(enabled);
         enableTextFields(enabled);
         this.startSeriesButton.setEnabled(enabled);
+        saveSeriesCheckBox.setEnabled(enabled);
+        sendNotificationCheckBox.setEnabled(enabled);
     }
 }

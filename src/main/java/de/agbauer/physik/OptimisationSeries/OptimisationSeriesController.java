@@ -1,5 +1,8 @@
 package de.agbauer.physik.OptimisationSeries;
 
+import de.agbauer.physik.GeneralInformation.GeneralInformationChangeListener;
+import de.agbauer.physik.GeneralInformation.GeneralInformationData;
+import de.agbauer.physik.Generic.ActivatableForm;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
 import de.agbauer.physik.PEEMCommunicator.PEEMQuantity;
@@ -15,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.logging.Logger;
 
-public class OptimisationSeriesController extends Observable implements DocumentListener {
+public class OptimisationSeriesController extends Observable implements DocumentListener, GeneralInformationChangeListener {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private OptimisationSeriesForm form;
@@ -72,36 +75,6 @@ public class OptimisationSeriesController extends Observable implements Document
 
     private boolean isMeasuring() {
         return optimisationSeriesExecuter != null;
-    }
-
-    private void postMessageToSlackChannel(boolean successfull) {
-//        OkHttpClient client = new OkHttpClient();
-//
-//        JSONObject payload = new JSONObject();
-//
-//        try {
-//            payload.put("username", "PEEM");
-//            payload.put("link_names", 1);
-//
-//            if (successfull) {
-//                payload.put("text", "@channel Optimisation series finished!");
-//                payload.put("icon_emoji", ":camera:");
-//            } else {
-//                payload.put("text", "@channel Optimisation series failed!");
-//                payload.put("icon_emoji", ":red_circle:");
-//            }
-//
-//            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), payload.toString());
-//
-//            Request request = new Request.Builder()
-//                    .url("https://hooks.slack.com/services/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")
-//                    .post(body)
-//                    .build();
-//
-//            client.newCall(request).execute();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
     }
 
     private void startButtonClicked(ActionEvent e) {
@@ -201,4 +174,10 @@ public class OptimisationSeriesController extends Observable implements Document
     public void changedUpdate(DocumentEvent e) {
 
     }
+
+    @Override
+    public void generalInformationChanged(GeneralInformationData data) {
+        this.form.setEnabledState(data.isValid());
+    }
+
 }
