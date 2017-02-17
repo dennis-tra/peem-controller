@@ -21,6 +21,8 @@ public class SlackLogger extends Handler {
             return;
         }
 
+        String logMessage = record.getMessage().substring("Slack: ".length());
+
         OkHttpClient client = new OkHttpClient();
 
         JSONObject payload = new JSONObject();
@@ -29,7 +31,7 @@ public class SlackLogger extends Handler {
             payload.put("username", "PEEM");
             payload.put("link_names", 1);
 
-            payload.put("text", "@channel " + record.getMessage());
+            payload.put("text", logMessage);
             payload.put("icon_emoji", ":camera:");
 
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), payload.toString());

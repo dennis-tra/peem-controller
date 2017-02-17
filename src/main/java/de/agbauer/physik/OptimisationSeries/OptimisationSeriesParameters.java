@@ -10,7 +10,6 @@ import java.util.ArrayList;
  */
 public class OptimisationSeriesParameters {
     ArrayList<Float> values;
-    float exposureTimeInS;
     boolean saveImages;
     boolean sendNotification;
     PEEMProperty property;
@@ -64,6 +63,11 @@ public class OptimisationSeriesParameters {
         measurementValues.add(endingValue);
 
         return measurementValues;
+    }
+
+    @Override
+    public String toString() {
+        return "Sweeping " + property.displayName() + " from " + startingValue + " V to " + endingValue +" V with " + exposureTimeInSeconds + " s exposure (" + values.size() + " images).";
     }
 }
 

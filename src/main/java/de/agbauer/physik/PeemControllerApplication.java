@@ -6,8 +6,8 @@ import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.Logging.LabelLogger;
 import de.agbauer.physik.Logging.LogInitialiser;
 import de.agbauer.physik.Observers.GeneralInformationObserver;
-import de.agbauer.physik.Observers.SingleAcquisition;
-import de.agbauer.physik.Observers.SingleAcquisitionObserver;
+import de.agbauer.physik.Observers.DataSaveListeners;
+import de.agbauer.physik.Observers.NewDataSavedObserver;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesController;
 import de.agbauer.physik.PEEMCommunicator.*;
 import de.agbauer.physik.PEEMHistory.PEEMHistoryController;
@@ -40,6 +40,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private OptimisationSeriesController optimisationSeriesController;
     private GeneralInformationController generalInformationController;
     private PEEMHistoryController peemHistoryController;
+    private PEEMStateController peemStateController;
 
     public static void main(String[] args) {
         PeemControllerApplication app = new PeemControllerApplication();
@@ -78,17 +79,18 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private void initObservers() {
 
         GeneralInformationObserver generalInformationObserver = new GeneralInformationObserver(new GeneralInformationChangeListener[]{
-                peemHistoryController, optimisationSeriesController, quickAcquisitionController
+                peemHistoryController, optimisationSeriesController, quickAcquisitionController, peemStateController
         });
 
         generalInformationController.addObserver(generalInformationObserver);
         generalInformationController.notifyObservers();
 
-        SingleAcquisitionObserver singleAcquisitionObserver = new SingleAcquisitionObserver(new SingleAcquisition[]{
+        NewDataSavedObserver singleAcquisitionObserver = new NewDataSavedObserver(new DataSaveListeners[]{
                 peemHistoryController
         });
 
         quickAcquisitionController.addObserver(singleAcquisitionObserver);
+        peemStateController.addObserver(singleAcquisitionObserver);
     }
 
     private void initLogManager() {
@@ -114,7 +116,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
             String errorMessage = "Could not connect to default port '" + Constants.defaultPort + "': " + e.getMessage();
 
             logger.severe(errorMessage);
-            JOptionPane.showConfirmDialog(null, errorMessage, "Port connection error", JOptionPane.OK_OPTION);
+            JOptionPane.showMessageDialog(null, errorMessage, "Port connection error", JOptionPane.OK_OPTION);
             System.exit(1);
         }
 
@@ -130,7 +132,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     }
 
     private void initPeemState() {
-        new PEEMStateController(peemCommunicator, mainWindow.peemStatePanel);
+        peemStateController = new PEEMStateController(peemCommunicator, mainWindow.peemStatePanel);
     }
 
     private PEEMCommunicator getPeemCommunicatorFromSerialConnection(SerialConnectionHandler connectionHandler) throws IOException {

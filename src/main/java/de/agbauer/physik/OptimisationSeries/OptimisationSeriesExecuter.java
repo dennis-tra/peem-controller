@@ -1,6 +1,7 @@
 package de.agbauer.physik.OptimisationSeries;
 
 import de.agbauer.physik.Generic.Constants;
+import de.agbauer.physik.Generic.WorkingDirectory;
 import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
@@ -35,11 +36,11 @@ public class OptimisationSeriesExecuter {
     void startSeries(OptimisationSeriesParameters optimisationSeriesParameters) throws Exception {
         String deviceLabel = Constants.cameraDevice;
 
-        double exposureTimeInSeconds = optimisationSeriesParameters.exposureTimeInS;
+        double exposureTimeInSeconds = optimisationSeriesParameters.exposureTimeInSeconds;
         ArrayList<Float> values = optimisationSeriesParameters.values;
         PEEMProperty property = optimisationSeriesParameters.property;
 
-        logger.info("Starting optimisation series with exposure " + exposureTimeInSeconds + " s and the following values: " +values.toString());
+        logger.info("Slack: Starting optimisation series - " + optimisationSeriesParameters.toString());
 
         if (mmCore.deviceBusy(deviceLabel)) {
             throw new IOException("Can't start series, camera is busy.");
@@ -65,7 +66,7 @@ public class OptimisationSeriesExecuter {
 
             peemCommunicator.setProperty(property, value);
 
-            logger.info("Acquiring image "+ imageNumber +"/" +values.size() + "...");
+            logger.info("Slack: Acquiring image "+ imageNumber +"/" +values.size() + ". " + property.displayName() +" = " + value + " V");
 
             List<Image> images = studio.getSnapLiveManager().snap(false);
 
@@ -92,16 +93,15 @@ public class OptimisationSeriesExecuter {
 
         }
 
-        if (optimisationSeriesParameters.saveImages) {
-            String savePath = Constants.defaultFileSaveFolder;
-            store.save(Datastore.SaveMode.SINGLEPLANE_TIFF_SERIES, savePath);
-        }
-
         logger.info("Reset camera exposure to " + currentExposureTimeInSeconds * 1000 + " s");
         mmCore.setExposure(currentExposureTimeInSeconds * 1000);
 
         logger.info("Reset camera binning to " + currentBinning);
         mmCore.setProperty(deviceLabel, "Binning", currentBinning);
+
+        if (optimisationSeriesParameters.sendNotification) {
+            logger.info("Slack: @channel Successfully finished optimisation series!");
+        }
     }
 
     private String setCameraBinningReturnCurrentBinning(int binning) throws Exception {

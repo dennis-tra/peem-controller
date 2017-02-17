@@ -1,15 +1,11 @@
-package de.agbauer.physik;
+package de.agbauer.physik.MaxCount;
 
-import org.micromanager.MenuPlugin;
 import org.micromanager.Studio;
 import org.micromanager.display.InspectorPanel;
 import org.micromanager.display.InspectorPlugin;
 import org.scijava.plugin.Plugin;
 import org.scijava.plugin.SciJavaPlugin;
 
-/**
- * Created by dennis on 17/02/2017.
- */
 @Plugin(type = InspectorPlugin.class)
 public class MaxCountPlugin implements InspectorPlugin, SciJavaPlugin {
 

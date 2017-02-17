@@ -31,5 +31,5 @@ public class PEEMStatePanel {
     JButton setVyButton;
     JButton setSxButton;
     JButton setSyButton;
-    private JButton readSaveButton;
+    JButton readSaveButton;
 }

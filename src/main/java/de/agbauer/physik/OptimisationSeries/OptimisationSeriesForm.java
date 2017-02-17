@@ -48,7 +48,7 @@ public class OptimisationSeriesForm {
     }
 
     private void enableCheckboxes(boolean enabled) {
-        saveSeriesCheckBox.setEnabled(enabled);
+        saveSeriesCheckBox.setEnabled(false);
         sendNotificationCheckBox.setEnabled(enabled);
     }
 
@@ -75,7 +75,6 @@ public class OptimisationSeriesForm {
         enableRadioButtons(enabled);
         enableTextFields(enabled);
         this.startSeriesButton.setEnabled(enabled);
-        saveSeriesCheckBox.setEnabled(enabled);
-        sendNotificationCheckBox.setEnabled(enabled);
+        enableCheckboxes(enabled);
     }
 }

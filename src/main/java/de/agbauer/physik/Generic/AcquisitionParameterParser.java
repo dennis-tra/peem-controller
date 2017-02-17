@@ -19,11 +19,7 @@ public class AcquisitionParameterParser {
 
         Path path = Paths.get(file.getAbsolutePath());
         List<String> lines;
-        try {
-            lines = Files.readAllLines(path, StandardCharsets.UTF_16LE);
-        } catch (Exception e) {
-            lines = Files.readAllLines(path, StandardCharsets.UTF_8);
-        }
+        lines = Files.readAllLines(path, StandardCharsets.UTF_8);
         for (String line : lines) {
             ap = parseLine(ap, line);
         }

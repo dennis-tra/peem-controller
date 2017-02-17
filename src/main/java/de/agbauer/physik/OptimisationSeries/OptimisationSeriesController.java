@@ -67,8 +67,10 @@ public class OptimisationSeriesController extends Observable implements Document
 
             logger.info("Images: " + imageCount + " - Total time: " + totalTimeStr + " min");
 
-        } catch (NumberFormatException | ValueException exception) {
+        } catch (ValueException exception) {
             logger.warning(exception.getMessage());
+        } catch (NumberFormatException exc) {
+
         }
     }
 

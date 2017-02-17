@@ -1,4 +1,4 @@
-package de.agbauer.physik;
+package de.agbauer.physik.MaxCount;
 
 import com.google.common.eventbus.Subscribe;
 import org.micromanager.Studio;
@@ -12,14 +12,11 @@ import org.micromanager.display.InspectorPanel;
 import javax.swing.*;
 import java.awt.*;
 
-/**
- * Created by dennis on 17/02/2017.
- */
 public class MaxCountInspectorPanel extends InspectorPanel {
-    JLabel countLabel = new JLabel("0");
+    private JLabel countLabel = new JLabel("0");
     private Datastore datastore;
 
-    public MaxCountInspectorPanel(Studio studio) {
+    MaxCountInspectorPanel(Studio studio) {
         Font font = countLabel.getFont();
         countLabel.setFont(new Font(font.getName(), font.getStyle(), 70));
         this.add(countLabel);
@@ -37,8 +34,10 @@ public class MaxCountInspectorPanel extends InspectorPanel {
     }
 
     public void setDataViewer(DataViewer viewer) {
-        if (viewer == null && this.datastore != null) {
-            this.datastore.unregisterForEvents(this);
+        if (viewer == null) {
+            if (this.datastore != null) {
+                this.datastore.unregisterForEvents(this);
+            }
         } else {
             this.datastore = viewer.getDatastore();
             this.datastore.registerForEvents(this);

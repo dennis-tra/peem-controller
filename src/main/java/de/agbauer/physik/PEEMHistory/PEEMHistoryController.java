@@ -5,19 +5,18 @@ import de.agbauer.physik.GeneralInformation.GeneralInformationData;
 import de.agbauer.physik.Generic.AcquisitionParameterParser;
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.Generic.WorkingDirectory;
-import de.agbauer.physik.Observers.SingleAcquisition;
+import de.agbauer.physik.Observers.DataSaveListeners;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters;
 import ij.ImagePlus;
 
 import javax.swing.table.TableColumn;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-public class PEEMHistoryController implements GeneralInformationChangeListener, SingleAcquisition {
+public class PEEMHistoryController implements GeneralInformationChangeListener, DataSaveListeners {
 
     private final PEEMHistoryForm form;
     private HistoryDataModel dataModel = new HistoryDataModel();
@@ -74,7 +73,7 @@ public class PEEMHistoryController implements GeneralInformationChangeListener, 
     }
 
     @Override
-    public void acquiredImage(ImagePlus image) {
+    public void newDataSaved(ImagePlus image) {
         loadDirectory(new File(Constants.defaultFileSaveFolder + WorkingDirectory.getCurrentDirectory(this.generalInformationData.sampleName)));
     }
 }
