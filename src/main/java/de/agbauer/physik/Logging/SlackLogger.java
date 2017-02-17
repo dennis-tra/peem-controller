@@ -17,7 +17,7 @@ import java.util.logging.LogRecord;
 public class SlackLogger extends Handler {
     @Override
     public synchronized void publish(LogRecord record) {
-        if (!record.getMessage().startsWith("Slack")) {
+        if (!record.getMessage().startsWith("Slack") && isLoggable(record)) {
             return;
         }
 

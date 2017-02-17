@@ -6,10 +6,10 @@ import javax.swing.*;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
-public class LabelLogHandler extends Handler {
+public class LabelLogger extends Handler {
     private JLabel label;
 
-    public LabelLogHandler(JLabel label) {
+    public LabelLogger(JLabel label) {
         this.label = label;
     }
 
