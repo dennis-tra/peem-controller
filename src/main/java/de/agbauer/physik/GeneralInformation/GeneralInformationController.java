@@ -49,8 +49,4 @@ public class GeneralInformationController extends Observable implements Document
 
     }
 
-    private boolean empty( final String s ) {
-        return s == null || s.trim().isEmpty();
-    }
-
 }
