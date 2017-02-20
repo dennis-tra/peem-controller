@@ -8,8 +8,8 @@ public class GeneralInformationController extends Observable implements Document
 
     private final GeneralInformationForm form;
 
-    public String sampleName = "";
-    public String excitation = "";
+    private String sampleName = "";
+    private String excitation = "";
 
     public GeneralInformationController(GeneralInformationForm form) {
         this.form = form;
