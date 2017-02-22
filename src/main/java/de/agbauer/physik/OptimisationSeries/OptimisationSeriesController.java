@@ -118,10 +118,10 @@ public class OptimisationSeriesController extends Observable implements Document
 
         } catch (NumberFormatException | ValueException exception) {
             logger.info("Could not read parameters: " + exception.getMessage());
+            seriesEnded();
 
         } catch (Exception exception) {
             logger.severe("Error in optimisation series: "+ exception.getMessage());
-        } finally {
             seriesEnded();
         }
     }
