@@ -17,11 +17,11 @@ public class AcquisitionParametersFormatter {
 
     String format() {
         String txtParams = "";
-        txtParams += "Image Parameter file created by PEEM-Controller " + Constants.version + "\n";
+        txtParams += "Image Parameter file created by PEEM-Controller " + Constants.version + "\r\n";
 
 
         String runOn = new SimpleDateFormat("yyyyMMdd-HHmm").format(new Date());
-        txtParams += "Run on " + runOn + "\n\n";
+        txtParams += "Run on " + runOn + "\r\n\r\n";
 
         txtParams += String.format("%-16s %s%n", "ContrastAperture", parameters.aperture);
         txtParams += String.format("%-16s %s%n", "Excitation", parameters.excitation);
@@ -34,7 +34,7 @@ public class AcquisitionParametersFormatter {
         txtParams += String.format("%-16s %02d%n", "Imagenr", parameters.imageNumber);
         txtParams += String.format("%-16s %s%n", "Note", parameters.note == null ? "": parameters.note);
 
-        txtParams += "\n\nPEEM Parameters below. U is in V, I is in nA.\n\n";
+        txtParams += "\r\n\r\nPEEM Parameters below. U is in V, I is in nA.\r\n\r\n";
 
         txtParams += String.format("%-11s %7s %6s%n", "Module", "U", "I");
         txtParams += String.format("%-11s %7s %6s%n", "------", "-", "-");
@@ -45,7 +45,7 @@ public class AcquisitionParametersFormatter {
         txtParams += String.format("%-11s %7s %6s%n", "projective2", parameters.projective2U, parameters.projective2I);
         txtParams += String.format("%-11s %7s %6s%n", "mcp", parameters.mcpU, parameters.mcpI);
         txtParams += String.format("%-11s %7s %6s%n", "screen", parameters.screenU, parameters.screenI);
-        txtParams += "\n\n\n";
+        txtParams += "\r\n\r\n\r\n";
 
         txtParams += String.format("%-9s %6s %6s %6s %6s%n", "Module", "Vx", "Vy", "Sx", "Sy");
         txtParams += String.format("%-9s %6s %6s %6s %6s%n", "------", "--", "--", "--", "--");
