@@ -46,6 +46,10 @@ public class OptimisationSeriesExecuter {
             throw new IOException("Can't start series, camera is busy.");
         }
 
+        if (studio.getSnapLiveManager().getIsLiveModeOn()) {
+            studio.getSnapLiveManager().setLiveMode(false);
+        }
+
         final String currentBinning = setCameraBinningReturnCurrentBinning(1);
         final double currentExposureTimeInSeconds = setExposureAndReturnCurrentExposure(exposureTimeInSeconds);
 
