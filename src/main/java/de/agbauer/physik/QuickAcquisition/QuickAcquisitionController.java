@@ -6,6 +6,7 @@ import de.agbauer.physik.Generic.Constants;
 import ij.ImagePlus;
 import org.micromanager.SnapLiveManager;
 import org.micromanager.Studio;
+import org.micromanager.data.Image;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -45,11 +46,10 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
         }));
 
         this.form.snapPlusButton.addActionListener(e -> acquireImage(form.snapPlusTextField, form.snapPlusComboBox, (exposureInMs, binning) -> {
-            snapLiveManager.snap(true).get(0);
+            Image image = snapLiveManager.snap(true).get(0);
             logger.info("Successfully snapped image!");
 
-            ImagePlus imagePlus = snapLiveManager.getDisplay().getImagePlus();
-            askToSaveImage(imagePlus, exposureInMs);
+            askToSaveImage(image, exposureInMs);
         }));
 
     }
@@ -85,7 +85,7 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
         }
     }
 
-    private void askToSaveImage(ImagePlus imagePlus, double exposureInMs) {
+    private void askToSaveImage(Image image, double exposureInMs) {
 
         int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want to save this image?", "Save image dialog", JOptionPane.YES_NO_OPTION);
 
@@ -94,8 +94,13 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
             return;
         }
 
+
+        ImagePlus imagePlus = snapLiveManager.getDisplay().getImagePlus();
+
         try {
             fileSaver.save(generalInformationData, imagePlus, "" + exposureInMs);
+
+            studio.getAlbum().addImage(image);
         } catch (IOException exc) {
             JOptionPane.showMessageDialog(null, "Failed saving acquisition: " + exc.getMessage(), "Failed saving", JOptionPane.OK_OPTION);
         } finally {
