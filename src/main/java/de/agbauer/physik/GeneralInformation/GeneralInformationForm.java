@@ -15,8 +15,9 @@ public class GeneralInformationForm {
     private JLabel apertureLabel;
 
     public GeneralInformationForm() {
-        apertureComboBox.addItem("50");
-        apertureComboBox.addItem("75");
+        apertureComboBox.addItem("30");
+        apertureComboBox.addItem("70");
+        apertureComboBox.addItem("150");
         apertureComboBox.addItem("500");
         apertureComboBox.addItem("1500");
         apertureComboBox.setSelectedItem("500");
