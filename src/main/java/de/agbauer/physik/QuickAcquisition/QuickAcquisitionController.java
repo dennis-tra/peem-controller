@@ -41,11 +41,6 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
         }));
 
         this.form.snapButton.addActionListener(e -> acquireImage(form.snapTextField, form.snapComboBox, (exposureInMs, binning) -> {
-            snapLiveManager.snap(true);
-            logger.info("Successfully snapped image!");
-        }));
-
-        this.form.snapPlusButton.addActionListener(e -> acquireImage(form.snapPlusTextField, form.snapPlusComboBox, (exposureInMs, binning) -> {
             Image image = snapLiveManager.snap(true).get(0);
             logger.info("Successfully snapped image!");
 
@@ -93,7 +88,6 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
             logger.info("User denied saving image");
             return;
         }
-
 
         ImagePlus imagePlus = snapLiveManager.getDisplay().getImagePlus();
 
