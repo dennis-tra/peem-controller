@@ -10,14 +10,19 @@ import de.agbauer.physik.QuickAcquisition.AcquisitionParameters;
 import ij.ImagePlus;
 
 import javax.swing.table.TableColumn;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class PEEMHistoryController implements GeneralInformationChangeListener, DataSaveListeners {
 
+    private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private final PEEMHistoryForm form;
     private HistoryDataModel dataModel = new HistoryDataModel();
     private GeneralInformationData generalInformationData;
@@ -34,6 +39,26 @@ public class PEEMHistoryController implements GeneralInformationChangeListener, 
         }
         this.form.historyTable.getColumnModel().getColumn(0).setPreferredWidth(8);
         this.form.historyTable.getColumnModel().getColumn(1).setPreferredWidth(45);
+
+        this.form.directoryLabel.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e){
+                if(e.getClickCount()==2){
+                    String pathName = form.directoryLabel.getText().substring("Dir: ".length());
+
+                    if (pathName.isEmpty()) {
+                        return;
+                    }
+
+                    try {
+                        Desktop.getDesktop().open(new File(pathName));
+                    } catch (IOException e1) {
+                        logger.info("Couldn't open '" + pathName + "'");
+                    }
+                }
+            }
+        });
+
     }
 
     private void loadDirectory(File directory) {
