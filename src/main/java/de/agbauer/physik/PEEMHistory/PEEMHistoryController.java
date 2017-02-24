@@ -52,8 +52,8 @@ public class PEEMHistoryController implements GeneralInformationChangeListener, 
 
                     try {
                         Desktop.getDesktop().open(new File(pathName));
-                    } catch (IOException e1) {
-                        logger.info("Couldn't open '" + pathName + "'");
+                    } catch (IOException | IllegalArgumentException e1) {
+                        logger.info("Couldn't open '" + pathName + "': " + e1.getMessage());
                     }
                 }
             }
