@@ -47,10 +47,7 @@ public class PEEMStateController extends Observable implements GeneralInformatio
 
     private void setPropertyFromTextField(PEEMProperty property, JTextField textField) {
         try {
-            Float value = 0.0f;
-            if (property != PEEMProperty.MCP) {
-                value = Float.parseFloat(textField.getText());
-            }
+            Float value = Float.parseFloat(textField.getText());
             peemCommunicator.setProperty(property, value);
         } catch (IOException e1) {
             logger.warning("Couldn't communicate with PEEM: " + e1.getMessage());

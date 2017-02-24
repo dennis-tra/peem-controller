@@ -276,7 +276,7 @@
                 </constraints>
                 <properties>
                   <enabled value="true"/>
-                  <icon value="refresh.png"/>
+                  <icon value="send.png"/>
                   <text value=""/>
                 </properties>
               </component>
