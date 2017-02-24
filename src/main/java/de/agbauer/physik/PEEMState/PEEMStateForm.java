@@ -5,7 +5,7 @@ import javax.swing.*;
 /**
  * Created by dennis on 09/02/2017.
  */
-public class PEEMStatePanel {
+public class PEEMStateForm {
     JTextField extTextField;
     JButton setExtButton;
     JTextField focusTextField;

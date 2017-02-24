@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="de.agbauer.physik.PEEMState.PEEMStatePanel">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="de.agbauer.physik.PEEMState.PEEMStateForm">
   <grid id="27dc6" binding="peemStatePanel" layout-manager="GridLayoutManager" row-count="5" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="5" bottom="0" right="5"/>
     <constraints>
@@ -36,7 +36,7 @@
               </component>
               <component id="10206" class="javax.swing.JTextField" binding="p1TextField">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                     <maximum-size width="100" height="-1"/>
                   </grid>
@@ -50,7 +50,7 @@
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
                   <icon value="send.png"/>
                   <text value=""/>
                 </properties>
@@ -77,7 +77,7 @@
               </component>
               <component id="3155c" class="javax.swing.JTextField" binding="p2TextField">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                     <maximum-size width="100" height="-1"/>
                   </grid>
@@ -91,7 +91,7 @@
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
                   <icon value="send.png"/>
                   <text value=""/>
                 </properties>
@@ -128,7 +128,7 @@
               </component>
               <component id="12b8d" class="javax.swing.JTextField" binding="extTextField">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                     <maximum-size width="100" height="-1"/>
                   </grid>
@@ -139,10 +139,10 @@
               </component>
               <component id="2d217" class="javax.swing.JButton" binding="setExtButton">
                 <constraints>
-                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
                   <icon value="send.png"/>
                   <text value=""/>
                 </properties>
@@ -169,7 +169,7 @@
               </component>
               <component id="247a2" class="javax.swing.JTextField" binding="focusTextField">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                     <maximum-size width="100" height="-1"/>
                   </grid>
@@ -183,7 +183,7 @@
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
                   <icon value="send.png"/>
                   <text value=""/>
                 </properties>
@@ -210,7 +210,7 @@
               </component>
               <component id="aff75" class="javax.swing.JTextField" binding="colTextField">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                     <maximum-size width="100" height="-1"/>
                   </grid>
@@ -224,7 +224,7 @@
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
                   <icon value="send.png"/>
                   <text value=""/>
                 </properties>
@@ -261,7 +261,7 @@
               </component>
               <component id="6225e" class="javax.swing.JTextField" binding="mcpTextfield">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                     <maximum-size width="100" height="-1"/>
                   </grid>
@@ -275,8 +275,8 @@
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
-                  <icon value="send.png"/>
+                  <enabled value="true"/>
+                  <icon value="refresh.png"/>
                   <text value=""/>
                 </properties>
               </component>
@@ -302,7 +302,7 @@
               </component>
               <component id="1a70" class="javax.swing.JTextField" binding="scrTextField">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                     <maximum-size width="100" height="-1"/>
                   </grid>
@@ -316,7 +316,7 @@
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
                   <icon value="send.png"/>
                   <text value=""/>
                 </properties>
@@ -353,7 +353,7 @@
               </component>
               <component id="777da" class="javax.swing.JTextField" binding="vxTextField">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                     <maximum-size width="100" height="-1"/>
                   </grid>
@@ -367,7 +367,7 @@
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
                   <icon value="send.png"/>
                   <text value=""/>
                 </properties>
@@ -394,7 +394,7 @@
               </component>
               <component id="d6b8c" class="javax.swing.JTextField" binding="vyTextField">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                     <maximum-size width="100" height="-1"/>
                   </grid>
@@ -408,7 +408,7 @@
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
                   <icon value="send.png"/>
                   <text value=""/>
                 </properties>
@@ -435,7 +435,7 @@
               </component>
               <component id="11153" class="javax.swing.JTextField" binding="sxTextField">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                     <maximum-size width="100" height="-1"/>
                   </grid>
@@ -449,7 +449,7 @@
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
                   <icon value="send.png"/>
                   <text value=""/>
                 </properties>
@@ -476,7 +476,7 @@
               </component>
               <component id="60c86" class="javax.swing.JTextField" binding="syTextField">
                 <constraints>
-                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                     <maximum-size width="100" height="-1"/>
                   </grid>
@@ -490,7 +490,7 @@
                   <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <enabled value="false"/>
+                  <enabled value="true"/>
                   <icon value="send.png"/>
                   <text value=""/>
                 </properties>

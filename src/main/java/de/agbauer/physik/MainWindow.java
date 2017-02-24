@@ -4,7 +4,7 @@ import de.agbauer.physik.GeneralInformation.GeneralInformationForm;
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesForm;
 import de.agbauer.physik.PEEMHistory.PEEMHistoryForm;
-import de.agbauer.physik.PEEMState.PEEMStatePanel;
+import de.agbauer.physik.PEEMState.PEEMStateForm;
 import de.agbauer.physik.QuickAcquisition.QuickAcquisitionForm;
 
 import javax.swing.*;
@@ -16,7 +16,7 @@ public class MainWindow extends JFrame {
     private JPanel rootPanel;
     JLabel statusBarLabel;
     public OptimisationSeriesForm optimisationSeriesForm;
-    PEEMStatePanel peemStatePanel;
+    PEEMStateForm peemStateForm;
     QuickAcquisitionForm quickAcquisitionForm;
     GeneralInformationForm generalInformationForm;
     PEEMHistoryForm peemHistoryForm;

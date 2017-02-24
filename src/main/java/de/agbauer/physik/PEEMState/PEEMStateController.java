@@ -7,7 +7,9 @@ import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
 import de.agbauer.physik.QuickAcquisition.FileSaver;
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Observable;
@@ -19,17 +21,44 @@ public class PEEMStateController extends Observable implements GeneralInformatio
     private PEEMCommunicator peemCommunicator;
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private FileSaver fileSaver;
-    private PEEMStatePanel peemStatePanel;
+    private PEEMStateForm peemStateForm;
     private GeneralInformationData generalInformationData;
 
-    public PEEMStateController(PEEMCommunicator peemCommunicator, PEEMStatePanel peemStatePanel) {
+    public PEEMStateController(PEEMCommunicator peemCommunicator, PEEMStateForm peemStateForm) {
         this.peemCommunicator = peemCommunicator;
         this.fileSaver = new FileSaver(peemCommunicator);
-        this.peemStatePanel = peemStatePanel;
+        this.peemStateForm = peemStateForm;
 
-        this.peemStatePanel.readAllButton.addActionListener(this::readAllButtonClicked);
-        this.peemStatePanel.readSaveButton.addActionListener(this::readSaveButtonClicked);
+        this.peemStateForm.readAllButton.addActionListener(this::readAllButtonClicked);
+        this.peemStateForm.readSaveButton.addActionListener(this::readSaveButtonClicked);
+
+        this.peemStateForm.setExtButton.addActionListener(e -> setPropertyFromTextField(PEEMProperty.EXTRACTOR, peemStateForm.extTextField));
+        this.peemStateForm.setFocusButton.addActionListener(e -> setPropertyFromTextField(PEEMProperty.FOCUS, peemStateForm.focusTextField));
+        this.peemStateForm.setColButton.addActionListener(e -> setPropertyFromTextField(PEEMProperty.COLUMN, peemStateForm.colTextField));
+        this.peemStateForm.setVxButton.addActionListener(e -> setPropertyFromTextField(PEEMProperty.DEFLECTOR_X, peemStateForm.vxTextField));
+        this.peemStateForm.setVyButton.addActionListener(e -> setPropertyFromTextField(PEEMProperty.DEFLECTOR_Y, peemStateForm.vyTextField));
+        this.peemStateForm.setSxButton.addActionListener(e -> setPropertyFromTextField(PEEMProperty.STIGMATOR_X, peemStateForm.sxTextField));
+        this.peemStateForm.setSyButton.addActionListener(e -> setPropertyFromTextField(PEEMProperty.STIGMATOR_Y, peemStateForm.syTextField));
+        this.peemStateForm.setP1Button.addActionListener(e -> setPropertyFromTextField(PEEMProperty.PROJECTIVE_1, peemStateForm.p1TextField));
+        this.peemStateForm.setP2Button.addActionListener(e -> setPropertyFromTextField(PEEMProperty.PROJECTIVE_2, peemStateForm.p2TextField));
+        this.peemStateForm.setMcpButton.addActionListener(e -> setPropertyFromTextField(PEEMProperty.MCP, peemStateForm.mcpTextfield));
+        this.peemStateForm.setScrButton.addActionListener(e -> setPropertyFromTextField(PEEMProperty.SCREEN, peemStateForm.scrTextField));
     }
+
+    private void setPropertyFromTextField(PEEMProperty property, JTextField textField) {
+        try {
+            Float value = 0.0f;
+            if (property != PEEMProperty.MCP) {
+                value = Float.parseFloat(textField.getText());
+            }
+            peemCommunicator.setProperty(property, value);
+        } catch (IOException e1) {
+            logger.warning("Couldn't communicate with PEEM: " + e1.getMessage());
+        } catch (NumberFormatException e2) {
+            logger.warning("Invalid input for " + property.displayName() + ": '" + textField.getText() + "'");
+        }
+    }
+
 
     private void readSaveButtonClicked(ActionEvent actionEvent) {
         try {
@@ -64,17 +93,17 @@ public class PEEMStateController extends Observable implements GeneralInformatio
     }
 
     private void updateUIWithVoltages(Map<PEEMProperty, String> allVoltages) {
-        peemStatePanel.extTextField.setText(allVoltages.get(PEEMProperty.EXTRACTOR));
-        peemStatePanel.focusTextField.setText(allVoltages.get(PEEMProperty.FOCUS));
-        peemStatePanel.colTextField.setText(allVoltages.get(PEEMProperty.COLUMN));
-        peemStatePanel.p1TextField.setText(allVoltages.get(PEEMProperty.PROJECTIVE_1));
-        peemStatePanel.p2TextField.setText(allVoltages.get(PEEMProperty.PROJECTIVE_2));
-        peemStatePanel.vxTextField.setText(allVoltages.get(PEEMProperty.DEFLECTOR_X));
-        peemStatePanel.vyTextField.setText(allVoltages.get(PEEMProperty.DEFLECTOR_Y));
-        peemStatePanel.sxTextField.setText(allVoltages.get(PEEMProperty.STIGMATOR_X));
-        peemStatePanel.syTextField.setText(allVoltages.get(PEEMProperty.STIGMATOR_Y));
-        peemStatePanel.mcpTextfield.setText(allVoltages.get(PEEMProperty.MCP));
-        peemStatePanel.scrTextField.setText(allVoltages.get(PEEMProperty.SCREEN));
+        peemStateForm.extTextField.setText(allVoltages.get(PEEMProperty.EXTRACTOR));
+        peemStateForm.focusTextField.setText(allVoltages.get(PEEMProperty.FOCUS));
+        peemStateForm.colTextField.setText(allVoltages.get(PEEMProperty.COLUMN));
+        peemStateForm.p1TextField.setText(allVoltages.get(PEEMProperty.PROJECTIVE_1));
+        peemStateForm.p2TextField.setText(allVoltages.get(PEEMProperty.PROJECTIVE_2));
+        peemStateForm.vxTextField.setText(allVoltages.get(PEEMProperty.DEFLECTOR_X));
+        peemStateForm.vyTextField.setText(allVoltages.get(PEEMProperty.DEFLECTOR_Y));
+        peemStateForm.sxTextField.setText(allVoltages.get(PEEMProperty.STIGMATOR_X));
+        peemStateForm.syTextField.setText(allVoltages.get(PEEMProperty.STIGMATOR_Y));
+        peemStateForm.mcpTextfield.setText(allVoltages.get(PEEMProperty.MCP));
+        peemStateForm.scrTextField.setText(allVoltages.get(PEEMProperty.SCREEN));
     }
 
     @Override

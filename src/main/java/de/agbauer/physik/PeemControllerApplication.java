@@ -132,7 +132,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     }
 
     private void initPeemState() {
-        peemStateController = new PEEMStateController(peemCommunicator, mainWindow.peemStatePanel);
+        peemStateController = new PEEMStateController(peemCommunicator, mainWindow.peemStateForm);
     }
 
     private PEEMCommunicator getPeemCommunicatorFromSerialConnection(SerialConnectionHandler connectionHandler) throws IOException {
