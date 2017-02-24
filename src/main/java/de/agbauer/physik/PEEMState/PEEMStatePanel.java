@@ -21,7 +21,6 @@ public class PEEMStatePanel {
     JTextField scrTextField;
     JButton setScrButton;
     JPanel peemStatePanel;
-    JButton setAllButton;
     JButton readAllButton;
     JTextField vxTextField;
     JTextField vyTextField;
