@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -26,6 +27,10 @@ public class FileSaver {
     public FileSaver(PEEMCommunicator peemCommunicator) {
 
         this.peemCommunicator = peemCommunicator;
+    }
+
+    public void saveOptimisationSeries(GeneralInformationData data, List<ImagePlus> datastore) {
+
     }
 
     public Map<PEEMProperty, String> savePEEMData(GeneralInformationData data) throws IOException {

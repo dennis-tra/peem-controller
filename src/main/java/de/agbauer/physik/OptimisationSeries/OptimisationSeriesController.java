@@ -2,16 +2,22 @@ package de.agbauer.physik.OptimisationSeries;
 
 import de.agbauer.physik.GeneralInformation.GeneralInformationChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationData;
+import de.agbauer.physik.Generic.WorkingDirectory;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
 import de.agbauer.physik.PEEMCommunicator.PEEMQuantity;
+import de.agbauer.physik.QuickAcquisition.FileSaver;
+import ij.ImagePlus;
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.micromanager.Studio;
+import org.micromanager.data.Datastore;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.xml.crypto.Data;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.util.List;
 import java.util.Observable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -24,6 +30,7 @@ public class OptimisationSeriesController extends Observable implements Document
     private PEEMCommunicator peemCommunicator;
     private Studio studio;
     private OptimisationSeriesExecuter optimisationSeriesExecuter;
+    private GeneralInformationData generalInformationData;
 
 
     public OptimisationSeriesController(Studio studio, PEEMCommunicator peemCommunicator, OptimisationSeriesForm form) {
@@ -101,7 +108,13 @@ public class OptimisationSeriesController extends Observable implements Document
 
             CompletableFuture.runAsync(() -> {
                 try {
-                    optimisationSeriesExecuter.startSeries(optimisationSeriesParameters);
+                    List<ImagePlus> images = optimisationSeriesExecuter.startSeries(optimisationSeriesParameters);
+
+//                    if (optimisationSeriesParameters.saveImages) {
+//                        FileSaver fs = new FileSaver(peemCommunicator);
+//                        fs.saveOptimisationSeries(generalInformationData, images);
+//                    }
+
                 } catch (Exception e1) {
                     throw new CompletionException(e1);
                 }
@@ -178,6 +191,7 @@ public class OptimisationSeriesController extends Observable implements Document
 
     @Override
     public void generalInformationChanged(GeneralInformationData data) {
+        this.generalInformationData = data;
         this.form.setEnabledState(data.isValid());
     }
 

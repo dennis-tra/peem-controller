@@ -1,15 +1,16 @@
 package de.agbauer.physik.OptimisationSeries;
 
 import de.agbauer.physik.Generic.Constants;
-import de.agbauer.physik.Generic.WorkingDirectory;
 import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
 
+import ij.ImagePlus;
 import mmcorej.CMMCore;
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
 import org.micromanager.data.*;
+import org.micromanager.display.DisplayWindow;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,10 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-/**
- * Created by dennis on 03/02/2017.
- */
-public class OptimisationSeriesExecuter {
+class OptimisationSeriesExecuter {
     private final PEEMCommunicator peemCommunicator;
     private Studio studio;
     private CMMCore mmCore;
@@ -33,7 +31,7 @@ public class OptimisationSeriesExecuter {
         this.peemCommunicator = communicator;
     }
 
-    void startSeries(OptimisationSeriesParameters optimisationSeriesParameters) throws Exception {
+    List<ImagePlus> startSeries(OptimisationSeriesParameters optimisationSeriesParameters) throws Exception {
         String deviceLabel = Constants.cameraDevice;
 
         double exposureTimeInSeconds = optimisationSeriesParameters.exposureTimeInSeconds;
@@ -57,7 +55,10 @@ public class OptimisationSeriesExecuter {
         Map<PEEMProperty, String> peemProperties = bulkReader.getAllVoltages();
 
         Datastore store = studio.data().createRAMDatastore();
-        studio.displays().createDisplay(store);
+        DisplayWindow window = studio.displays().createDisplay(store);
+        window.setCustomTitle("Optimisation series for " + optimisationSeriesParameters.property.displayName());
+
+        List<ImagePlus> images = new ArrayList<ImagePlus>();
 
         for (int i = 0; i < values.size(); i++) {
             if (shouldStop) {
@@ -70,11 +71,9 @@ public class OptimisationSeriesExecuter {
 
             peemCommunicator.setProperty(property, value);
 
-            logger.info("Slack: Acquiring image "+ imageNumber +"/" +values.size() + ". " + property.displayName() +" = " + value + " V");
+            logger.info("Slack: Acquiring image " + imageNumber + "/" + values.size() + ". " + property.displayName() + " = " + value + " V");
 
-            List<Image> images = studio.getSnapLiveManager().snap(false);
-
-            Image image = images.get(0);
+            Image image = studio.getSnapLiveManager().snap(false).get(0);
 
             PropertyMap.PropertyMapBuilder propertyMapBuilder = studio.data().getPropertyMapBuilder();
             propertyMapBuilder.putDouble(property.cmdString(), Double.valueOf(value));
@@ -95,6 +94,9 @@ public class OptimisationSeriesExecuter {
 
             store.putImage(image);
 
+            //ImageProcessor processor = ImageUtils.makeProcessor(studio.getCMMCore(), image);
+            //ImagePlus imagePlus = new ImagePlus(property.displayName() + " = " + value + " V", processor);
+            //images.add(imagePlus);
         }
 
         logger.info("Reset camera exposure to " + currentExposureTimeInSeconds * 1000 + " s");
@@ -106,6 +108,8 @@ public class OptimisationSeriesExecuter {
         if (optimisationSeriesParameters.sendNotification) {
             logger.info("Slack: @channel Successfully finished optimisation series!");
         }
+
+        return images;
     }
 
     private String setCameraBinningReturnCurrentBinning(int binning) throws Exception {
