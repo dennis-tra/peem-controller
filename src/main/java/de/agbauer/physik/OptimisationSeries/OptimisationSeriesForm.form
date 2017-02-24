@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="de.agbauer.physik.OptimisationSeries.OptimisationSeriesForm">
   <grid id="27dc6" binding="optimisationSeriesPanel" layout-manager="GridLayoutManager" row-count="6" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-    <margin top="0" left="0" bottom="0" right="0"/>
+    <margin top="0" left="5" bottom="5" right="5"/>
     <constraints>
-      <xy x="20" y="20" width="579" height="400"/>
+      <xy x="20" y="20" width="427" height="226"/>
     </constraints>
     <properties/>
     <border type="etched" title="Optimisation Series"/>
@@ -80,7 +80,9 @@
             <preferred-size width="70" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-1"/>
+        </properties>
       </component>
       <component id="2c322" class="javax.swing.JTextField" binding="endingValueTextField">
         <constraints>
@@ -88,7 +90,9 @@
             <preferred-size width="70" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-1"/>
+        </properties>
       </component>
       <component id="1aa3" class="javax.swing.JTextField" binding="stepSizeTextField">
         <constraints>
@@ -96,7 +100,9 @@
             <preferred-size width="70" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-1"/>
+        </properties>
       </component>
       <component id="4f5b7" class="javax.swing.JTextField" binding="exposureTextField">
         <constraints>
@@ -104,7 +110,9 @@
             <preferred-size width="70" height="-1"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-1"/>
+        </properties>
       </component>
       <component id="ea715" class="javax.swing.JCheckBox" binding="saveSeriesCheckBox" default-binding="true">
         <constraints>
