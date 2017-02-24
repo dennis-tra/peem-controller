@@ -12,7 +12,7 @@ public class CustomFormatter extends Formatter {
     @Override
     public String format(LogRecord record) {
         return String.format(
-                "%1$s %2$-7s %3$s\n",
+                "[%1$s] %2$-7s %3$s\n",
                 new SimpleDateFormat(PATTERN).format(new Date(record.getMillis())),
                 record.getLevel().getName(), formatMessage(record));
     }
