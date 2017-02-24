@@ -14,7 +14,7 @@ public class LogInitialiser {
         logger.addHandler(new SlackLogger());
 
         ImageJLogger imageJLogger = new ImageJLogger();
-        imageJLogger.setFormatter(new CustomFormatter());
+        imageJLogger.setFormatter(new IJFormatter());
         logger.addHandler(imageJLogger);
 
         ConsoleHandler consoleHandler = new ConsoleHandler();

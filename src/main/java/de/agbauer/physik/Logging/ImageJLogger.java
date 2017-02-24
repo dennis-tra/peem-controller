@@ -12,7 +12,7 @@ public class ImageJLogger extends Handler {
             return;
         }
 
-        IJ.log(record.getMessage());
+        IJ.log(this.getFormatter().format(record));
     }
 
     @Override
