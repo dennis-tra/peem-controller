@@ -32,7 +32,7 @@ public class AcquisitionParametersFormatter {
         txtParams += String.format("%-16s %s%n", "Date", date);
 
         txtParams += String.format("%-16s %02d%n", "Imagenr", parameters.imageNumber);
-        txtParams += String.format("%-16s %s%n", "Note", parameters.note == null ? "": parameters.note);
+        txtParams += String.format("%-16s %s%n", "Note", parameters.note);
 
         txtParams += "\r\n\r\nPEEM Parameters below. U is in V, I is in nA.\r\n\r\n";
 

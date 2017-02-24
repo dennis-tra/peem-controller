@@ -15,13 +15,13 @@ public class AcquisitionParameters {
         this.aperture = data.aperture;
         this.excitation = data.excitation;
         this.sampleName = data.sampleName;
+        this.note = data.note;
 
         //this.exposure = "";
 
         this.createdAt = new Date();
 
         //this.imageNumber = "";
-        //this.note = "";
 
         this.extractorU = Double.parseDouble(allVoltages.get(PEEMProperty.EXTRACTOR));
         this.focusU = Double.parseDouble(allVoltages.get(PEEMProperty.FOCUS));
