@@ -18,7 +18,7 @@ public class PEEMCommunicator implements PEEMCommunicatorInterface {
 
     public void setProperty(PEEMProperty property, Float value) throws IOException {
         String valueStr = String.format(Locale.ROOT, "%.2f", value);
-        String commandStr = "set " + property.cmdString() + " " + valueStr + "\r";
+        String commandStr = "set " + property.setCmdString() + " " + valueStr + "\r";
 
         this.sendCommand(commandStr);
     }

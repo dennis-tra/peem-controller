@@ -1,8 +1,5 @@
 package de.agbauer.physik.PEEMCommunicator;
 
-/**
- * Created by dennis on 02/02/2017.
- */
 public enum PEEMQuantity {
     VOLTAGE,
     CURRENT;
