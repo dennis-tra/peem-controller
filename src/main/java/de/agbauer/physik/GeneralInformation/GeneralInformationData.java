@@ -7,6 +7,7 @@ public class GeneralInformationData {
     public String sampleName;
     public String excitation;
     public String aperture;
+    public String note;
 
     public boolean isValid() {
         return !empty(sampleName) && !empty(excitation);

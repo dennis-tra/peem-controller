@@ -9,8 +9,9 @@ public class GeneralInformationForm {
     private JPanel generalInformationPanel;
     JComboBox apertureComboBox;
     JTextField excitationTextField;
-    JTextField probeNameTextField;
-    private JLabel probeNameLabel;
+    JTextField sampleNameTextField;
+    JTextField noteTextField;
+    private JLabel sampleNameLabel;
     private JLabel excitationLabel;
     private JLabel apertureLabel;
 
