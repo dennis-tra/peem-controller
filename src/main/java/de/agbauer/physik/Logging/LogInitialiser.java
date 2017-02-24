@@ -13,6 +13,10 @@ public class LogInitialiser {
         logger.addHandler(labelLogHandler);
         logger.addHandler(new SlackLogger());
 
+        ImageJLogger imageJLogger = new ImageJLogger();
+        imageJLogger.setFormatter(new CustomFormatter());
+        logger.addHandler(imageJLogger);
+
         ConsoleHandler consoleHandler = new ConsoleHandler();
         consoleHandler.setFormatter(new CustomFormatter());
         logger.addHandler(consoleHandler);
