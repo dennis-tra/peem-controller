@@ -1,6 +1,6 @@
 package de.agbauer.physik.OptimisationSeries;
 
-import de.agbauer.physik.GeneralInformation.GeneralInformationChangeListener;
+import de.agbauer.physik.Observers.GeneralInformationChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationData;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;

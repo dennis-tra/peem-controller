@@ -1,6 +1,6 @@
 package de.agbauer.physik;
 
-import de.agbauer.physik.GeneralInformation.GeneralInformationChangeListener;
+import de.agbauer.physik.Observers.GeneralInformationChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationController;
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.Logging.LabelLogger;

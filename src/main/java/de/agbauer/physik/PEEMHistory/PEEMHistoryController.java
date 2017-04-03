@@ -1,6 +1,6 @@
 package de.agbauer.physik.PEEMHistory;
 
-import de.agbauer.physik.GeneralInformation.GeneralInformationChangeListener;
+import de.agbauer.physik.Observers.GeneralInformationChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationData;
 import de.agbauer.physik.Generic.AcquisitionParameterParser;
 import de.agbauer.physik.Generic.Constants;

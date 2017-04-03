@@ -1,6 +1,5 @@
 package de.agbauer.physik.Observers;
 
-import de.agbauer.physik.GeneralInformation.GeneralInformationChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationData;
 
 import java.util.Observable;
