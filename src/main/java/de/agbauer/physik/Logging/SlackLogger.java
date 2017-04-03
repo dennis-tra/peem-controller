@@ -1,19 +1,14 @@
 package de.agbauer.physik.Logging;
 
-import de.agbauer.physik.Generic.Constants;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.json.JSONObject;
 
-import javax.swing.*;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
-/**
- * Created by dennis on 17/02/2017.
- */
 public class SlackLogger extends Handler {
     @Override
     public synchronized void publish(LogRecord record) {

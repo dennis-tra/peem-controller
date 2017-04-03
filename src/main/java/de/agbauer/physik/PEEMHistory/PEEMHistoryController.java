@@ -40,7 +40,7 @@ public class PEEMHistoryController implements GeneralInformationChangeListener, 
         this.form.historyTable.getColumnModel().getColumn(0).setPreferredWidth(8);
         this.form.historyTable.getColumnModel().getColumn(1).setPreferredWidth(45);
 
-        this.form.directoryLabel.addMouseListener(new MouseAdapter(){
+        this.form.directoryLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e){
                 if(e.getClickCount()==2){
@@ -58,7 +58,6 @@ public class PEEMHistoryController implements GeneralInformationChangeListener, 
                 }
             }
         });
-
     }
 
     private void loadDirectory(File directory) {

@@ -2,19 +2,15 @@ package de.agbauer.physik.OptimisationSeries;
 
 import de.agbauer.physik.GeneralInformation.GeneralInformationChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationData;
-import de.agbauer.physik.Generic.WorkingDirectory;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
 import de.agbauer.physik.PEEMCommunicator.PEEMQuantity;
-import de.agbauer.physik.QuickAcquisition.FileSaver;
 import ij.ImagePlus;
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.micromanager.Studio;
-import org.micromanager.data.Datastore;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.xml.crypto.Data;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.List;

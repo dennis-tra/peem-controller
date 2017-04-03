@@ -1,8 +1,7 @@
-package de.agbauer.physik.GeneralInformation;
+package de.agbauer.physik.Observers;
 
-/**
- * Created by dennis on 17/02/2017.
- */
+import de.agbauer.physik.GeneralInformation.GeneralInformationData;
+
 public interface GeneralInformationChangeListener {
     void generalInformationChanged(GeneralInformationData data);
 }

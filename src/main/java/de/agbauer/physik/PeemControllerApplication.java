@@ -85,6 +85,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         generalInformationController.addObserver(generalInformationObserver);
         generalInformationController.notifyObservers();
 
+
         NewDataSavedObserver singleAcquisitionObserver = new NewDataSavedObserver(new DataSaveListeners[]{
                 peemHistoryController
         });
