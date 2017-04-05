@@ -14,6 +14,11 @@ public class GeneralInformationController extends Observable implements Document
     }
 
     private void textFieldChanged() {
+        notifyObservers();
+    }
+
+    @Override
+    public void notifyObservers(Object arg) {
         String sampleName = this.form.sampleNameTextField.getText();
         setChanged();
         super.notifyObservers(sampleName);
