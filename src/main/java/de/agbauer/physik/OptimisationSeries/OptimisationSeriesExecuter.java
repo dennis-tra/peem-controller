@@ -1,21 +1,32 @@
 package de.agbauer.physik.OptimisationSeries;
 
 import de.agbauer.physik.Generic.Constants;
+import de.agbauer.physik.Generic.GifSequenceWriter;
 import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
 
+import de.agbauer.physik.PEEMCommunicator.PEEMQuantity;
 import ij.ImagePlus;
+import ij.process.ImageProcessor;
 import mmcorej.CMMCore;
+import okhttp3.*;
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
 import org.micromanager.data.*;
+import org.micromanager.data.Image;
 import org.micromanager.display.DisplayWindow;
 
+import javax.imageio.ImageIO;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 class OptimisationSeriesExecuter {
@@ -50,6 +61,7 @@ class OptimisationSeriesExecuter {
 
         final String currentBinning = setCameraBinningReturnCurrentBinning(1);
         final double currentExposureTimeInSeconds = setExposureAndReturnCurrentExposure(exposureTimeInSeconds);
+        peemCommunicator.getProperty(property, PEEMQuantity.VOLTAGE);
 
         PEEMBulkReader bulkReader = new PEEMBulkReader(peemCommunicator);
         Map<PEEMProperty, String> peemProperties = bulkReader.getAllVoltages();
@@ -58,11 +70,12 @@ class OptimisationSeriesExecuter {
         DisplayWindow window = studio.displays().createDisplay(store);
         window.setCustomTitle("Optimisation series for " + optimisationSeriesParameters.property.displayName());
 
-        List<ImagePlus> images = new ArrayList<ImagePlus>();
+        List<ImagePlus> images = new ArrayList<>();
+        List<File> tmpImages = new ArrayList<>();
 
         for (int i = 0; i < values.size(); i++) {
             if (shouldStop) {
-                break;
+                throw new IOException("User stopped optimisation series");
             }
 
             Float value = values.get(i);
@@ -94,9 +107,8 @@ class OptimisationSeriesExecuter {
 
             store.putImage(image);
 
-            //ImageProcessor processor = ImageUtils.makeProcessor(studio.getCMMCore(), image);
-            //ImagePlus imagePlus = new ImagePlus(property.displayName() + " = " + value + " V", processor);
-            //images.add(imagePlus);
+            tmpImages.add(saveImageTemporarily(image));
+
         }
 
         logger.info("Reset camera exposure to " + currentExposureTimeInSeconds * 1000 + " s");
@@ -109,7 +121,81 @@ class OptimisationSeriesExecuter {
             logger.info("Slack: @channel Successfully finished optimisation series!");
         }
 
+        CompletableFuture.runAsync(() -> {
+            try {
+                File gifFile = createGifFromTmpFiles(tmpImages);
+
+                Float firstVal = values.get(0);
+                Float lastVal = values.get(values.size() - 1);
+                String title = "Optimisation series " + property.displayName() + " (from " + firstVal.toString() + " V to " + lastVal.toString() + " V).";
+
+                sendImageToSlack(title, gifFile);
+            } catch (Exception e) {
+                logger.warning("Could not save or send gif to slack channel " + e.getMessage());
+            }
+        });
+
         return images;
+    }
+
+    private File saveImageTemporarily(Image image) {
+        File jpegFile = null;
+        try {
+            ImageProcessor ip = studio.data().getImageJConverter().createProcessor(image);
+            ImagePlus imagePlus = new ImagePlus("", ip);
+            ij.io.FileSaver fileSaver = new ij.io.FileSaver(imagePlus);
+
+            jpegFile = File.createTempFile("jpegFile", Long.toString(System.nanoTime()));
+            jpegFile.deleteOnExit();
+
+            fileSaver.saveAsJpeg(jpegFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return jpegFile;
+    }
+
+    private File createGifFromTmpFiles(List<File> tmpImages) throws IOException {
+        logger.info("Generating gif from temporary jpeg images");
+        BufferedImage firstImage = ImageIO.read(tmpImages.get(0));
+
+        File gifFile = File.createTempFile("gifFile", Long.toString(System.nanoTime()));
+        gifFile.deleteOnExit();
+
+        ImageOutputStream output = new FileImageOutputStream(gifFile);
+
+        GifSequenceWriter writer = new GifSequenceWriter(output, firstImage.getType(), 2, true);
+
+        writer.writeToSequence(firstImage);
+
+        for (File image : tmpImages) {
+            BufferedImage nextImage = ImageIO.read(image);
+            writer.writeToSequence(nextImage);
+        }
+
+        writer.close();
+        output.close();
+        return gifFile;
+    }
+
+    private void sendImageToSlack(String title, File imageFile) throws Exception {
+        logger.info("Sending gif to slack channel #peem-lab");
+        OkHttpClient client = new OkHttpClient();
+
+        RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("file", title, RequestBody.create(MediaType.parse("image/gif"), imageFile))
+                .addFormDataPart("token", Constants.slackBotToken)
+                .addFormDataPart("filename", title)
+                .addFormDataPart("channels", "#peem-lab")
+                .build();
+
+        Request request = new Request.Builder().url("https://slack.com/api/files.upload")
+                .post(requestBody).build();
+
+        Response response = client.newCall(request).execute();
+        response.body().close();
+
     }
 
     private String setCameraBinningReturnCurrentBinning(int binning) throws Exception {
