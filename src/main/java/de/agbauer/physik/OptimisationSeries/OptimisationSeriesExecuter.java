@@ -8,7 +8,10 @@ import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
 
 import de.agbauer.physik.PEEMCommunicator.PEEMQuantity;
 import ij.ImagePlus;
+import ij.ImageStack;
+import ij.plugin.JpegWriter;
 import ij.process.ImageProcessor;
+import ij.process.StackProcessor;
 import mmcorej.CMMCore;
 import okhttp3.*;
 import org.micromanager.PropertyMap;
@@ -131,7 +134,7 @@ class OptimisationSeriesExecuter {
 
                 sendImageToSlack(title, gifFile);
             } catch (Exception e) {
-                logger.warning("Could not save or send gif to slack channel " + e.getMessage());
+                logger.warning("Could not save or send gif to slack channel: " + e.getMessage());
             }
         });
 
@@ -142,8 +145,11 @@ class OptimisationSeriesExecuter {
         File jpegFile = null;
         try {
             ImageProcessor ip = studio.data().getImageJConverter().createProcessor(image);
+            ip.setMinAndMax(40, 250);
+
             ImagePlus imagePlus = new ImagePlus("", ip);
             ij.io.FileSaver fileSaver = new ij.io.FileSaver(imagePlus);
+            ij.io.FileSaver.setJpegQuality(40);
 
             jpegFile = File.createTempFile("jpegFile", Long.toString(System.nanoTime()));
             jpegFile.deleteOnExit();
@@ -165,7 +171,7 @@ class OptimisationSeriesExecuter {
 
         ImageOutputStream output = new FileImageOutputStream(gifFile);
 
-        GifSequenceWriter writer = new GifSequenceWriter(output, firstImage.getType(), 2, true);
+        GifSequenceWriter writer = new GifSequenceWriter(output, firstImage.getType(), 500, true);
 
         writer.writeToSequence(firstImage);
 
