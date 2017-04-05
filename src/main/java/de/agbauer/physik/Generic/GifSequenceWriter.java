@@ -43,6 +43,10 @@ public class GifSequenceWriter {
         ImageTypeSpecifier imageTypeSpecifier =
                 ImageTypeSpecifier.createFromBufferedImageType(imageType);
 
+        imageWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+        imageWriteParam.setCompressionType("LZW");
+        imageWriteParam.setCompressionQuality(0.5f);
+
         imageMetaData =
                 gifWriter.getDefaultImageMetadata(imageTypeSpecifier,
                         imageWriteParam);
