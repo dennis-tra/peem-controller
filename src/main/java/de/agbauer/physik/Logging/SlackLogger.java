@@ -1,9 +1,8 @@
 package de.agbauer.physik.Logging;
 
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
+import de.agbauer.physik.Generic.Constants;
+import okhttp3.*;
+import org.apache.tomcat.util.bcel.Const;
 import org.json.JSONObject;
 
 import java.util.logging.Handler;
@@ -18,25 +17,23 @@ public class SlackLogger extends Handler {
 
         String logMessage = record.getMessage().substring("Slack: ".length());
 
-        OkHttpClient client = new OkHttpClient();
-
-        JSONObject payload = new JSONObject();
 
         try {
-            payload.put("username", "PEEM");
-            payload.put("link_names", 1);
+            OkHttpClient client = new OkHttpClient();
 
-            payload.put("text", logMessage);
-            payload.put("icon_emoji", ":camera:");
-
-            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), payload.toString());
-
-            Request request = new Request.Builder()
-                    .url("https://hooks.slack.com/services/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")
-                    .post(body)
+            RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
+                    .addFormDataPart("token", Constants.slackBotToken)
+                    .addFormDataPart("channel", "#peem-lab")
+                    .addFormDataPart("text", logMessage)
+                    .addFormDataPart("link_names", "true")
+                    .addFormDataPart("as_user", "true")
                     .build();
 
-            client.newCall(request).execute();
+            Request request = new Request.Builder().url("https://slack.com/api/chat.postMessage")
+                    .post(requestBody).build();
+
+            Response response = client.newCall(request).execute();
+            response.body().close();
         } catch (Exception e) {
             e.printStackTrace();
         }

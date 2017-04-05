@@ -13,7 +13,6 @@ public class GeneralInformationData {
         return !empty(sampleName) && !empty(excitation);
     }
 
-
     private boolean empty( final String s ) {
         return s == null || s.trim().isEmpty();
     }

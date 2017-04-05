@@ -1,9 +1,9 @@
 package de.agbauer.physik.QuickAcquisition;
 
-import de.agbauer.physik.Observers.GeneralInformationChangeListener;
-import de.agbauer.physik.GeneralInformation.GeneralInformationData;
+import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.Generic.Constants;
 import ij.ImagePlus;
+import ij.process.ImageProcessor;
 import org.micromanager.SnapLiveManager;
 import org.micromanager.Studio;
 import org.micromanager.data.Image;
@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class QuickAcquisitionController extends Observable implements GeneralInformationChangeListener {
+public class QuickAcquisitionController extends Observable implements SampleNameChangeListener {
 
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
@@ -21,7 +21,7 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
     private QuickAcquisitionForm form;
     private Studio studio;
     private SnapLiveManager snapLiveManager;
-    private GeneralInformationData generalInformationData;
+    private String sampleName;
 
     private interface AcquisitionAction {
         void acquire(float exposureInMs, int binning);
@@ -42,11 +42,26 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
 
         this.form.snapButton.addActionListener(e -> acquireImage(form.snapTextField, form.snapComboBox, (exposureInMs, binning) -> {
             Image image = snapLiveManager.snap(true).get(0);
-            logger.info("Successfully snapped image!");
+            logger.info((exposureInMs >= 180000 ? "Slack: @channel " : "") + "Successfully snapped image!"); // Posts to slack if exposure is longer than three minutes
 
-            askToSaveImage(image, exposureInMs);
+            saveImage(exposureInMs, image);
         }));
 
+    }
+
+    private void saveImage(float exposureInMs, Image image) {
+        ImageProcessor ip = studio.data().getImageJConverter().createProcessor(image);
+        ImagePlus imagePlus = new ImagePlus(sampleName, ip);
+
+        try {
+            fileSaver.save(sampleName, imagePlus, "" + exposureInMs);
+            studio.getAlbum().addImage(image);
+        } catch (IOException exc) {
+            logger.warning("Failed saving acquisition: " + exc.getMessage());
+        } finally {
+            setChanged();
+            notifyObservers(imagePlus);
+        }
     }
 
 
@@ -80,29 +95,6 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
         }
     }
 
-    private void askToSaveImage(Image image, double exposureInMs) {
-
-        int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want to save this image?", "Save image dialog", JOptionPane.YES_NO_OPTION);
-
-        if(dialogResult != JOptionPane.YES_OPTION) {
-            logger.info("User denied saving image");
-            return;
-        }
-
-        ImagePlus imagePlus = snapLiveManager.getDisplay().getImagePlus();
-
-        try {
-            fileSaver.save(generalInformationData, imagePlus, "" + exposureInMs);
-
-            studio.getAlbum().addImage(image);
-        } catch (IOException exc) {
-            JOptionPane.showMessageDialog(null, "Failed saving acquisition: " + exc.getMessage(), "Failed saving", JOptionPane.OK_OPTION);
-        } finally {
-            setChanged();
-            notifyObservers(imagePlus);
-        }
-    }
-
     private void turnOffLiveMode() {
         logger.info("Stopping live acquisition");
 
@@ -112,9 +104,8 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
     }
 
     @Override
-    public void generalInformationChanged(GeneralInformationData data) {
-        this.generalInformationData = data;
-        this.form.setGeneralInformationGiven(data.isValid());
+    public void sampleNameChanged(String sampleName) {
+        this.sampleName = sampleName;
     }
 
     private double zoomForBinning(int binning) {

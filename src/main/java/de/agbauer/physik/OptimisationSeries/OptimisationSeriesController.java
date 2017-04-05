@@ -1,7 +1,6 @@
 package de.agbauer.physik.OptimisationSeries;
 
-import de.agbauer.physik.Observers.GeneralInformationChangeListener;
-import de.agbauer.physik.GeneralInformation.GeneralInformationData;
+import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
 import de.agbauer.physik.PEEMCommunicator.PEEMQuantity;
@@ -19,14 +18,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.logging.Logger;
 
-public class OptimisationSeriesController extends Observable implements DocumentListener, GeneralInformationChangeListener {
+public class OptimisationSeriesController extends Observable implements DocumentListener, SampleNameChangeListener {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private OptimisationSeriesForm form;
     private PEEMCommunicator peemCommunicator;
     private Studio studio;
     private OptimisationSeriesExecuter optimisationSeriesExecuter;
-    private GeneralInformationData generalInformationData;
 
 
     public OptimisationSeriesController(Studio studio, PEEMCommunicator peemCommunicator, OptimisationSeriesForm form) {
@@ -186,9 +184,11 @@ public class OptimisationSeriesController extends Observable implements Document
     }
 
     @Override
-    public void generalInformationChanged(GeneralInformationData data) {
-        this.generalInformationData = data;
-        this.form.setEnabledState(data.isValid());
+    public void sampleNameChanged(String sampleName) {
+        this.form.setEnabledState(!empty(sampleName));
     }
 
+    private boolean empty( final String s ) {
+        return s == null || s.trim().isEmpty();
+    }
 }
