@@ -3,6 +3,7 @@ package de.agbauer.physik.QuickAcquisition;
 import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.Generic.Constants;
 import ij.ImagePlus;
+import ij.process.ImageProcessor;
 import org.micromanager.SnapLiveManager;
 import org.micromanager.Studio;
 import org.micromanager.data.Image;
@@ -43,9 +44,24 @@ public class QuickAcquisitionController extends Observable implements SampleName
             Image image = snapLiveManager.snap(true).get(0);
             logger.info((exposureInMs >= 180000 ? "Slack: @channel " : "") + "Successfully snapped image!"); // Posts to slack if exposure is longer than three minutes
 
-            askToSaveImage(image, exposureInMs);
+            saveImage(exposureInMs, image);
         }));
 
+    }
+
+    private void saveImage(float exposureInMs, Image image) {
+        ImageProcessor ip = studio.data().getImageJConverter().createProcessor(image);
+        ImagePlus imagePlus = new ImagePlus(sampleName, ip);
+
+        try {
+            fileSaver.save(sampleName, imagePlus, "" + exposureInMs);
+            studio.getAlbum().addImage(image);
+        } catch (IOException exc) {
+            logger.warning("Failed saving acquisition: " + exc.getMessage());
+        } finally {
+            setChanged();
+            notifyObservers(imagePlus);
+        }
     }
 
 
@@ -76,29 +92,6 @@ public class QuickAcquisitionController extends Observable implements SampleName
             logger.warning("Couldn't read your quick acquisition input values: " + exc.getMessage());
         } catch (Exception e1) {
             logger.severe("Couldn't snap an image: " + e1.getMessage());
-        }
-    }
-
-    private void askToSaveImage(Image image, double exposureInMs) {
-
-        int dialogResult = JOptionPane.showConfirmDialog(null, "Do you want to save this image?", "Save image dialog", JOptionPane.YES_NO_OPTION);
-
-        if(dialogResult != JOptionPane.YES_OPTION) {
-            logger.info("User denied saving image");
-            return;
-        }
-
-        ImagePlus imagePlus = snapLiveManager.getDisplay().getImagePlus();
-
-        try {
-            fileSaver.save(sampleName, imagePlus, "" + exposureInMs);
-
-            studio.getAlbum().addImage(image);
-        } catch (IOException exc) {
-            JOptionPane.showMessageDialog(null, "Failed saving acquisition: " + exc.getMessage(), "Failed saving", JOptionPane.OK_OPTION);
-        } finally {
-            setChanged();
-            notifyObservers(imagePlus);
         }
     }
 
