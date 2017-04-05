@@ -104,5 +104,10 @@ public class PEEMStateController extends Observable implements SampleNameChangeL
     @Override
     public void sampleNameChanged(String sampleName) {
         this.sampleName = sampleName;
+        this.peemStateForm.setEnabledState(!empty(this.sampleName));
+    }
+
+    private boolean empty( final String s ) {
+        return s == null || s.trim().isEmpty();
     }
 }

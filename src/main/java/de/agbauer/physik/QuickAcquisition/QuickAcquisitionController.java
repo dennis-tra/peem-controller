@@ -75,7 +75,7 @@ public class QuickAcquisitionController extends Observable implements SampleName
             int binning = Integer.parseInt((String) binningComboBox.getSelectedItem());
 
             logger.info("Settting camera exposure to " + exposureInMs/1000 + " s");
-            studio.getCMMCore().setExposure(exposureInMs);
+            studio.getCMMCore().setExposure(Constants.cameraDevice, exposureInMs);
 
             logger.info("Setting camera binning to " + binning);
             studio.getCMMCore().setProperty(Constants.cameraDevice, "Binning", binning);
@@ -106,6 +106,11 @@ public class QuickAcquisitionController extends Observable implements SampleName
     @Override
     public void sampleNameChanged(String sampleName) {
         this.sampleName = sampleName;
+        this.form.setGeneralInformationGiven(!empty(this.sampleName));
+    }
+
+    private boolean empty( final String s ) {
+        return s == null || s.trim().isEmpty();
     }
 
     private double zoomForBinning(int binning) {

@@ -31,4 +31,8 @@ public class PEEMStateForm {
     JButton setSxButton;
     JButton setSyButton;
     JButton readSaveButton;
+
+    void setEnabledState(boolean enabled) {
+        readSaveButton.setEnabled(enabled);
+    }
 }
