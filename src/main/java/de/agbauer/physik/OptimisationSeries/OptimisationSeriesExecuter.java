@@ -146,6 +146,7 @@ class OptimisationSeriesExecuter {
         try {
             ImageProcessor ip = studio.data().getImageJConverter().createProcessor(image);
             ip.setMinAndMax(40, 250);
+            ip.resize(640);
 
             ImagePlus imagePlus = new ImagePlus("", ip);
             ij.io.FileSaver fileSaver = new ij.io.FileSaver(imagePlus);
