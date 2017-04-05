@@ -117,7 +117,7 @@ public class OptimisationSeriesController extends Observable implements Document
             }).exceptionally((exc) -> {
                 seriesEnded();
 
-                logger.severe("Optimisation series failed: " + exc.getMessage());
+                logger.severe("Slack: Optimisation series failed: " + exc.getMessage());
                 return null;
             });
 
@@ -128,7 +128,7 @@ public class OptimisationSeriesController extends Observable implements Document
             seriesEnded();
 
         } catch (Exception exception) {
-            logger.severe("Error in optimisation series: "+ exception.getMessage());
+            logger.severe("Slack: Error in optimisation series: "+ exception.getMessage());
             seriesEnded();
         }
     }
