@@ -8,34 +8,15 @@ public class GeneralInformationController extends Observable implements Document
 
     private final GeneralInformationForm form;
 
-    private String sampleName = "";
-    private String excitation = "";
-    private String note = "";
-
     public GeneralInformationController(GeneralInformationForm form) {
         this.form = form;
         this.form.sampleNameTextField.getDocument().addDocumentListener(this);
-        this.form.excitationTextField.getDocument().addDocumentListener(this);
-        this.form.noteTextField.getDocument().addDocumentListener(this);
     }
 
     private void textFieldChanged() {
-        sampleName = this.form.sampleNameTextField.getText();
-        excitation = this.form.excitationTextField.getText();
-        note = this.form.noteTextField.getText();
-        notifyObservers();
-    }
-
-    @Override
-    public void notifyObservers() {
-        GeneralInformationData data = new GeneralInformationData();
-        data.excitation = this.excitation;
-        data.sampleName = this.sampleName;
-        data.note = this.note;
-        data.aperture = (String) this.form.apertureComboBox.getSelectedItem();
-
+        String sampleName = this.form.sampleNameTextField.getText();
         setChanged();
-        super.notifyObservers(data);
+        super.notifyObservers(sampleName);
     }
 
     @Override

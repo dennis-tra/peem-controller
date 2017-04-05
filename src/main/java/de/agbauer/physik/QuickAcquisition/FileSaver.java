@@ -29,20 +29,17 @@ public class FileSaver {
         this.peemCommunicator = peemCommunicator;
     }
 
-    public void saveOptimisationSeries(GeneralInformationData data, List<ImagePlus> datastore) {
+    public void saveOptimisationSeries(String sampleName, List<ImagePlus> datastore) {
 
     }
 
-    public Map<PEEMProperty, String> savePEEMData(GeneralInformationData data) throws IOException {
-        String exposureTimeInMs = JOptionPane.showInputDialog(
-                null,
-                "Enter the exposure time in ms",
-                "Unknown exposure",
-                JOptionPane.INFORMATION_MESSAGE
-        );
+    public Map<PEEMProperty, String>  save(String sampleName, ImagePlus imagePlus, String exposureTimeInMs) throws IOException {
+        logger.info("Saving image...");
+
+        GeneralInformationData data = askForExcitationApertureAndNote(sampleName);
 
         if (exposureTimeInMs == null) {
-            throw new IOException("User denied to enter an exposure time");
+            exposureTimeInMs = askForExposureTimeInMs();
         }
 
         PEEMBulkReader bulkReader = new PEEMBulkReader(this.peemCommunicator);
@@ -69,6 +66,13 @@ public class FileSaver {
 
         String filePath = workingDirectory + scopeName + "_" + imageNumberStr + "_" + data.excitation;
 
+        if (imagePlus != null) {
+            logger.info("Saving image to " + filePath + ".tif");
+
+            ij.io.FileSaver fileSaver = new ij.io.FileSaver(imagePlus);
+            fileSaver.saveAsTiff(filePath + ".tif");
+        }
+
         logger.info("Saving peem params to " + filePath + "_PARAMS.txt");
         AcquisitionParametersFormatter formatter = new AcquisitionParametersFormatter(ap);
         String paramsString = formatter.format();
@@ -76,50 +80,9 @@ public class FileSaver {
             out.print(paramsString);
         }
 
-        logger.info("Successfully saved image and parameters!");
+        logger.info("Successfully saved!");
 
         return allVoltages;
-    }
-
-    void save(GeneralInformationData data, ImagePlus imagePlus, String exposure) throws IOException {
-        logger.info("Saving image...");
-
-        PEEMBulkReader bulkReader = new PEEMBulkReader(this.peemCommunicator);
-
-        Map<PEEMProperty, String> allVoltages = bulkReader.getAllVoltages();
-        Map<PEEMProperty, String> allCurrents = bulkReader.getAllCurrents();
-
-        String workingDirectory = Constants.defaultFileSaveFolder + WorkingDirectory.getCurrentDirectory(data.sampleName);
-
-        File workDir = new File(workingDirectory);
-        if (!workDir.exists() && !workDir.mkdirs()) {
-            throw new IOException("Couldn't create directory "+ workingDirectory);
-        }
-
-        AcquisitionParameters ap = new AcquisitionParameters(data, allVoltages, allCurrents);
-        ap.exposure = exposure;
-
-        String yearStr = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        String scopeName =  yearStr + "_" + data.sampleName;
-
-        ap.imageNumber = getCurrentImageCountForDirectory(workingDirectory, scopeName);
-        String imageNumberStr = String.format("%02d", ap.imageNumber);
-
-        ij.io.FileSaver fileSaver = new ij.io.FileSaver(imagePlus);
-
-        String filePath = workingDirectory + scopeName + "_" + imageNumberStr + "_" + data.excitation;
-
-        logger.info("Saving image to " + filePath + ".tif");
-        fileSaver.saveAsTiff(filePath + ".tif");
-
-        logger.info("Saving peem params to " + filePath + "_PARAMS.txt");
-        AcquisitionParametersFormatter formatter = new AcquisitionParametersFormatter(ap);
-        String paramsString = formatter.format();
-        try (PrintStream out = new PrintStream(new FileOutputStream(filePath + "_PARAMS.txt"))) {
-            out.print(paramsString);
-        }
-
-        logger.info("Successfully saved image and parameters!");
     }
 
 
@@ -148,4 +111,49 @@ public class FileSaver {
         return 1;
     }
 
+    private String askForExposureTimeInMs() throws IOException {
+        String exposureTimeInMs = JOptionPane.showInputDialog(
+                null,
+                "Enter the exposure time in ms",
+                "Unknown exposure",
+                JOptionPane.INFORMATION_MESSAGE
+        );
+
+        if (exposureTimeInMs == null) {
+            throw new IOException("User denied to enter an exposure time");
+        }
+
+        return exposureTimeInMs;
+    }
+
+    private GeneralInformationData askForExcitationApertureAndNote(String sampleName) throws IOException {
+
+        SaveParameterDialog saveParametersDialaog = new SaveParameterDialog();
+
+        Object[] dialogOptions = { "Save", "Cancel" };
+
+        int result = JOptionPane.showOptionDialog(null,
+                saveParametersDialaog.contentPane,
+                "Enter external parameters",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                dialogOptions,
+                dialogOptions[0]);
+
+        if (result == JOptionPane.YES_OPTION){
+
+            saveParametersDialaog.saveSelectedParams();
+
+            GeneralInformationData data = new GeneralInformationData();
+            data.sampleName = sampleName;
+            data.excitation = saveParametersDialaog.excitationTextField.getText();
+            data.aperture = (String) saveParametersDialaog.apertureComboBox.getSelectedItem();
+            data.note = saveParametersDialaog.notesTextField.getText();
+
+            return data;
+        } else {
+            throw new IOException("User denied to enter general information");
+        }
+    }
 }

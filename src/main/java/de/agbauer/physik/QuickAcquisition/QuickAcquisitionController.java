@@ -1,7 +1,6 @@
 package de.agbauer.physik.QuickAcquisition;
 
-import de.agbauer.physik.Observers.GeneralInformationChangeListener;
-import de.agbauer.physik.GeneralInformation.GeneralInformationData;
+import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.Generic.Constants;
 import ij.ImagePlus;
 import org.micromanager.SnapLiveManager;
@@ -13,7 +12,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class QuickAcquisitionController extends Observable implements GeneralInformationChangeListener {
+public class QuickAcquisitionController extends Observable implements SampleNameChangeListener {
 
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
@@ -21,7 +20,7 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
     private QuickAcquisitionForm form;
     private Studio studio;
     private SnapLiveManager snapLiveManager;
-    private GeneralInformationData generalInformationData;
+    private String sampleName;
 
     private interface AcquisitionAction {
         void acquire(float exposureInMs, int binning);
@@ -42,7 +41,7 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
 
         this.form.snapButton.addActionListener(e -> acquireImage(form.snapTextField, form.snapComboBox, (exposureInMs, binning) -> {
             Image image = snapLiveManager.snap(true).get(0);
-            logger.info("Successfully snapped image!");
+            logger.info((exposureInMs >= 180000 ? "Slack: @channel " : "") + "Successfully snapped image!"); // Posts to slack if exposure is longer than three minutes
 
             askToSaveImage(image, exposureInMs);
         }));
@@ -92,7 +91,7 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
         ImagePlus imagePlus = snapLiveManager.getDisplay().getImagePlus();
 
         try {
-            fileSaver.save(generalInformationData, imagePlus, "" + exposureInMs);
+            fileSaver.save(sampleName, imagePlus, "" + exposureInMs);
 
             studio.getAlbum().addImage(image);
         } catch (IOException exc) {
@@ -112,9 +111,8 @@ public class QuickAcquisitionController extends Observable implements GeneralInf
     }
 
     @Override
-    public void generalInformationChanged(GeneralInformationData data) {
-        this.generalInformationData = data;
-        this.form.setGeneralInformationGiven(data.isValid());
+    public void sampleNameChanged(String sampleName) {
+        this.sampleName = sampleName;
     }
 
     private double zoomForBinning(int binning) {

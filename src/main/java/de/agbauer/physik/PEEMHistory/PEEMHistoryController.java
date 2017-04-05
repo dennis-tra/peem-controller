@@ -1,7 +1,6 @@
 package de.agbauer.physik.PEEMHistory;
 
-import de.agbauer.physik.Observers.GeneralInformationChangeListener;
-import de.agbauer.physik.GeneralInformation.GeneralInformationData;
+import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.Generic.AcquisitionParameterParser;
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.Generic.WorkingDirectory;
@@ -20,12 +19,12 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Logger;
 
-public class PEEMHistoryController implements GeneralInformationChangeListener, DataSaveListeners {
+public class PEEMHistoryController implements SampleNameChangeListener, DataSaveListeners {
 
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private final PEEMHistoryForm form;
     private HistoryDataModel dataModel = new HistoryDataModel();
-    private GeneralInformationData generalInformationData;
+    private String sampleName;
 
     public PEEMHistoryController(PEEMHistoryForm form) {
 
@@ -91,13 +90,13 @@ public class PEEMHistoryController implements GeneralInformationChangeListener, 
     }
 
     @Override
-    public void generalInformationChanged(GeneralInformationData data) {
-        this.generalInformationData = data;
-        loadDirectory(new File(Constants.defaultFileSaveFolder + WorkingDirectory.getCurrentDirectory(this.generalInformationData.sampleName)));
+    public void sampleNameChanged(String sampleName) {
+        this.sampleName = sampleName;
+        loadDirectory(new File(Constants.defaultFileSaveFolder + WorkingDirectory.getCurrentDirectory(this.sampleName)));
     }
 
     @Override
     public void newDataSaved(ImagePlus image) {
-        loadDirectory(new File(Constants.defaultFileSaveFolder + WorkingDirectory.getCurrentDirectory(this.generalInformationData.sampleName)));
+        loadDirectory(new File(Constants.defaultFileSaveFolder + WorkingDirectory.getCurrentDirectory(this.sampleName)));
     }
 }

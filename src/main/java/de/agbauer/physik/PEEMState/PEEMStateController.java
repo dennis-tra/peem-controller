@@ -1,7 +1,6 @@
 package de.agbauer.physik.PEEMState;
 
-import de.agbauer.physik.Observers.GeneralInformationChangeListener;
-import de.agbauer.physik.GeneralInformation.GeneralInformationData;
+import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
@@ -16,12 +15,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.logging.Logger;
 
-public class PEEMStateController extends Observable implements GeneralInformationChangeListener {
+public class PEEMStateController extends Observable implements SampleNameChangeListener {
     private PEEMCommunicator peemCommunicator;
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private FileSaver fileSaver;
     private PEEMStateForm peemStateForm;
-    private GeneralInformationData generalInformationData;
+    private String sampleName;
 
     public PEEMStateController(PEEMCommunicator peemCommunicator, PEEMStateForm peemStateForm) {
         this.peemCommunicator = peemCommunicator;
@@ -58,7 +57,7 @@ public class PEEMStateController extends Observable implements GeneralInformatio
 
     private void readSaveButtonClicked(ActionEvent actionEvent) {
         try {
-            Map<PEEMProperty, String> allVoltages = fileSaver.savePEEMData(this.generalInformationData);
+            Map<PEEMProperty, String> allVoltages = fileSaver.save(this.sampleName, null, null);
             updateUIWithVoltages(allVoltages);
             setChanged();
             notifyObservers();
@@ -103,7 +102,7 @@ public class PEEMStateController extends Observable implements GeneralInformatio
     }
 
     @Override
-    public void generalInformationChanged(GeneralInformationData data) {
-        this.generalInformationData = data;
+    public void sampleNameChanged(String sampleName) {
+        this.sampleName = sampleName;
     }
 }
