@@ -102,13 +102,7 @@ public class OptimisationSeriesController extends Observable implements Document
 
             CompletableFuture.runAsync(() -> {
                 try {
-                    List<ImagePlus> images = optimisationSeriesExecuter.startSeries(optimisationSeriesParameters);
-
-//                    if (optimisationSeriesParameters.saveImages) {
-//                        FileSaver fs = new FileSaver(peemCommunicator);
-//                        fs.saveOptimisationSeries(generalInformationData, images);
-//                    }
-
+                    optimisationSeriesExecuter.startSeries(optimisationSeriesParameters);
                 } catch (Exception e1) {
                     throw new CompletionException(e1);
                 }
