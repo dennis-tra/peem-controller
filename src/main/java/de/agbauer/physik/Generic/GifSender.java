@@ -1,6 +1,7 @@
 package de.agbauer.physik.Generic;
 
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
+import ij.io.FileSaver;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import okhttp3.*;
@@ -15,7 +16,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -33,8 +33,11 @@ public class GifSender {
     public void addImage(Image image) {
         try {
             ImageProcessor ip = this.imageJConverter.createProcessor(image);
+            ip.setMinAndMax(40, 250);
             ImagePlus imagePlus = new ImagePlus("", ip);
-            ij.io.FileSaver fileSaver = new ij.io.FileSaver(imagePlus);
+
+            FileSaver.setJpegQuality(40);
+            FileSaver fileSaver = new FileSaver(imagePlus);
 
             File jpegFile = File.createTempFile("jpegFile", Long.toString(System.nanoTime()));
             jpegFile.deleteOnExit();
