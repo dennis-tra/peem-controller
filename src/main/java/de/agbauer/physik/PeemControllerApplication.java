@@ -54,7 +54,6 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
     @Override
     public void onPluginSelected() {
-        System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT %4$s %2$s %5$s%6$s%n");
 
 		mainWindow = new MainWindow();
 
@@ -145,7 +144,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 	@Override
 	public void setContext(Studio studio) {
 		this.studio = studio;
-
+        System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT %4$s %2$s %5$s%6$s%n");
     }
 
 	@Override
