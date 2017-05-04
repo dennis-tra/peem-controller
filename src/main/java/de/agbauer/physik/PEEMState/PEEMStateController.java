@@ -1,10 +1,14 @@
 package de.agbauer.physik.PEEMState;
 
+import de.agbauer.physik.Generic.AcquisitionParameterParser;
+import de.agbauer.physik.Observers.AcquisitionParamsLoadListener;
 import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters;
 import de.agbauer.physik.QuickAcquisition.FileSaver;
+import de.agbauer.physik.QuickAcquisition.PresetFileSaver;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -14,21 +18,26 @@ import java.util.Observable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.logging.Logger;
+import java.io.File;
 
-public class PEEMStateController extends Observable implements SampleNameChangeListener {
+public class PEEMStateController extends Observable implements SampleNameChangeListener, AcquisitionParamsLoadListener {
     private PEEMCommunicator peemCommunicator;
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    private FileSaver fileSaver;
+    private FileSaver fileSaver; // not necessary with new button function
+    private PresetFileSaver presetSaver;
+    private final JFileChooser fc = new JFileChooser();
     private PEEMStateForm peemStateForm;
     private String sampleName;
 
     public PEEMStateController(PEEMCommunicator peemCommunicator, PEEMStateForm peemStateForm) {
         this.peemCommunicator = peemCommunicator;
         this.fileSaver = new FileSaver(peemCommunicator);
+        this.presetSaver = new PresetFileSaver(peemCommunicator);
         this.peemStateForm = peemStateForm;
 
         this.peemStateForm.readAllButton.addActionListener(this::readAllButtonClicked);
         this.peemStateForm.readSaveButton.addActionListener(this::readSaveButtonClicked);
+        this.peemStateForm.loadButton.addActionListener(this::loadButtonClicked);
 
         this.peemStateForm.setExtButton.addActionListener(e -> setPropertyFromTextField(PEEMProperty.EXTRACTOR, peemStateForm.extTextField));
         this.peemStateForm.setFocusButton.addActionListener(e -> setPropertyFromTextField(PEEMProperty.FOCUS, peemStateForm.focusTextField));
@@ -54,10 +63,23 @@ public class PEEMStateController extends Observable implements SampleNameChangeL
         }
     }
 
-
+    //old readSaveButtonClicked implementation to normally save params without PEEM image
+    /*
     private void readSaveButtonClicked(ActionEvent actionEvent) {
         try {
             Map<PEEMProperty, String> allVoltages = fileSaver.save(this.sampleName, null, null);
+            updateUIWithVoltages(allVoltages);
+            setChanged();
+            notifyObservers();
+        } catch (IOException e) {
+            logger.severe("Couldn't save PEEM params: " + e.getMessage());
+        }
+    }
+    */
+
+    private void readSaveButtonClicked(ActionEvent actionEvent) {
+        try {
+            Map<PEEMProperty, String> allVoltages = presetSaver.save();
             updateUIWithVoltages(allVoltages);
             setChanged();
             notifyObservers();
@@ -87,6 +109,21 @@ public class PEEMStateController extends Observable implements SampleNameChangeL
 
     }
 
+    public void loadButtonClicked(ActionEvent actionEvent){
+
+        int returnVal = fc.showOpenDialog(null);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File loadedPreset = fc.getSelectedFile();
+            try{
+                this.loadParams(AcquisitionParameterParser.parse(loadedPreset));
+            } catch (NullPointerException | IOException exc) {
+                logger.info("Loading preset failed!");
+            }
+            logger.info("Loaded preset from file: " + loadedPreset);
+        }
+    }
+
     private void updateUIWithVoltages(Map<PEEMProperty, String> allVoltages) {
         peemStateForm.extTextField.setText(allVoltages.get(PEEMProperty.EXTRACTOR));
         peemStateForm.focusTextField.setText(allVoltages.get(PEEMProperty.FOCUS));
@@ -109,5 +146,20 @@ public class PEEMStateController extends Observable implements SampleNameChangeL
 
     private boolean empty( final String s ) {
         return s == null || s.trim().isEmpty();
+    }
+
+    @Override
+    public void loadParams(AcquisitionParameters params) {
+        peemStateForm.extTextField.setText(params.extractorU + "");
+        peemStateForm.focusTextField.setText(params.focusU + "");
+        peemStateForm.colTextField.setText(params.columnU + "");
+        peemStateForm.p1TextField.setText(params.projective1U + "");
+        peemStateForm.p2TextField.setText(params.projective2U + "");
+        peemStateForm.vxTextField.setText(params.stigmatorVx + ""); // stigmatorVx richtig?
+        peemStateForm.vyTextField.setText(params.stigmatorVy+ "");
+        peemStateForm.sxTextField.setText(params.stigmatorSx + "");
+        peemStateForm.syTextField.setText(params.stigmatorSy + "");
+        peemStateForm.mcpTextfield.setText(params.mcpU + "");
+        peemStateForm.scrTextField.setText(params.screenU + "");
     }
 }
