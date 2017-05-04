@@ -9,6 +9,8 @@ import org.micromanager.Studio;
 import org.micromanager.data.Image;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
