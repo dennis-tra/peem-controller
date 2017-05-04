@@ -17,9 +17,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Observable;
 import java.util.logging.Logger;
 
-public class PEEMHistoryController implements SampleNameChangeListener, DataSaveListeners {
+public class PEEMHistoryController extends Observable implements SampleNameChangeListener, DataSaveListeners {
 
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private final PEEMHistoryForm form;
@@ -57,6 +58,8 @@ public class PEEMHistoryController implements SampleNameChangeListener, DataSave
                 }
             }
         });
+
+        this.form.loadButton.addActionListener(e -> loadParamsFromTable());
     }
 
     private void loadDirectory(File directory) {
@@ -82,6 +85,16 @@ public class PEEMHistoryController implements SampleNameChangeListener, DataSave
             dataModel.fireTableDataChanged();
             form.historyTable.repaint();
 
+        }
+    }
+
+    //Looks up the selected line in the HistoryTable and sends the according params from the dataModel
+    //to the Observer (AcquisitionParamsLoadObserver)
+    private void loadParamsFromTable(){
+        int selectedParameters = form.historyTable.getSelectedRow();
+        if(dataModel.acquisitionParameters.length > selectedParameters && selectedParameters >= 0) {
+            this.setChanged();
+            notifyObservers(dataModel.acquisitionParameters[selectedParameters]);
         }
     }
 

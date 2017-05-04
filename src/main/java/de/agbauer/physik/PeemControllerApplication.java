@@ -1,13 +1,10 @@
 package de.agbauer.physik;
 
-import de.agbauer.physik.Observers.SampleNameChangeListener;
+import de.agbauer.physik.Observers.*;
 import de.agbauer.physik.GeneralInformation.GeneralInformationController;
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.Logging.LabelLogger;
 import de.agbauer.physik.Logging.LogInitialiser;
-import de.agbauer.physik.Observers.SampleNameObserver;
-import de.agbauer.physik.Observers.DataSaveListeners;
-import de.agbauer.physik.Observers.NewDataSavedObserver;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesController;
 import de.agbauer.physik.PEEMCommunicator.*;
 import de.agbauer.physik.PEEMHistory.PEEMHistoryController;
@@ -92,6 +89,12 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
         quickAcquisitionController.addObserver(singleAcquisitionObserver);
         peemStateController.addObserver(singleAcquisitionObserver);
+
+        AcquisitionParamsLoadObserver paramsLoadObserver = new AcquisitionParamsLoadObserver(new AcquisitionParamsLoadListener[]{
+                peemStateController
+        });
+
+        peemHistoryController.addObserver(paramsLoadObserver);
     }
 
     private void initLogManager() {
@@ -145,7 +148,6 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 	@Override
 	public void setContext(Studio studio) {
 		this.studio = studio;
-
     }
 
 	@Override
