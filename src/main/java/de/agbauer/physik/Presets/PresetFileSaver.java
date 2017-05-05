@@ -1,9 +1,10 @@
-package de.agbauer.physik.QuickAcquisition;
+package de.agbauer.physik.Presets;
 
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParametersVoltages;
 
 import javax.swing.*;
 import java.io.*;

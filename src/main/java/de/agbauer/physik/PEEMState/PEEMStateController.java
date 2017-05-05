@@ -1,15 +1,13 @@
 package de.agbauer.physik.PEEMState;
 
-import de.agbauer.physik.Generic.AcquisitionParameterParser;
 import de.agbauer.physik.Observers.AcquisitionParamsLoadListener;
 import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
-import de.agbauer.physik.QuickAcquisition.AcquisitionParameters;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParametersVoltages;
 import de.agbauer.physik.QuickAcquisition.FileSaver;
-import de.agbauer.physik.QuickAcquisition.PresetFileSaver;
+import de.agbauer.physik.Presets.PresetFileSaver;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
