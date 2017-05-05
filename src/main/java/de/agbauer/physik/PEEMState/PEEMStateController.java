@@ -7,12 +7,15 @@ import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
 import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
 import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParametersVoltages;
 import de.agbauer.physik.QuickAcquisition.FileSaver;
 import de.agbauer.physik.QuickAcquisition.PresetFileSaver;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.CompletableFuture;
@@ -116,11 +119,17 @@ public class PEEMStateController extends Observable implements SampleNameChangeL
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File loadedPreset = fc.getSelectedFile();
             try{
-                this.loadParams(AcquisitionParameterParser.parse(loadedPreset));
-            } catch (NullPointerException | IOException exc) {
+
+                FileInputStream is = new FileInputStream(loadedPreset);
+                ObjectInputStream ois = new ObjectInputStream(is);
+                AcquisitionParametersVoltages loadedVoltages = (AcquisitionParametersVoltages) ois.readObject();
+                ois.close();
+
+                this.loadParams(loadedVoltages);
+                logger.info("Loaded preset from file: " + loadedPreset);
+            } catch (NullPointerException | ClassNotFoundException | IOException exc) {
                 logger.info("Loading preset failed!");
             }
-            logger.info("Loaded preset from file: " + loadedPreset);
         }
     }
 
@@ -148,18 +157,17 @@ public class PEEMStateController extends Observable implements SampleNameChangeL
         return s == null || s.trim().isEmpty();
     }
 
-    @Override
-    public void loadParams(AcquisitionParameters params) {
-        peemStateForm.extTextField.setText(params.getExtractorU() + "");
-        peemStateForm.focusTextField.setText(params.getFocusU() + "");
-        peemStateForm.colTextField.setText(params.getColumnU() + "");
-        peemStateForm.p1TextField.setText(params.getProjective1U() + "");
-        peemStateForm.p2TextField.setText(params.getProjective2U() + "");
-        peemStateForm.vxTextField.setText(params.getStigmatorVx() + ""); // stigmatorVx richtig?
-        peemStateForm.vyTextField.setText(params.getStigmatorVy()+ "");
-        peemStateForm.sxTextField.setText(params.getStigmatorSx() + "");
-        peemStateForm.syTextField.setText(params.getStigmatorSy() + "");
-        peemStateForm.mcpTextfield.setText(params.getMcpU() + "");
-        peemStateForm.scrTextField.setText(params.getScreenU() + "");
+    public void loadParams(AcquisitionParametersVoltages params) {
+        peemStateForm.extTextField.setText(params.extractorU + "");
+        peemStateForm.focusTextField.setText(params.focusU + "");
+        peemStateForm.colTextField.setText(params.columnU + "");
+        peemStateForm.p1TextField.setText(params.projective1U + "");
+        peemStateForm.p2TextField.setText(params.projective2U + "");
+        peemStateForm.vxTextField.setText(params.stigmatorVx + "");
+        peemStateForm.vyTextField.setText(params.stigmatorVy+ "");
+        peemStateForm.sxTextField.setText(params.stigmatorSx + "");
+        peemStateForm.syTextField.setText(params.stigmatorSy + "");
+        peemStateForm.mcpTextfield.setText(params.mcpU + "");
+        peemStateForm.scrTextField.setText(params.screenU + "");
     }
 }
