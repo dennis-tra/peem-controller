@@ -66,6 +66,8 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
         try {
 
             List<AcquisitionParameters> acquisitionParameters = new ArrayList<>();
+
+            //The next line throws a NullPointerException, but the files are still loaded...?
             for (File file : directory.listFiles()) {
                 if (isParamsTextFile(file)) {
                     acquisitionParameters.add(AcquisitionParameterParser.parse(file));
@@ -76,9 +78,7 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
             dataModel.acquisitionParameters = acquisitionParameters.toArray(arr);
 
         } catch (NullPointerException | IOException exc) {
-
             dataModel.acquisitionParameters = new AcquisitionParameters[]{};
-
         } finally {
 
             this.form.directoryLabel.setText("Dir: " + directory.getAbsolutePath());
