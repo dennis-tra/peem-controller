@@ -94,7 +94,7 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
         int selectedParameters = form.historyTable.getSelectedRow();
         if(dataModel.acquisitionParameters.length > selectedParameters && selectedParameters >= 0) {
             this.setChanged();
-            notifyObservers(dataModel.acquisitionParameters[selectedParameters]);
+            notifyObservers(dataModel.acquisitionParameters[selectedParameters].voltages);
         }
     }
 
