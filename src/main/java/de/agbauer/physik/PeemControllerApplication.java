@@ -9,6 +9,7 @@ import de.agbauer.physik.OptimisationSeries.OptimisationSeriesController;
 import de.agbauer.physik.PEEMCommunicator.*;
 import de.agbauer.physik.PEEMHistory.PEEMHistoryController;
 import de.agbauer.physik.PEEMState.PEEMStateController;
+import de.agbauer.physik.Presets.PresetController;
 import de.agbauer.physik.QuickAcquisition.FileSaver;
 import de.agbauer.physik.QuickAcquisition.QuickAcquisitionController;
 import org.micromanager.MenuPlugin;
@@ -38,6 +39,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private GeneralInformationController generalInformationController;
     private PEEMHistoryController peemHistoryController;
     private PEEMStateController peemStateController;
+    private PresetController presetController;
 
     public static void main(String[] args) {
         PeemControllerApplication app = new PeemControllerApplication();
@@ -62,7 +64,12 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         initQuickAcquisition();
         initPeemState();
         initPeemHistory();
+        initPresetController();
         initObservers();
+    }
+
+    private void initPresetController(){
+        presetController = new PresetController(mainWindow.presetForm);
     }
 
     private void initPeemHistory() {
@@ -94,6 +101,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
                 peemStateController
         });
 
+        presetController.addObserver(paramsLoadObserver);
         peemHistoryController.addObserver(paramsLoadObserver);
     }
 

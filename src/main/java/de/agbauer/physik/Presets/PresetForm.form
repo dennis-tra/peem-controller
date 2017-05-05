@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="de.agbauer.physik.Presets.PresetForm">
+  <grid id="27dc6" binding="panel1" default-binding="true" layout-manager="GridLayoutManager" row-count="3" column-count="2" same-size-horizontally="true" same-size-vertically="true" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="104" y="218" width="326" height="119"/>
+    </constraints>
+    <properties/>
+    <border type="none"/>
+    <children>
+      <component id="c0118" class="javax.swing.JButton" binding="lowMagButton" default-binding="true">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Low Mag"/>
+        </properties>
+      </component>
+      <component id="eebb4" class="javax.swing.JButton" binding="apertureButton" default-binding="true">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="Aperture"/>
+        </properties>
+      </component>
+      <component id="ea191" class="javax.swing.JButton" binding="a1LensButton" default-binding="true">
+        <constraints>
+          <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="1 Lens"/>
+        </properties>
+      </component>
+      <component id="d6d83" class="javax.swing.JButton" binding="a2LensButton" default-binding="true">
+        <constraints>
+          <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="2 Lens"/>
+        </properties>
+      </component>
+      <component id="b669d" class="javax.swing.JButton" binding="a3LensButton" default-binding="true">
+        <constraints>
+          <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="3 Lens"/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

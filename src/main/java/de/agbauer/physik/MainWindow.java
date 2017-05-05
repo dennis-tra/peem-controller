@@ -5,6 +5,7 @@ import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesForm;
 import de.agbauer.physik.PEEMHistory.PEEMHistoryForm;
 import de.agbauer.physik.PEEMState.PEEMStateForm;
+import de.agbauer.physik.Presets.PresetForm;
 import de.agbauer.physik.QuickAcquisition.QuickAcquisitionForm;
 
 import javax.swing.*;
@@ -20,6 +21,8 @@ public class MainWindow extends JFrame {
     QuickAcquisitionForm quickAcquisitionForm;
     GeneralInformationForm generalInformationForm;
     PEEMHistoryForm peemHistoryForm;
+    PresetForm presetForm;
+
 
     MainWindow() {
         super();
@@ -39,4 +42,7 @@ public class MainWindow extends JFrame {
         setVisible(true);
     }
 
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+    }
 }
