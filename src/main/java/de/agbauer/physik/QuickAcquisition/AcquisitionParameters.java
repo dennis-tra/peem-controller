@@ -8,7 +8,6 @@ import java.util.Map;
 
 public class AcquisitionParameters {
     public AcquisitionParameters() {
-
         voltages = new AcquisitionParametersVoltages();
     }
 
@@ -23,14 +22,7 @@ public class AcquisitionParameters {
         this.createdAt = new Date();
 
         //this.imageNumber = "";
-
-        this.voltages.extractorU = Double.parseDouble(allVoltages.get(PEEMProperty.EXTRACTOR));
-        this.voltages.focusU = Double.parseDouble(allVoltages.get(PEEMProperty.FOCUS));
-        this.voltages.columnU = Double.parseDouble(allVoltages.get(PEEMProperty.COLUMN));
-        this.voltages.projective1U = Double.parseDouble(allVoltages.get(PEEMProperty.PROJECTIVE_1));
-        this.voltages.projective2U = Double.parseDouble(allVoltages.get(PEEMProperty.PROJECTIVE_2));
-        this.voltages.mcpU = Double.parseDouble(allVoltages.get(PEEMProperty.MCP));
-        this.voltages.screenU = Double.parseDouble(allVoltages.get(PEEMProperty.SCREEN));
+        voltages = new AcquisitionParametersVoltages(allVoltages);
 
         this.extractorI = Double.parseDouble(allCurrents.get(PEEMProperty.EXTRACTOR));
         this.focusI = Double.parseDouble(allCurrents.get(PEEMProperty.FOCUS));
