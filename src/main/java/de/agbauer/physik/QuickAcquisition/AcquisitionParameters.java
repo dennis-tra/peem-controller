@@ -9,6 +9,7 @@ import java.util.Map;
 public class AcquisitionParameters {
     public AcquisitionParameters() {
 
+        voltages = new AcquisitionParametersVoltages();
     }
 
     AcquisitionParameters(GeneralInformationData data, Map<PEEMProperty, String> allVoltages, Map<PEEMProperty, String> allCurrents) {
