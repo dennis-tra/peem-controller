@@ -101,29 +101,29 @@ public class AcquisitionParameterParserTest {
     @Test
     public void parsesExtractorValues() throws Exception {
         ap = AcquisitionParameterParser.parseLine(this.ap, "extractor   12502,2  40300");
-        assertEquals(12502.2, ap.extractorU, 0.01);
+        assertEquals(12502.2, ap.getExtractorU(), 0.01);
         assertEquals(40300, ap.extractorI, 0.01);
 
-        ap.extractorU = 0.0;
+        ap.setExtractorU(0.0);
         ap.extractorI = 0.0;
         ap = AcquisitionParameterParser.parseLine(this.ap, "extractor   ");
-        assertEquals(0.0, ap.extractorU, 0.01);
+        assertEquals(0.0, ap.getExtractorU(), 0.01);
         assertEquals(0.0, ap.extractorI, 0.01);
 
-        ap.extractorU = 0.0;
+        ap.setExtractorU(0.0);
         ap.extractorI = 0.0;
         ap = AcquisitionParameterParser.parseLine(this.ap, "extractor  32.4 533,3 ");
-        assertEquals(32.4, ap.extractorU, 0.01);
+        assertEquals(32.4, ap.getExtractorU(), 0.01);
         assertEquals(533.3, ap.extractorI, 0.01);
     }
 
     @Test
     public void parsesStigmatorValues() throws Exception {
         ap = AcquisitionParameterParser.parseLine(this.ap, "stigmator -2,883 -0,003 0,06  0");
-        assertEquals(-2.883, ap.stigmatorVx, 0.01);
-        assertEquals(-0.003, ap.stigmatorVy, 0.01);
-        assertEquals(0.06, ap.stigmatorSx, 0.01);
-        assertEquals(0, ap.stigmatorSy, 0.01);
+        assertEquals(-2.883, ap.getStigmatorVx(), 0.01);
+        assertEquals(-0.003, ap.getStigmatorVy(), 0.01);
+        assertEquals(0.06, ap.getStigmatorSx(), 0.01);
+        assertEquals(0, ap.getStigmatorSy(), 0.01);
     }
 
 

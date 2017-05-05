@@ -38,18 +38,19 @@ public class AcquisitionParametersFormatter {
 
         txtParams += String.format("%-11s %7s %6s%n", "Module", "U", "I");
         txtParams += String.format("%-11s %7s %6s%n", "------", "-", "-");
-        txtParams += String.format("%-11s %7s %6s%n", "extractor", parameters.extractorU, parameters.extractorI);
-        txtParams += String.format("%-11s %7s %6s%n", "focus", parameters.focusU, parameters.focusI);
-        txtParams += String.format("%-11s %7s %6s%n", "column", parameters.columnU, parameters.columnI);
-        txtParams += String.format("%-11s %7s %6s%n", "projective1", parameters.projective1U, parameters.projective1I);
-        txtParams += String.format("%-11s %7s %6s%n", "projective2", parameters.projective2U, parameters.projective2I);
-        txtParams += String.format("%-11s %7s %6s%n", "mcp", parameters.mcpU, parameters.mcpI);
-        txtParams += String.format("%-11s %7s %6s%n", "screen", parameters.screenU, parameters.screenI);
+        txtParams += String.format("%-11s %7s %6s%n", "extractor", parameters.getExtractorU(), parameters.extractorI);
+        txtParams += String.format("%-11s %7s %6s%n", "focus", parameters.getFocusU(), parameters.focusI);
+        txtParams += String.format("%-11s %7s %6s%n", "column", parameters.getColumnU(), parameters.columnI);
+        txtParams += String.format("%-11s %7s %6s%n", "projective1", parameters.getProjective1U(), parameters.projective1I);
+        txtParams += String.format("%-11s %7s %6s%n", "projective2", parameters.getProjective2U(), parameters.projective2I);
+        txtParams += String.format("%-11s %7s %6s%n", "mcp", parameters.getMcpU(), parameters.mcpI);
+        txtParams += String.format("%-11s %7s %6s%n", "screen", parameters.getScreenU(), parameters.screenI);
         txtParams += "\r\n\r\n\r\n";
 
         txtParams += String.format("%-9s %6s %6s %6s %6s%n", "Module", "Vx", "Vy", "Sx", "Sy");
         txtParams += String.format("%-9s %6s %6s %6s %6s%n", "------", "--", "--", "--", "--");
-        txtParams += String.format("%-9s %6s %6s %6s %6s%n", "stigmator", parameters.stigmatorVx, parameters.stigmatorVy, parameters.stigmatorSx, parameters.stigmatorSy);
+        txtParams += String.format("%-9s %6s %6s %6s %6s%n", "stigmator", parameters.getStigmatorVx(), parameters.getStigmatorVy(),
+                parameters.getStigmatorSx(), parameters.getStigmatorSy());
 
         return txtParams;
     }

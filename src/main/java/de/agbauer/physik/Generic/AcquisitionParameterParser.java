@@ -50,33 +50,33 @@ public class AcquisitionParameterParser {
                 String dateStr = parseGeneralInformationLine(line, "Date");
                 ap.createdAt = new SimpleDateFormat("yyyyMMdd").parse(dateStr);
             } else if (line.startsWith("extractor")) {
-                ap.extractorU = getVoltageValue(line, "extractor");
+                ap.setExtractorU(getVoltageValue(line, "extractor"));
                 ap.extractorI = getCurrentValue(line, "extractor");
             } else if (line.startsWith("focus")) {
-                ap.focusU = getVoltageValue(line, "focus");
+                ap.setFocusU(getVoltageValue(line, "focus"));
                 ap.focusI = getCurrentValue(line, "focus");
             } else if (line.startsWith("column")) {
-                ap.columnU = getVoltageValue(line, "column");
+                ap.setColumnU(getVoltageValue(line, "column"));
                 ap.columnI = getCurrentValue(line, "column");
             } else if (line.startsWith("projective1")) {
-                ap.projective1U = getVoltageValue(line, "projective1");
+                ap.setProjective1U(getVoltageValue(line, "projective1"));
                 ap.projective1I = getCurrentValue(line, "projective1");
             } else if (line.startsWith("projective2")) {
-                ap.projective2U = getVoltageValue(line, "projective2");
+                ap.setProjective2U(getVoltageValue(line, "projective2"));
                 ap.projective2I = getCurrentValue(line, "projective2");
             } else if (line.startsWith("mcp")) {
-                ap.mcpU = getVoltageValue(line, "mcp");
+                ap.setMcpU(getVoltageValue(line, "mcp"));
                 ap.mcpI = getCurrentValue(line, "mcp");
             } else if (line.startsWith("screen")) {
-                ap.screenU = getVoltageValue(line, "screen");
+                ap.setScreenU(getVoltageValue(line, "screen"));
                 ap.screenI = getCurrentValue(line, "screen");
             } else if (line.startsWith("stigmator")) {
                 String[] vals = line.substring("stigmator".length()).trim().replace(',', '.').split("\\s+");
                 if (vals.length < 4) return ap;
-                ap.stigmatorVx = Double.parseDouble(vals[0]);
-                ap.stigmatorVy = Double.parseDouble(vals[1]);
-                ap.stigmatorSx = Double.parseDouble(vals[2]);
-                ap.stigmatorSy = Double.parseDouble(vals[3]);
+                ap.setStigmatorVx(Double.parseDouble(vals[0]));
+                ap.setStigmatorVy(Double.parseDouble(vals[1]));
+                ap.setStigmatorSx(Double.parseDouble(vals[2]));
+                ap.setStigmatorSy(Double.parseDouble(vals[3]));
             }
         } catch (NumberFormatException | ParseException e) {
 

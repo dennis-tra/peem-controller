@@ -150,16 +150,16 @@ public class PEEMStateController extends Observable implements SampleNameChangeL
 
     @Override
     public void loadParams(AcquisitionParameters params) {
-        peemStateForm.extTextField.setText(params.extractorU + "");
-        peemStateForm.focusTextField.setText(params.focusU + "");
-        peemStateForm.colTextField.setText(params.columnU + "");
-        peemStateForm.p1TextField.setText(params.projective1U + "");
-        peemStateForm.p2TextField.setText(params.projective2U + "");
-        peemStateForm.vxTextField.setText(params.stigmatorVx + ""); // stigmatorVx richtig?
-        peemStateForm.vyTextField.setText(params.stigmatorVy+ "");
-        peemStateForm.sxTextField.setText(params.stigmatorSx + "");
-        peemStateForm.syTextField.setText(params.stigmatorSy + "");
-        peemStateForm.mcpTextfield.setText(params.mcpU + "");
-        peemStateForm.scrTextField.setText(params.screenU + "");
+        peemStateForm.extTextField.setText(params.getExtractorU() + "");
+        peemStateForm.focusTextField.setText(params.getFocusU() + "");
+        peemStateForm.colTextField.setText(params.getColumnU() + "");
+        peemStateForm.p1TextField.setText(params.getProjective1U() + "");
+        peemStateForm.p2TextField.setText(params.getProjective2U() + "");
+        peemStateForm.vxTextField.setText(params.getStigmatorVx() + ""); // stigmatorVx richtig?
+        peemStateForm.vyTextField.setText(params.getStigmatorVy()+ "");
+        peemStateForm.sxTextField.setText(params.getStigmatorSx() + "");
+        peemStateForm.syTextField.setText(params.getStigmatorSy() + "");
+        peemStateForm.mcpTextfield.setText(params.getMcpU() + "");
+        peemStateForm.scrTextField.setText(params.getScreenU() + "");
     }
 }
