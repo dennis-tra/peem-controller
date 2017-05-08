@@ -5,12 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-/**
- * Created by dennis on 10/02/2017.
- */
 public class PEEMBulkReader {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    PEEMCommunicator peemCommunicator;
+    private PEEMCommunicator peemCommunicator;
 
     public PEEMBulkReader(PEEMCommunicator peemCommunicator) {
         this.peemCommunicator = peemCommunicator;
