@@ -16,14 +16,14 @@ public class PEEMCommunicator implements PEEMCommunicatorInterface {
         this.outputStream = outputStream;
     }
 
-    public void setProperty(PEEMProperty property, Float value) throws IOException {
+    public synchronized void setProperty(PEEMProperty property, Float value) throws IOException {
         String valueStr = String.format(Locale.ROOT, "%.2f", value);
         String commandStr = "set " + property.setCmdString() + " " + valueStr + "\r";
 
         this.sendCommand(commandStr);
     }
 
-    public String getProperty(PEEMProperty property, PEEMQuantity quantity) throws IOException {
+    public synchronized String getProperty(PEEMProperty property, PEEMQuantity quantity) throws IOException {
         this.flushInputStream();
 
         String commandStr = "get " + property.cmdString() + " " + quantity.toString()+"\r";
