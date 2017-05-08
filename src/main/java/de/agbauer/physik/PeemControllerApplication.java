@@ -1,5 +1,6 @@
 package de.agbauer.physik;
 
+import de.agbauer.physik.Generic.PeemControllerWindowListener;
 import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationController;
 import de.agbauer.physik.Generic.Constants;
@@ -22,6 +23,8 @@ import org.scijava.plugin.SciJavaPlugin;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.swing.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,7 +33,7 @@ import java.util.logging.Logger;
 @SpringBootApplication
 @Plugin(type = MenuPlugin.class)
 public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
-    private Logger logger;
+    private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);;
     private Studio studio;
 
 	private MainWindow mainWindow;
@@ -41,6 +44,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private GeneralInformationController generalInformationController;
     private PEEMHistoryController peemHistoryController;
     private PEEMStateController peemStateController;
+    private RxTxConnectionHandler rxTxConnectionHandler;
 
     public static void main(String[] args) {
         PeemControllerApplication app = new PeemControllerApplication();
@@ -65,6 +69,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         initPeemState();
         initPeemHistory();
         initObservers();
+        initWindowListener();
     }
 
     private void initPeemHistory() {
@@ -96,8 +101,6 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private void initLogManager() {
         LabelLogger labelLogHandler = new LabelLogger(mainWindow.statusBarLabel);
         new LogInitialiser(labelLogHandler);
-
-        logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     }
 
     private void initPEEMConnection() {
@@ -106,7 +109,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
             return;
         }
 
-        SerialConnectionHandler rxTxConnectionHandler = new RxTxConnectionHandler();
+        rxTxConnectionHandler = new RxTxConnectionHandler();
 
         try {
             rxTxConnectionHandler.connectTo(Constants.defaultPort);
@@ -139,6 +142,10 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         InputStream inputStream = connectionHandler.getInputStream();
         OutputStream outputStream = connectionHandler.getOutputStream();
         return new PEEMCommunicator(inputStream, outputStream);
+    }
+
+    private void initWindowListener() {
+        mainWindow.addWindowListener(new PeemControllerWindowListener(rxTxConnectionHandler));
     }
 
 	@Override
