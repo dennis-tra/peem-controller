@@ -14,7 +14,6 @@ import javax.imageio.stream.FileImageOutputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +52,7 @@ public class GifSender {
     public void sendGifAsync(ArrayList<Float> values, PEEMProperty property) {
         CompletableFuture.runAsync(() -> {
             try {
-                File gifFile = createGifFromTmpFiles1(tmpImages);
+                File gifFile = createGifFromTmpFiles(tmpImages);
 
                 Float firstVal = values.get(0);
                 Float lastVal = values.get(values.size() - 1);
@@ -66,7 +65,7 @@ public class GifSender {
         });
     }
 
-    private File createGifFromTmpFiles1(List<File> tmpImages) throws IOException {
+    private File createGifFromTmpFiles(List<File> tmpImages) throws IOException {
         logger.info("Generating gif from temporary jpeg images");
         BufferedImage firstImage = ImageIO.read(tmpImages.get(0));
 
@@ -87,29 +86,6 @@ public class GifSender {
 
         writer.close();
         output.close();
-        return gifFile;
-    }
-
-    private File createGifFromTmpFiles2(List<File> tmpImages) throws IOException {
-        logger.info("Generating gif from temporary jpeg images");
-
-        File gifFile = File.createTempFile("gifFile", Long.toString(System.nanoTime()));
-        gifFile.deleteOnExit();
-
-        FileOutputStream output = new FileOutputStream(gifFile);
-
-        AnimatedGifEncoder encoder = new AnimatedGifEncoder();
-        encoder.setRepeat(0);
-        encoder.setDelay(500);
-        encoder.start(output);
-
-        for (File image : tmpImages) {
-            BufferedImage nextImage = ImageIO.read(image);
-            encoder.addFrame(nextImage);
-        }
-
-        encoder.finish();
-
         return gifFile;
     }
 
