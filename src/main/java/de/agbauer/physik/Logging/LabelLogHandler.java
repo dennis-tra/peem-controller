@@ -1,6 +1,6 @@
 package de.agbauer.physik.Logging;
 
-import de.agbauer.physik.Generic.Constants;
+import de.agbauer.physik.Constants;
 
 import javax.swing.*;
 import java.util.logging.Handler;

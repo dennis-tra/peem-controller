@@ -71,7 +71,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <nested-form id="9888e" form-file="de/agbauer/physik/PEEMState/PEEMStateForm.form" binding="peemStateForm">
+          <nested-form id="9888e" form-file="de/agbauer/physik/PeemState/PEEMStateForm.form" binding="peemStateForm">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="1" anchor="0" fill="3" indent="0" use-parent-layout="false">
                 <preferred-size width="191" height="534"/>
@@ -90,7 +90,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <nested-form id="4e083" form-file="de/agbauer/physik/PEEMHistory/PEEMHistoryForm.form" binding="peemHistoryForm">
+          <nested-form id="4e083" form-file="de/agbauer/physik/PeemHistory/PEEMHistoryForm.form" binding="peemHistoryForm">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>

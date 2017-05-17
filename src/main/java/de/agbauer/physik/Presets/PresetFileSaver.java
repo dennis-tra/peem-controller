@@ -1,9 +1,9 @@
 package de.agbauer.physik.Presets;
 
-import de.agbauer.physik.Generic.Constants;
-import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
-import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
-import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
+import de.agbauer.physik.Constants;
+import de.agbauer.physik.PeemCommunicator.PeemBulkReader;
+import de.agbauer.physik.PeemCommunicator.PeemCommunicator;
+import de.agbauer.physik.PeemCommunicator.PeemProperty;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParametersVoltages;
 
 import javax.swing.*;
@@ -17,18 +17,18 @@ public class PresetFileSaver {
 
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    private PEEMCommunicator peemCommunicator;
+    private PeemCommunicator peemCommunicator;
 
-    public PresetFileSaver(PEEMCommunicator peemCommunicator) {
+    public PresetFileSaver(PeemCommunicator peemCommunicator) {
         this.peemCommunicator = peemCommunicator;
     }
 
-    public Map<PEEMProperty, String> save() throws IOException {
+    public Map<PeemProperty, String> save() throws IOException {
         logger.info("Saving current parameters as preset...");
 
-        PEEMBulkReader bulkReader = new PEEMBulkReader(this.peemCommunicator);
+        PeemBulkReader bulkReader = new PeemBulkReader(this.peemCommunicator);
 
-        Map<PEEMProperty, String> allVoltages = bulkReader.getAllVoltages();
+        Map<PeemProperty, String> allVoltages = bulkReader.getAllVoltages();
 
         // ask for preset name
         String presetName = (String)JOptionPane.showInputDialog(

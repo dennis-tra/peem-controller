@@ -1,10 +1,9 @@
 package de.agbauer.physik;
 
 import de.agbauer.physik.GeneralInformation.GeneralInformationForm;
-import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesForm;
-import de.agbauer.physik.PEEMHistory.PEEMHistoryForm;
-import de.agbauer.physik.PEEMState.PEEMStateForm;
+import de.agbauer.physik.PeemHistory.PEEMHistoryForm;
+import de.agbauer.physik.PeemState.PEEMStateForm;
 import de.agbauer.physik.Presets.PresetForm;
 import de.agbauer.physik.QuickAcquisition.QuickAcquisitionForm;
 

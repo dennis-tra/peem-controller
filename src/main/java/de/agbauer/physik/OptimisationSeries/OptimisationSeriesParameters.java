@@ -1,6 +1,6 @@
 package de.agbauer.physik.OptimisationSeries;
 
-import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
+import de.agbauer.physik.PeemCommunicator.PeemProperty;
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 
 import java.util.ArrayList;
@@ -12,13 +12,13 @@ public class OptimisationSeriesParameters {
     ArrayList<Float> values;
     boolean saveImages;
     boolean sendNotification;
-    PEEMProperty property;
+    PeemProperty property;
     float startingValue;
     float endingValue;
     float stepSizeValue;
     float exposureTimeInSeconds;
 
-    OptimisationSeriesParameters(String startingValueStr, String endingValueStr, String stepSizeStr, String exposureValueStr, boolean saveImages, boolean sendNotification, PEEMProperty property) throws NumberFormatException, ValueException {
+    OptimisationSeriesParameters(String startingValueStr, String endingValueStr, String stepSizeStr, String exposureValueStr, boolean saveImages, boolean sendNotification, PeemProperty property) throws NumberFormatException, ValueException {
         this.startingValue = Float.parseFloat(startingValueStr);
         this.endingValue = Float.parseFloat(endingValueStr);
         this.stepSizeValue = Float.parseFloat(stepSizeStr);

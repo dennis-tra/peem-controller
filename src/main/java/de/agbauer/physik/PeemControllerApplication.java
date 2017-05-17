@@ -2,14 +2,12 @@ package de.agbauer.physik;
 
 import de.agbauer.physik.Logging.*;
 import de.agbauer.physik.Observers.*;
-import de.agbauer.physik.Generic.PeemControllerWindowListener;
 import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationController;
-import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesController;
-import de.agbauer.physik.PEEMCommunicator.*;
-import de.agbauer.physik.PEEMHistory.PEEMHistoryController;
-import de.agbauer.physik.PEEMState.PEEMStateController;
+import de.agbauer.physik.PeemCommunicator.*;
+import de.agbauer.physik.PeemHistory.PEEMHistoryController;
+import de.agbauer.physik.PeemState.PEEMStateController;
 import de.agbauer.physik.Presets.PresetController;
 import de.agbauer.physik.QuickAcquisition.FileSaver;
 import de.agbauer.physik.QuickAcquisition.QuickAcquisitionController;
@@ -35,24 +33,19 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
 	private MainWindow mainWindow;
 
-    private PEEMCommunicator peemCommunicator;
+    private PeemCommunicator peemCommunicator;
     private QuickAcquisitionController quickAcquisitionController;
     private OptimisationSeriesController optimisationSeriesController;
     private GeneralInformationController generalInformationController;
     private PEEMHistoryController peemHistoryController;
     private PEEMStateController peemStateController;
     private PresetController presetController;
-    private RxTxConnectionHandler rxTxConnectionHandler;
+    private SerialConnectionHandler serialConnectionHandler = new RxTxConnectionHandler();
 
     public static void main(String[] args) {
         PeemControllerApplication app = new PeemControllerApplication();
         app.onPluginSelected();
 	}
-
-    @Override
-    public String getSubMenu() {
-        return "";
-    }
 
     @Override
     public void onPluginSelected() {
@@ -127,16 +120,14 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
     private void initPEEMConnection() {
         if (!Constants.peemConnected) {
-            peemCommunicator = new PEEMCommunicatorDummy();
+            peemCommunicator = new DummyPeemCommunicator();
             return;
         }
 
-        rxTxConnectionHandler = new RxTxConnectionHandler();
-
         try {
-            rxTxConnectionHandler.connectTo(Constants.defaultPort);
+            serialConnectionHandler.connectTo(Constants.defaultPort);
 
-            peemCommunicator = getPeemCommunicatorFromSerialConnection(rxTxConnectionHandler);
+            peemCommunicator = getPeemCommunicatorFromSerialConnection(serialConnectionHandler);
         } catch (IOException e) {
             String errorMessage = "Could not connect to default port '" + Constants.defaultPort + "': " + e.getMessage();
 
@@ -160,20 +151,25 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         peemStateController = new PEEMStateController(peemCommunicator, mainWindow.peemStateForm);
     }
 
-    private PEEMCommunicator getPeemCommunicatorFromSerialConnection(SerialConnectionHandler connectionHandler) throws IOException {
+    private FocusPeemCommunicator getPeemCommunicatorFromSerialConnection(SerialConnectionHandler connectionHandler) throws IOException {
         InputStream inputStream = connectionHandler.getInputStream();
         OutputStream outputStream = connectionHandler.getOutputStream();
-        return new PEEMCommunicator(inputStream, outputStream);
+        return new FocusPeemCommunicator(inputStream, outputStream);
     }
 
     private void initWindowListener() {
-        mainWindow.addWindowListener(new PeemControllerWindowListener(rxTxConnectionHandler));
+        mainWindow.addWindowListener(new PeemControllerWindowListener(serialConnectionHandler));
     }
 
 	@Override
 	public void setContext(Studio studio) {
 		this.studio = studio;
         System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT %4$s %2$s %5$s%6$s%n");
+    }
+
+    @Override
+    public String getSubMenu() {
+        return "";
     }
 
 	@Override

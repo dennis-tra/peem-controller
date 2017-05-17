@@ -1,9 +1,7 @@
 package de.agbauer.physik.Logging;
 
-import de.agbauer.physik.Generic.Constants;
+import de.agbauer.physik.Constants;
 import okhttp3.*;
-import org.apache.tomcat.util.bcel.Const;
-import org.json.JSONObject;
 
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;

@@ -1,6 +1,6 @@
 package de.agbauer.physik.QuickAcquisition;
 
-import de.agbauer.physik.Generic.Constants;
+import de.agbauer.physik.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

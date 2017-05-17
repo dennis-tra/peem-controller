@@ -1,10 +1,9 @@
 package de.agbauer.physik.OptimisationSeries;
 
 import de.agbauer.physik.Observers.SampleNameChangeListener;
-import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
-import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
-import de.agbauer.physik.PEEMCommunicator.PEEMQuantity;
-import ij.ImagePlus;
+import de.agbauer.physik.PeemCommunicator.PeemCommunicator;
+import de.agbauer.physik.PeemCommunicator.PeemProperty;
+import de.agbauer.physik.PeemCommunicator.PeemQuantity;
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.micromanager.Studio;
 
@@ -12,7 +11,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.List;
 import java.util.Observable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -22,12 +20,12 @@ public class OptimisationSeriesController extends Observable implements Document
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private OptimisationSeriesForm form;
-    private PEEMCommunicator peemCommunicator;
+    private PeemCommunicator peemCommunicator;
     private Studio studio;
     private OptimisationSeriesExecuter optimisationSeriesExecuter;
 
 
-    public OptimisationSeriesController(Studio studio, PEEMCommunicator peemCommunicator, OptimisationSeriesForm form) {
+    public OptimisationSeriesController(Studio studio, PeemCommunicator peemCommunicator, OptimisationSeriesForm form) {
         this.form = form;
         this.studio = studio;
         this.peemCommunicator = peemCommunicator;
@@ -45,10 +43,10 @@ public class OptimisationSeriesController extends Observable implements Document
     }
 
     private void showCurrentValue(ActionEvent e) {
-        PEEMProperty property = getPropertyToOptimiseSelection();
+        PeemProperty property = getPropertyToOptimiseSelection();
         new Thread(() -> {
             try {
-                String propertyVal = peemCommunicator.getProperty(property, PEEMQuantity.VOLTAGE);
+                String propertyVal = peemCommunicator.getProperty(property, PeemQuantity.VOLTAGE);
                 logger.info("Current value: "+ property.displayName()+" = " + propertyVal + " V");
             } catch (IOException exc) {
                 logger.severe(exc.getMessage());
@@ -147,15 +145,15 @@ public class OptimisationSeriesController extends Observable implements Document
         );
     }
 
-    private PEEMProperty getPropertyToOptimiseSelection() {
+    private PeemProperty getPropertyToOptimiseSelection() {
         if (this.form.focusRadioButton.isSelected()) {
-            return PEEMProperty.FOCUS;
+            return PeemProperty.FOCUS;
         } else if (this.form.stigmatorXRadioButton.isSelected()) {
-            return PEEMProperty.STIGMATOR_X;
+            return PeemProperty.STIGMATOR_X;
         } else if (this.form.stigmatorYRadioButton.isSelected()) {
-            return PEEMProperty.STIGMATOR_Y;
+            return PeemProperty.STIGMATOR_Y;
         } else if (this.form.extraktorRadioButton.isSelected()) {
-            return PEEMProperty.EXTRACTOR;
+            return PeemProperty.EXTRACTOR;
         } else {
             logger.warning("Tried to access optimisation property selection. Nothing selected.");
             return null;

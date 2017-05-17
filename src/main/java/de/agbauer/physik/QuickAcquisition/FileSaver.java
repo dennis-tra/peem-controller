@@ -1,11 +1,11 @@
 package de.agbauer.physik.QuickAcquisition;
 
-import de.agbauer.physik.GeneralInformation.GeneralInformationData;
-import de.agbauer.physik.Generic.Constants;
-import de.agbauer.physik.Generic.WorkingDirectory;
-import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
-import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
-import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
+import de.agbauer.physik.GeneralInformation.GeneralAcquisitionData;
+import de.agbauer.physik.Constants;
+import de.agbauer.physik.FileSystem.WorkingDirectory;
+import de.agbauer.physik.PeemCommunicator.PeemBulkReader;
+import de.agbauer.physik.PeemCommunicator.PeemCommunicator;
+import de.agbauer.physik.PeemCommunicator.PeemProperty;
 import ij.ImagePlus;
 
 import javax.swing.*;
@@ -22,9 +22,9 @@ import java.util.logging.Logger;
 public class FileSaver {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    private PEEMCommunicator peemCommunicator;
+    private PeemCommunicator peemCommunicator;
 
-    public FileSaver(PEEMCommunicator peemCommunicator) {
+    public FileSaver(PeemCommunicator peemCommunicator) {
 
         this.peemCommunicator = peemCommunicator;
     }
@@ -33,19 +33,19 @@ public class FileSaver {
 
     }
 
-    public Map<PEEMProperty, String>  save(String sampleName, ImagePlus imagePlus, String exposureTimeInMs) throws IOException {
+    public Map<PeemProperty, String>  save(String sampleName, ImagePlus imagePlus, String exposureTimeInMs) throws IOException {
         logger.info("Saving image...");
 
-        GeneralInformationData data = askForExcitationApertureAndNote(sampleName);
+        GeneralAcquisitionData data = askForExcitationApertureAndNote(sampleName);
 
         if (exposureTimeInMs == null) {
             exposureTimeInMs = askForExposureTimeInMs();
         }
 
-        PEEMBulkReader bulkReader = new PEEMBulkReader(this.peemCommunicator);
+        PeemBulkReader bulkReader = new PeemBulkReader(this.peemCommunicator);
 
-        Map<PEEMProperty, String> allVoltages = bulkReader.getAllVoltages();
-        Map<PEEMProperty, String> allCurrents = bulkReader.getAllCurrents();
+        Map<PeemProperty, String> allVoltages = bulkReader.getAllVoltages();
+        Map<PeemProperty, String> allCurrents = bulkReader.getAllCurrents();
 
         String workingDirectory = Constants.defaultFileSaveFolder + WorkingDirectory.getCurrentDirectory(data.sampleName);
 
@@ -126,7 +126,7 @@ public class FileSaver {
         return exposureTimeInMs;
     }
 
-    private GeneralInformationData askForExcitationApertureAndNote(String sampleName) throws IOException {
+    private GeneralAcquisitionData askForExcitationApertureAndNote(String sampleName) throws IOException {
 
         SaveParameterDialog saveParametersDialaog = new SaveParameterDialog();
 
@@ -145,7 +145,7 @@ public class FileSaver {
 
             saveParametersDialaog.saveSelectedParams();
 
-            GeneralInformationData data = new GeneralInformationData();
+            GeneralAcquisitionData data = new GeneralAcquisitionData();
             data.sampleName = sampleName;
             data.excitation = saveParametersDialaog.excitationTextField.getText();
             data.aperture = (String) saveParametersDialaog.apertureComboBox.getSelectedItem();

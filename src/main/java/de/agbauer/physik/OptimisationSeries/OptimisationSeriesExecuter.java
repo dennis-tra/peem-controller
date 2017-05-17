@@ -1,12 +1,9 @@
 package de.agbauer.physik.OptimisationSeries;
 
-import de.agbauer.physik.Generic.Constants;
-import de.agbauer.physik.Generic.GifSender;
-import de.agbauer.physik.PEEMCommunicator.PEEMBulkReader;
-import de.agbauer.physik.PEEMCommunicator.PEEMCommunicator;
-import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
+import de.agbauer.physik.Constants;
+import de.agbauer.physik.Gif.GifSender;
+import de.agbauer.physik.PeemCommunicator.*;
 
-import de.agbauer.physik.PEEMCommunicator.PEEMQuantity;
 import ij.ImagePlus;
 import mmcorej.CMMCore;
 import org.micromanager.PropertyMap;
@@ -22,13 +19,13 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 class OptimisationSeriesExecuter {
-    private final PEEMCommunicator peemCommunicator;
+    private final PeemCommunicator peemCommunicator;
     private Studio studio;
     private CMMCore mmCore;
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private boolean shouldStop = false;
 
-    OptimisationSeriesExecuter(Studio studio, PEEMCommunicator communicator) {
+    OptimisationSeriesExecuter(Studio studio, PeemCommunicator communicator) {
         this.studio = studio;
         this.mmCore = studio.getCMMCore();
         this.peemCommunicator = communicator;
@@ -39,7 +36,7 @@ class OptimisationSeriesExecuter {
 
         double exposureTimeInSeconds = optimisationSeriesParameters.exposureTimeInSeconds;
         ArrayList<Float> values = optimisationSeriesParameters.values;
-        PEEMProperty property = optimisationSeriesParameters.property;
+        PeemProperty property = optimisationSeriesParameters.property;
 
         logger.info("Slack: Starting optimisation series - " + optimisationSeriesParameters.toString());
 
@@ -53,10 +50,10 @@ class OptimisationSeriesExecuter {
 
         final String currentBinning = setCameraBinningReturnCurrentBinning(1);
         final double currentExposureTimeInSeconds = setExposureAndReturnCurrentExposure(exposureTimeInSeconds);
-        peemCommunicator.getProperty(property, PEEMQuantity.VOLTAGE);
+        peemCommunicator.getProperty(property, PeemQuantity.VOLTAGE);
 
-        PEEMBulkReader bulkReader = new PEEMBulkReader(peemCommunicator);
-        Map<PEEMProperty, String> peemProperties = bulkReader.getAllVoltages();
+        PeemBulkReader bulkReader = new PeemBulkReader(peemCommunicator);
+        Map<PeemProperty, String> peemProperties = bulkReader.getAllVoltages();
 
         Datastore store = studio.data().createRAMDatastore();
         DisplayWindow window = studio.displays().createDisplay(store);
@@ -83,7 +80,7 @@ class OptimisationSeriesExecuter {
             PropertyMap.PropertyMapBuilder propertyMapBuilder = studio.data().getPropertyMapBuilder();
             propertyMapBuilder.putDouble(property.cmdString(), Double.valueOf(value));
 
-            for (Map.Entry<PEEMProperty, String> entry : peemProperties.entrySet()) {
+            for (Map.Entry<PeemProperty, String> entry : peemProperties.entrySet()) {
                 propertyMapBuilder.putString(entry.getKey().displayName(), entry.getValue());
             }
 

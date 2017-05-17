@@ -1,7 +1,7 @@
 package de.agbauer.physik.Presets;
 
 
-import de.agbauer.physik.Generic.Constants;
+import de.agbauer.physik.Constants;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParametersVoltages;
 
 import java.io.File;

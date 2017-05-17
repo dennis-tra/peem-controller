@@ -1,7 +1,7 @@
 package de.agbauer.physik.QuickAcquisition;
 
-import de.agbauer.physik.GeneralInformation.GeneralInformationData;
-import de.agbauer.physik.PEEMCommunicator.PEEMProperty;
+import de.agbauer.physik.GeneralInformation.GeneralAcquisitionData;
+import de.agbauer.physik.PeemCommunicator.PeemProperty;
 
 import java.util.Date;
 import java.util.Map;
@@ -11,7 +11,7 @@ public class AcquisitionParameters {
         voltages = new AcquisitionParametersVoltages();
     }
 
-    AcquisitionParameters(GeneralInformationData data, Map<PEEMProperty, String> allVoltages, Map<PEEMProperty, String> allCurrents) {
+    AcquisitionParameters(GeneralAcquisitionData data, Map<PeemProperty, String> allVoltages, Map<PeemProperty, String> allCurrents) {
         this.aperture = data.aperture;
         this.excitation = data.excitation;
         this.sampleName = data.sampleName;
@@ -24,18 +24,18 @@ public class AcquisitionParameters {
         //this.imageNumber = "";
         voltages = new AcquisitionParametersVoltages(allVoltages);
 
-        this.extractorI = Double.parseDouble(allCurrents.get(PEEMProperty.EXTRACTOR));
-        this.focusI = Double.parseDouble(allCurrents.get(PEEMProperty.FOCUS));
-        this.columnI = Double.parseDouble(allCurrents.get(PEEMProperty.COLUMN));
-        this.projective1I = Double.parseDouble(allCurrents.get(PEEMProperty.PROJECTIVE_1));
-        this.projective2I = Double.parseDouble(allCurrents.get(PEEMProperty.PROJECTIVE_2));
-        this.mcpI = Double.parseDouble(allCurrents.get(PEEMProperty.MCP));
-        this.screenI = Double.parseDouble(allCurrents.get(PEEMProperty.SCREEN));
+        this.extractorI = Double.parseDouble(allCurrents.get(PeemProperty.EXTRACTOR));
+        this.focusI = Double.parseDouble(allCurrents.get(PeemProperty.FOCUS));
+        this.columnI = Double.parseDouble(allCurrents.get(PeemProperty.COLUMN));
+        this.projective1I = Double.parseDouble(allCurrents.get(PeemProperty.PROJECTIVE_1));
+        this.projective2I = Double.parseDouble(allCurrents.get(PeemProperty.PROJECTIVE_2));
+        this.mcpI = Double.parseDouble(allCurrents.get(PeemProperty.MCP));
+        this.screenI = Double.parseDouble(allCurrents.get(PeemProperty.SCREEN));
 
-        this.voltages.stigmatorVx = Double.parseDouble(allVoltages.get(PEEMProperty.DEFLECTOR_X));
-        this.voltages.stigmatorVy = Double.parseDouble(allVoltages.get(PEEMProperty.DEFLECTOR_Y));
-        this.voltages.stigmatorSx = Double.parseDouble(allVoltages.get(PEEMProperty.STIGMATOR_X));
-        this.voltages.stigmatorSy = Double.parseDouble(allVoltages.get(PEEMProperty.STIGMATOR_Y));
+        this.voltages.stigmatorVx = Double.parseDouble(allVoltages.get(PeemProperty.DEFLECTOR_X));
+        this.voltages.stigmatorVy = Double.parseDouble(allVoltages.get(PeemProperty.DEFLECTOR_Y));
+        this.voltages.stigmatorSx = Double.parseDouble(allVoltages.get(PeemProperty.STIGMATOR_X));
+        this.voltages.stigmatorSy = Double.parseDouble(allVoltages.get(PeemProperty.STIGMATOR_Y));
     }
 
     public double getExtractorU(){

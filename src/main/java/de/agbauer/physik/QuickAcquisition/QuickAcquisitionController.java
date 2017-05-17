@@ -1,7 +1,7 @@
 package de.agbauer.physik.QuickAcquisition;
 
 import de.agbauer.physik.Observers.SampleNameChangeListener;
-import de.agbauer.physik.Generic.Constants;
+import de.agbauer.physik.Constants;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import org.micromanager.SnapLiveManager;
@@ -9,8 +9,6 @@ import org.micromanager.Studio;
 import org.micromanager.data.Image;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
