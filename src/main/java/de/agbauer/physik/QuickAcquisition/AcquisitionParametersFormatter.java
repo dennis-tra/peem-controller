@@ -5,10 +5,7 @@ import de.agbauer.physik.Generic.Constants;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Created by dennis on 17/02/2017.
- */
-public class AcquisitionParametersFormatter {
+class AcquisitionParametersFormatter {
     private AcquisitionParameters parameters;
 
     AcquisitionParametersFormatter(AcquisitionParameters parameters) {
