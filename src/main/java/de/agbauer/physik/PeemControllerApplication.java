@@ -1,12 +1,11 @@
 package de.agbauer.physik;
 
+import de.agbauer.physik.Logging.*;
 import de.agbauer.physik.Observers.*;
 import de.agbauer.physik.Generic.PeemControllerWindowListener;
 import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationController;
 import de.agbauer.physik.Generic.Constants;
-import de.agbauer.physik.Logging.LabelLogger;
-import de.agbauer.physik.Logging.LogInitialiser;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesController;
 import de.agbauer.physik.PEEMCommunicator.*;
 import de.agbauer.physik.PEEMHistory.PEEMHistoryController;
@@ -25,12 +24,13 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
 
 @SpringBootApplication
 @Plugin(type = MenuPlugin.class)
 public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
-    private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);;
+    private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private Studio studio;
 
 	private MainWindow mainWindow;
@@ -59,7 +59,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
 		mainWindow = new MainWindow();
 
-        initLogManager();
+        initLogHandlers();
         initPEEMConnection();
         initGeneralInformation();
         initOptimisationSeries();
@@ -108,9 +108,21 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         peemHistoryController.addObserver(paramsLoadObserver);
     }
 
-    private void initLogManager() {
-        LabelLogger labelLogHandler = new LabelLogger(mainWindow.statusBarLabel);
-        new LogInitialiser(labelLogHandler);
+    private void initLogHandlers() {
+        logger.setUseParentHandlers(false);
+
+        LabelLogHandler labelLogHandler = new LabelLogHandler(mainWindow.statusBarLabel);
+        ImageJLogHandler imageJLogHandler = new ImageJLogHandler();
+        SlackLogHandler slackLogHandler = new SlackLogHandler();
+        ConsoleHandler consoleLogHandler = new ConsoleHandler();
+
+        imageJLogHandler.setFormatter(new ImageJLogFormatter());
+        consoleLogHandler.setFormatter(new ConsoleLogFormatter());
+
+        logger.addHandler(labelLogHandler);
+        logger.addHandler(imageJLogHandler);
+        logger.addHandler(slackLogHandler);
+        logger.addHandler(consoleLogHandler);
     }
 
     private void initPEEMConnection() {
