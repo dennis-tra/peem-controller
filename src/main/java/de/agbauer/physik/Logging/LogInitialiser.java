@@ -5,10 +5,9 @@ import java.util.logging.Logger;
 
 
 public class LogInitialiser {
-    private Logger logger = null;
+    private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     public LogInitialiser(LabelLogger labelLogHandler) {
-        logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
         logger.setUseParentHandlers(false);
         logger.addHandler(labelLogHandler);
         logger.addHandler(new SlackLogger());

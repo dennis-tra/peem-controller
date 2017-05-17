@@ -1,6 +1,8 @@
 package de.agbauer.physik;
 
 import de.agbauer.physik.Observers.*;
+import de.agbauer.physik.Generic.PeemControllerWindowListener;
+import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationController;
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.Logging.LabelLogger;
@@ -28,7 +30,7 @@ import java.util.logging.Logger;
 @SpringBootApplication
 @Plugin(type = MenuPlugin.class)
 public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
-    private Logger logger;
+    private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);;
     private Studio studio;
 
 	private MainWindow mainWindow;
@@ -40,6 +42,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private PEEMHistoryController peemHistoryController;
     private PEEMStateController peemStateController;
     private PresetController presetController;
+    private RxTxConnectionHandler rxTxConnectionHandler;
 
     public static void main(String[] args) {
         PeemControllerApplication app = new PeemControllerApplication();
@@ -53,7 +56,6 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
     @Override
     public void onPluginSelected() {
-        System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT %4$s %2$s %5$s%6$s%n");
 
 		mainWindow = new MainWindow();
 
@@ -66,6 +68,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         initPeemHistory();
         initPresetController();
         initObservers();
+        initWindowListener();
     }
 
     private void initPresetController(){
@@ -108,8 +111,6 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private void initLogManager() {
         LabelLogger labelLogHandler = new LabelLogger(mainWindow.statusBarLabel);
         new LogInitialiser(labelLogHandler);
-
-        logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     }
 
     private void initPEEMConnection() {
@@ -118,7 +119,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
             return;
         }
 
-        SerialConnectionHandler rxTxConnectionHandler = new RxTxConnectionHandler();
+        rxTxConnectionHandler = new RxTxConnectionHandler();
 
         try {
             rxTxConnectionHandler.connectTo(Constants.defaultPort);
@@ -153,9 +154,14 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         return new PEEMCommunicator(inputStream, outputStream);
     }
 
+    private void initWindowListener() {
+        mainWindow.addWindowListener(new PeemControllerWindowListener(rxTxConnectionHandler));
+    }
+
 	@Override
 	public void setContext(Studio studio) {
 		this.studio = studio;
+        System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT %4$s %2$s %5$s%6$s%n");
     }
 
 	@Override

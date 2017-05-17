@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
+import java.util.stream.IntStream;
 
 public class GifSender {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -32,7 +33,23 @@ public class GifSender {
     public void addImage(Image image) {
         try {
             ImageProcessor ip = this.imageJConverter.createProcessor(image);
-            ip.setMinAndMax(40, 250);
+            int[] histogram = ip.getHistogram();
+            int sum = IntStream.of(histogram).sum();
+            int tenPercent = Math.round(sum * 0.1f);
+
+            int tmpSum = 0;
+            int upperLimit = 250;
+
+            for (int i = histogram.length - 1; i >= 0; i--) {
+                tmpSum += histogram[i];
+
+                if (tmpSum > tenPercent) {
+                    upperLimit = i;
+                    break;
+                }
+            }
+
+            ip.setMinAndMax(40, upperLimit);
             ImagePlus imagePlus = new ImagePlus("", ip);
 
             FileSaver.setJpegQuality(40);

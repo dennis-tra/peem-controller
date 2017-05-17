@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>peem-controller</name>
-	<description>Demo project for Spring Boot</description>
+	<description>A Micro-Manager 2.0 plugin to acquire images in conjunction with controlling our PEEM.</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
