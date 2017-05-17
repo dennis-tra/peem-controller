@@ -1,7 +1,7 @@
 package de.agbauer.physik.PEEMHistory;
 
 import de.agbauer.physik.Observers.SampleNameChangeListener;
-import de.agbauer.physik.Generic.AcquisitionParameterParser;
+import de.agbauer.physik.Generic.PowershellParser;
 import de.agbauer.physik.Generic.Constants;
 import de.agbauer.physik.Generic.WorkingDirectory;
 import de.agbauer.physik.Observers.DataSaveListeners;
@@ -70,7 +70,7 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
             //The next line throws a NullPointerException, but the files are still loaded...?
             for (File file : directory.listFiles()) {
                 if (isParamsTextFile(file)) {
-                    acquisitionParameters.add(AcquisitionParameterParser.parse(file));
+                    acquisitionParameters.add(PowershellParser.parse(file));
                 }
             }
 
