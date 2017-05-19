@@ -1,7 +1,7 @@
-package de.agbauer.physik.FileSystem;
+package de.agbauer.physik.QuickAcquisition;
 
 
-import de.agbauer.physik.QuickAcquisition.AcquisitionParameters;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParameters;
 
 import java.io.File;
 

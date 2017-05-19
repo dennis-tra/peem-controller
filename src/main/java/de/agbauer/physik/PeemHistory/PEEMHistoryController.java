@@ -1,11 +1,10 @@
 package de.agbauer.physik.PeemHistory;
 
 import de.agbauer.physik.Observers.SampleNameChangeListener;
-import de.agbauer.physik.FileSystem.PowershellParser;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParametersPowershellParser;
 import de.agbauer.physik.Constants;
-import de.agbauer.physik.FileSystem.WorkingDirectory;
 import de.agbauer.physik.Observers.DataSaveListeners;
-import de.agbauer.physik.QuickAcquisition.AcquisitionParameters;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParameters;
 import ij.ImagePlus;
 
 import javax.swing.table.TableColumn;
@@ -70,7 +69,7 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
             //The next line throws a NullPointerException, but the files are still loaded...?
             for (File file : directory.listFiles()) {
                 if (isParamsTextFile(file)) {
-                    acquisitionParameters.add(PowershellParser.parse(file));
+                    acquisitionParameters.add(AcquisitionParametersPowershellParser.parse(file));
                 }
             }
 
@@ -94,7 +93,7 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
         int selectedParameters = form.historyTable.getSelectedRow();
         if(dataModel.acquisitionParameters.length > selectedParameters && selectedParameters >= 0) {
             this.setChanged();
-            notifyObservers(dataModel.acquisitionParameters[selectedParameters].voltages);
+            notifyObservers(dataModel.acquisitionParameters[selectedParameters].peemVoltages);
         }
     }
 

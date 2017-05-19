@@ -1,6 +1,6 @@
 package de.agbauer.physik.PeemHistory;
 
-import de.agbauer.physik.QuickAcquisition.AcquisitionParameters;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParameters;
 
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;

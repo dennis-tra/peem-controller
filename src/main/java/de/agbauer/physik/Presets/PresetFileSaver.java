@@ -4,7 +4,7 @@ import de.agbauer.physik.Constants;
 import de.agbauer.physik.PeemCommunicator.PeemBulkReader;
 import de.agbauer.physik.PeemCommunicator.PeemCommunicator;
 import de.agbauer.physik.PeemCommunicator.PeemProperty;
-import de.agbauer.physik.QuickAcquisition.AcquisitionParametersVoltages;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.PeemVoltages;
 
 import javax.swing.*;
 import java.io.*;
@@ -48,7 +48,7 @@ public class PresetFileSaver {
         }
 
         //might have to manually put values for data
-        AcquisitionParametersVoltages apVoltages = new AcquisitionParametersVoltages(allVoltages);
+        PeemVoltages apVoltages = new PeemVoltages(allVoltages);
 
         String yearStr = new SimpleDateFormat("yyyyMMdd").format(new Date());
 

@@ -15,7 +15,7 @@ public class PeemBulkReader {
 
 
     public Map<PeemProperty, String> getAllVoltages() throws IOException {
-        logger.info("Reading all voltages...");
+        logger.info("Reading all peemVoltages...");
         return getAllPropertiesForQuantity(PeemQuantity.VOLTAGE);
     }
 

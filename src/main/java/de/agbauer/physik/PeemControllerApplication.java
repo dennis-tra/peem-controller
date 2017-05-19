@@ -1,5 +1,7 @@
 package de.agbauer.physik;
 
+import de.agbauer.physik.FileSystem.DataFiler;
+import de.agbauer.physik.FileSystem.DataFilerPeemLab;
 import de.agbauer.physik.Logging.*;
 import de.agbauer.physik.Observers.*;
 import de.agbauer.physik.Observers.SampleNameChangeListener;
@@ -9,8 +11,9 @@ import de.agbauer.physik.PeemCommunicator.*;
 import de.agbauer.physik.PeemHistory.PEEMHistoryController;
 import de.agbauer.physik.PeemState.PEEMStateController;
 import de.agbauer.physik.Presets.PresetController;
-import de.agbauer.physik.QuickAcquisition.FileSaver;
+import de.agbauer.physik.QuickAcquisition.AcquisitionSaver;
 import de.agbauer.physik.QuickAcquisition.QuickAcquisitionController;
+import de.agbauer.physik.QuickAcquisition.QuickAcquisitionSaver;
 import org.micromanager.MenuPlugin;
 import org.micromanager.Studio;
 
@@ -119,19 +122,26 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     }
 
     private void initPEEMConnection() {
-        if (!Constants.peemConnected) {
-            peemCommunicator = new DummyPeemCommunicator();
-            return;
-        }
 
         try {
             serialConnectionHandler.connectTo(Constants.defaultPort);
 
-            peemCommunicator = getPeemCommunicatorFromSerialConnection(serialConnectionHandler);
-        } catch (IOException e) {
-            String errorMessage = "Could not connect to default port '" + Constants.defaultPort + "': " + e.getMessage();
+            InputStream inputStream = serialConnectionHandler.getInputStream();
+            OutputStream outputStream = serialConnectionHandler.getOutputStream();
 
+            peemCommunicator =  new FocusPeemCommunicator(inputStream, outputStream);
+
+        } catch (IOException e) {
+
+            String errorMessage = "Could not connect to default port '" + Constants.defaultPort + "': " + e.getMessage();
             logger.severe(errorMessage);
+
+            if (!Constants.peemConnected) {
+                logger.warning("PEEM is not connected: Using dummy interface instead.");
+                peemCommunicator = new DummyPeemCommunicator();
+                return;
+            }
+
             JOptionPane.showMessageDialog(null, errorMessage, "Port connection error", JOptionPane.OK_OPTION);
             System.exit(1);
         }
@@ -143,18 +153,13 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     }
 
     private void initQuickAcquisition() {
-        FileSaver fileSaver = new FileSaver(peemCommunicator);
+        DataFiler dataFiler = new DataFilerPeemLab();
+        AcquisitionSaver fileSaver = new QuickAcquisitionSaver(peemCommunicator, dataFiler);
         quickAcquisitionController = new QuickAcquisitionController(studio, fileSaver, mainWindow.quickAcquisitionForm);
     }
 
     private void initPeemState() {
         peemStateController = new PEEMStateController(peemCommunicator, mainWindow.peemStateForm);
-    }
-
-    private FocusPeemCommunicator getPeemCommunicatorFromSerialConnection(SerialConnectionHandler connectionHandler) throws IOException {
-        InputStream inputStream = connectionHandler.getInputStream();
-        OutputStream outputStream = connectionHandler.getOutputStream();
-        return new FocusPeemCommunicator(inputStream, outputStream);
     }
 
     private void initWindowListener() {

@@ -2,7 +2,7 @@ package de.agbauer.physik.Presets;
 
 
 import de.agbauer.physik.Constants;
-import de.agbauer.physik.QuickAcquisition.AcquisitionParametersVoltages;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.PeemVoltages;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +30,7 @@ public class PresetController extends Observable{
             File loadedPreset = new File(Constants.defaultPresetSaveFolder + presetName + ".pst");
             FileInputStream is = new FileInputStream(loadedPreset);
             ObjectInputStream ois = new ObjectInputStream(is);
-            AcquisitionParametersVoltages loadedVoltages = (AcquisitionParametersVoltages) ois.readObject();
+            PeemVoltages loadedVoltages = (PeemVoltages) ois.readObject();
             ois.close();
 
             this.setChanged();

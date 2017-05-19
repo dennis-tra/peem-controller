@@ -1,7 +1,7 @@
 package de.agbauer.physik.Observers;
 
-import de.agbauer.physik.QuickAcquisition.AcquisitionParametersVoltages;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.PeemVoltages;
 
 public interface AcquisitionParamsLoadListener {
-    void loadParams(AcquisitionParametersVoltages params);
+    void loadParams(PeemVoltages params);
 }

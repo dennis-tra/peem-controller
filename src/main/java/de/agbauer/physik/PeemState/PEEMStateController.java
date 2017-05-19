@@ -5,8 +5,7 @@ import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.PeemCommunicator.PeemBulkReader;
 import de.agbauer.physik.PeemCommunicator.PeemCommunicator;
 import de.agbauer.physik.PeemCommunicator.PeemProperty;
-import de.agbauer.physik.QuickAcquisition.AcquisitionParametersVoltages;
-import de.agbauer.physik.QuickAcquisition.FileSaver;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.PeemVoltages;
 import de.agbauer.physik.Presets.PresetFileSaver;
 
 import javax.swing.*;
@@ -24,7 +23,6 @@ import java.io.File;
 public class PEEMStateController extends Observable implements SampleNameChangeListener, AcquisitionParamsLoadListener {
     private PeemCommunicator peemCommunicator;
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    private FileSaver fileSaver; // not necessary with new button function
     private PresetFileSaver presetSaver;
     private final JFileChooser fc = new JFileChooser();
     private PEEMStateForm peemStateForm;
@@ -32,7 +30,6 @@ public class PEEMStateController extends Observable implements SampleNameChangeL
 
     public PEEMStateController(PeemCommunicator peemCommunicator, PEEMStateForm peemStateForm) {
         this.peemCommunicator = peemCommunicator;
-        this.fileSaver = new FileSaver(peemCommunicator);
         this.presetSaver = new PresetFileSaver(peemCommunicator);
         this.peemStateForm = peemStateForm;
 
@@ -120,7 +117,7 @@ public class PEEMStateController extends Observable implements SampleNameChangeL
 
                 FileInputStream is = new FileInputStream(loadedPreset);
                 ObjectInputStream ois = new ObjectInputStream(is);
-                AcquisitionParametersVoltages loadedVoltages = (AcquisitionParametersVoltages) ois.readObject();
+                PeemVoltages loadedVoltages = (PeemVoltages) ois.readObject();
                 ois.close();
 
                 this.loadParams(loadedVoltages);
@@ -155,17 +152,17 @@ public class PEEMStateController extends Observable implements SampleNameChangeL
         return s == null || s.trim().isEmpty();
     }
 
-    public void loadParams(AcquisitionParametersVoltages params) {
-        peemStateForm.extTextField.setText(params.extractorU + "");
-        peemStateForm.focusTextField.setText(params.focusU + "");
-        peemStateForm.colTextField.setText(params.columnU + "");
-        peemStateForm.p1TextField.setText(params.projective1U + "");
-        peemStateForm.p2TextField.setText(params.projective2U + "");
+    public void loadParams(PeemVoltages params) {
+        peemStateForm.extTextField.setText(params.extractor + "");
+        peemStateForm.focusTextField.setText(params.focus + "");
+        peemStateForm.colTextField.setText(params.column + "");
+        peemStateForm.p1TextField.setText(params.projective1 + "");
+        peemStateForm.p2TextField.setText(params.projective2 + "");
         peemStateForm.vxTextField.setText(params.stigmatorVx + "");
         peemStateForm.vyTextField.setText(params.stigmatorVy+ "");
         peemStateForm.sxTextField.setText(params.stigmatorSx + "");
         peemStateForm.syTextField.setText(params.stigmatorSy + "");
-        peemStateForm.mcpTextfield.setText(params.mcpU + "");
-        peemStateForm.scrTextField.setText(params.screenU + "");
+        peemStateForm.mcpTextfield.setText(params.mcp + "");
+        peemStateForm.scrTextField.setText(params.screen + "");
     }
 }

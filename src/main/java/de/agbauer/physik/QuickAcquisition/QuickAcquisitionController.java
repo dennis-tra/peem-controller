@@ -2,6 +2,7 @@ package de.agbauer.physik.QuickAcquisition;
 
 import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.Constants;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.CameraData;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import org.micromanager.SnapLiveManager;
@@ -17,7 +18,6 @@ public class QuickAcquisitionController extends Observable implements SampleName
 
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    private FileSaver fileSaver;
     private QuickAcquisitionForm form;
     private Studio studio;
     private SnapLiveManager snapLiveManager;
@@ -27,8 +27,7 @@ public class QuickAcquisitionController extends Observable implements SampleName
         void acquire(float exposureInMs, int binning);
     }
 
-    public QuickAcquisitionController(Studio studio, FileSaver fileSaver, QuickAcquisitionForm form) {
-        this.fileSaver = fileSaver;
+    public QuickAcquisitionController(Studio studio, AcquisitionSaver fileSaver, QuickAcquisitionForm form) {
         this.form = form;
         this.studio = studio;
         this.snapLiveManager = studio == null ? null : studio.getSnapLiveManager();
@@ -42,28 +41,31 @@ public class QuickAcquisitionController extends Observable implements SampleName
 
         this.form.snapButton.addActionListener(e -> acquireImage(form.snapTextField, form.snapComboBox, (exposureInMs, binning) -> {
             Image image = snapLiveManager.snap(true).get(0);
-            logger.info((exposureInMs >= 180000 ? "Slack: @channel " : "") + "Successfully snapped image!"); // Posts to slack if exposure is longer than three minutes
 
-            saveImage(exposureInMs, image);
+            // Post to slack if exposure is longer than three minutes
+            logger.info((exposureInMs >= 180000 ? "Slack: @channel " : "") + "Successfully snapped image!");
+
+            ImageProcessor ip = studio.data().getImageJConverter().createProcessor(image);
+            ImagePlus imagePlus = new ImagePlus(sampleName, ip);
+
+            CameraData cameraData = new CameraData(imagePlus, exposureInMs, binning);
+
+            try {
+                fileSaver.save(sampleName, cameraData);
+
+                studio.getAlbum().addImage(image);
+
+            } catch (IOException exc) {
+
+                logger.warning("Failed saving acquisition: " + exc.getMessage());
+
+            } finally {
+                setChanged();
+                notifyObservers(imagePlus);
+            }
         }));
 
     }
-
-    private void saveImage(float exposureInMs, Image image) {
-        ImageProcessor ip = studio.data().getImageJConverter().createProcessor(image);
-        ImagePlus imagePlus = new ImagePlus(sampleName, ip);
-
-        try {
-            fileSaver.save(sampleName, imagePlus, "" + exposureInMs);
-            studio.getAlbum().addImage(image);
-        } catch (IOException exc) {
-            logger.warning("Failed saving acquisition: " + exc.getMessage());
-        } finally {
-            setChanged();
-            notifyObservers(imagePlus);
-        }
-    }
-
 
     private void acquireImage(JTextField exposureTextField, JComboBox binningComboBox, AcquisitionAction acquisitionAction) {
         logger.info("Starting image acquisition...");
