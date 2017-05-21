@@ -2,9 +2,6 @@ package de.agbauer.physik.PeemState;
 
 import javax.swing.*;
 
-/**
- * Created by dennis on 09/02/2017.
- */
 public class PEEMStateForm {
     JTextField extTextField;
     JButton setExtButton;
@@ -30,11 +27,5 @@ public class PEEMStateForm {
     JButton setVyButton;
     JButton setSxButton;
     JButton setSyButton;
-    JButton readSaveButton;
-    JButton loadButton;
-
-    void setEnabledState(boolean enabled) {
-        readSaveButton.setEnabled(enabled);
-        loadButton.setEnabled(enabled);
-    }
+    JButton setAllButton;
 }

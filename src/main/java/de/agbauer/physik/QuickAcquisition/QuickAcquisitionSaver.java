@@ -1,6 +1,7 @@
 package de.agbauer.physik.QuickAcquisition;
 
 import de.agbauer.physik.FileSystem.DataFiler;
+import de.agbauer.physik.FileSystem.FileLocations;
 import de.agbauer.physik.FileSystem.ImageSaver;
 import de.agbauer.physik.PeemCommunicator.PeemCommunicator;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParameters;
@@ -19,18 +20,20 @@ public class QuickAcquisitionSaver implements AcquisitionSaver {
     }
 
     @Override
-    public void save(String sampleName, CameraData cameraData) throws IOException {
+    public AcquisitionParameters save(String sampleName, CameraData cameraData) throws IOException {
 
         AcquisitionParametersCollector apc = new AcquisitionParametersCollector(peemCommunicator);
         AcquisitionParameters ap = apc.collect(sampleName, cameraData);
 
-        filer.setAcquisitionParams(ap);
+        FileLocations fileLocations = filer.setAcquisitionParams(ap);
 
         ImageSaver imageSaver = new ImageSaver();
-        imageSaver.save(cameraData.imagePlus, filer.getTifImageFilePath());
+        imageSaver.save(cameraData.imagePlus, fileLocations.tifImageFilePath);
 
         AcquisitionParametersFormatter apFormatter = new AcquisitionParametersPowershellFormatter();
         AcquisitionParametersSaver apSaver = new AcquisitionParametersSaver(apFormatter);
-        apSaver.save(ap, filer.getPeemParametersFilePath());
+        apSaver.save(ap, fileLocations.peemParametersFilePath);
+
+        return ap;
     }
 }

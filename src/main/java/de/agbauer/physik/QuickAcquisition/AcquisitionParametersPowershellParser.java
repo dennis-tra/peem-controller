@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class AcquisitionParametersPowershellParser implements AcquisitionParameterParser {
+public class AcquisitionParametersPowershellParser implements AcquisitionParametersParser {
 
     private String sampleName;
     private String excitation;

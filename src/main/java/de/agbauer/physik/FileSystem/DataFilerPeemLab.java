@@ -1,6 +1,7 @@
 package de.agbauer.physik.FileSystem;
 
 import de.agbauer.physik.Constants;
+import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParameters;
 
 import java.io.File;
@@ -9,27 +10,23 @@ import java.util.Date;
 import java.util.Locale;
 
 public class DataFilerPeemLab implements DataFiler {
-    private String workingDirectory;
-    private int imageNumber;
-    private String scopeName;
-    private String tifImageFilePath;
-    private String peemParametersFilePath;
-    private AcquisitionParameters ap;
 
-    public void setAcquisitionParams(AcquisitionParameters ap) {
-        this.ap = ap;
-        this.workingDirectory = generateWorkingDirectory(ap.generalData.sampleName);
-        this.scopeName = generateScopeName(ap.generalData.sampleName);
-        this.imageNumber = calculateImageNumber(ap.generalData.sampleName);
-        ap.imageNumber = this.imageNumber;
+    public FileLocations setAcquisitionParams(AcquisitionParameters ap) {
+        FileLocations fileLocations = new FileLocations();
 
-        String absFileName = this.workingDirectory + this.scopeName + "_" + this.imageNumber + "_" + ap.generalData.excitation;
+        fileLocations.workingDirectory = getWorkingDirectoryFor(ap.generalData.sampleName);
+        fileLocations.scopeName = generateScopeName(ap.generalData.sampleName);
+        fileLocations.imageNumber = calculateImageNumber(ap.generalData.sampleName);
+        ap.imageNumber = fileLocations.imageNumber;
 
-        this.tifImageFilePath = absFileName + ".tif";
-        this.peemParametersFilePath = absFileName + "_PARAMS.txt";
+        String absFileName = fileLocations.workingDirectory + fileLocations.scopeName + "_" + fileLocations.imageNumber + "_" + ap.generalData.excitation;
+
+        fileLocations.tifImageFilePath = absFileName + ".tif";
+        fileLocations.peemParametersFilePath = absFileName + "_PARAMS.txt";
+        return fileLocations;
     }
 
-    private String generateWorkingDirectory(String sampleName) {
+    public String getWorkingDirectoryFor(String sampleName) {
 
         SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
         SimpleDateFormat year = new SimpleDateFormat("yyyy");
@@ -49,9 +46,9 @@ public class DataFilerPeemLab implements DataFiler {
 
     }
 
-    private int calculateImageNumber(String sampleName) {
+    public int calculateImageNumber(String sampleName) {
 
-        File folder = new File(generateWorkingDirectory(sampleName));
+        File folder = new File(getWorkingDirectoryFor(sampleName));
         File[] listOfFiles = folder.listFiles();
 
         if (listOfFiles == null) {
@@ -75,34 +72,12 @@ public class DataFilerPeemLab implements DataFiler {
         return 1;
     }
 
-    private String generateScopeName(String sampleName) {
+    public String generateScopeName(String sampleName) {
         String yearStr = new SimpleDateFormat("yyyyMMdd").format(new Date());
         return yearStr + "_" + sampleName;
     }
 
-    @Override
-    public String getWorkingDirectory() {
-        return this.workingDirectory;
+    public boolean isParamsTextFile(File file) {
+        return !file.isDirectory() && file.getName().endsWith("_PARAMS.txt");
     }
-
-    @Override
-    public String getScopeName() {
-        return this.scopeName;
-    }
-
-    @Override
-    public String getTifImageFilePath() {
-        return this.tifImageFilePath;
-    }
-
-    @Override
-    public String getPeemParametersFilePath() {
-        return this.peemParametersFilePath;
-    }
-
-    @Override
-    public int getImageNumber() {
-        return this.imageNumber;
-    }
-
 }

@@ -2,11 +2,12 @@ package de.agbauer.physik.FileSystem;
 
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParameters;
 
+import java.io.File;
+
 public interface DataFiler {
-    void setAcquisitionParams(AcquisitionParameters ap);
-    String getWorkingDirectory();
-    String getScopeName();
-    String getTifImageFilePath();
-    String getPeemParametersFilePath();
-    int getImageNumber();
+    FileLocations setAcquisitionParams(AcquisitionParameters ap);
+    String getWorkingDirectoryFor(String sampleName);
+    String generateScopeName(String sampleName);
+    int calculateImageNumber(String sampleName);
+    boolean isParamsTextFile(File file);
 }

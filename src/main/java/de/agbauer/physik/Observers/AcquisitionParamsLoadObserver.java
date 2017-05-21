@@ -5,7 +5,7 @@ import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.PeemVoltages;
 import java.util.Observable;
 import java.util.Observer;
 
-public class AcquisitionParamsLoadObserver implements Observer{
+public class AcquisitionParamsLoadObserver implements Observer {
 
     private AcquisitionParamsLoadListener[] listeners;
 
@@ -14,11 +14,11 @@ public class AcquisitionParamsLoadObserver implements Observer{
     }
 
     @Override
-    public void update(Observable o, Object arg) {
-        if(arg instanceof PeemVoltages){
+    public void update(Observable observable, Object arg) {
+        if(arg == null || arg instanceof PeemVoltages){
             PeemVoltages params = (PeemVoltages) arg;
             for (AcquisitionParamsLoadListener listener: listeners) {
-                listener.loadParams(params);
+                listener.peemVoltagesUpdated(observable, params);
             }
         }
     }

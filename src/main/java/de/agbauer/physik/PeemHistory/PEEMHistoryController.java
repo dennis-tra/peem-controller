@@ -1,10 +1,12 @@
 package de.agbauer.physik.PeemHistory;
 
+import de.agbauer.physik.FileSystem.DataFiler;
 import de.agbauer.physik.Observers.SampleNameChangeListener;
-import de.agbauer.physik.QuickAcquisition.AcquisitionParametersPowershellParser;
-import de.agbauer.physik.Constants;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.PeemVoltages;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParametersParser;
 import de.agbauer.physik.Observers.DataSaveListeners;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParameters;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParametersPowershellParser;
 import ij.ImagePlus;
 
 import javax.swing.table.TableColumn;
@@ -20,29 +22,28 @@ import java.util.Observable;
 import java.util.logging.Logger;
 
 public class PEEMHistoryController extends Observable implements SampleNameChangeListener, DataSaveListeners {
-
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-    private final PEEMHistoryForm form;
-    private HistoryDataModel dataModel = new HistoryDataModel();
-    private String sampleName;
 
-    public PEEMHistoryController(PEEMHistoryForm form) {
+    private final PEEMHistoryForm form;
+    private DataFiler dataFiler;
+    private AcquisitionParametersParser acquisitionParametersParser = new AcquisitionParametersPowershellParser();
+    private HistoryDataModel dataModel = new HistoryDataModel();
+
+    private File workingDirectory;
+
+
+    public PEEMHistoryController(PEEMHistoryForm form, DataFiler dataFiler) {
 
         this.form = form;
+        this.dataFiler = dataFiler;
         this.form.historyTable.setModel(dataModel);
 
-        Enumeration<TableColumn> columns = this.form.historyTable.getColumnModel().getColumns();
-        while(columns.hasMoreElements()){
-            TableColumn column = (TableColumn) columns.nextElement();
-            column.setPreferredWidth(37);
-        }
-        this.form.historyTable.getColumnModel().getColumn(0).setPreferredWidth(8);
-        this.form.historyTable.getColumnModel().getColumn(1).setPreferredWidth(45);
+        setColumnWidths();
 
         this.form.directoryLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e){
-                if(e.getClickCount()==2){
+                if(e.getClickCount() == 2){
                     String pathName = form.directoryLabel.getText().substring("Dir: ".length());
 
                     if (pathName.isEmpty()) {
@@ -61,15 +62,26 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
         this.form.loadButton.addActionListener(e -> loadParamsFromTable());
     }
 
-    private void loadDirectory(File directory) {
+    private void setColumnWidths() {
+        Enumeration<TableColumn> columns = this.form.historyTable.getColumnModel().getColumns();
+        while(columns.hasMoreElements()) {
+            TableColumn column = columns.nextElement();
+            column.setPreferredWidth(37);
+        }
+        this.form.historyTable.getColumnModel().getColumn(0).setPreferredWidth(10);
+        this.form.historyTable.getColumnModel().getColumn(1).setPreferredWidth(45);
+    }
+
+    private void loadDirectory() {
         try {
 
             List<AcquisitionParameters> acquisitionParameters = new ArrayList<>();
 
             //The next line throws a NullPointerException, but the files are still loaded...?
-            for (File file : directory.listFiles()) {
-                if (isParamsTextFile(file)) {
-                    acquisitionParameters.add(AcquisitionParametersPowershellParser.parse(file));
+            for (File file : this.workingDirectory.listFiles()) {
+
+                if (dataFiler.isParamsTextFile(file)) {
+                    acquisitionParameters.add(acquisitionParametersParser.parse(file));
                 }
             }
 
@@ -80,7 +92,7 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
             dataModel.acquisitionParameters = new AcquisitionParameters[]{};
         } finally {
 
-            this.form.directoryLabel.setText("Dir: " + directory.getAbsolutePath());
+            this.form.directoryLabel.setText("Dir: " + this.workingDirectory.getAbsolutePath());
             dataModel.fireTableDataChanged();
             form.historyTable.repaint();
 
@@ -91,24 +103,20 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
     //to the Observer (AcquisitionParamsLoadObserver)
     private void loadParamsFromTable(){
         int selectedParameters = form.historyTable.getSelectedRow();
-        if(dataModel.acquisitionParameters.length > selectedParameters && selectedParameters >= 0) {
-            this.setChanged();
-            notifyObservers(dataModel.acquisitionParameters[selectedParameters].peemVoltages);
-        }
-    }
+        PeemVoltages peemVoltages = dataModel.acquisitionParameters[selectedParameters].peemVoltages;
 
-    private boolean isParamsTextFile(File file) {
-        return !file.isDirectory() && file.getName().endsWith("_PARAMS.txt");
+        this.setChanged();
+        notifyObservers(peemVoltages);
     }
 
     @Override
     public void sampleNameChanged(String sampleName) {
-        this.sampleName = sampleName;
-        loadDirectory(new File(Constants.defaultFileSaveFolder + WorkingDirectory.getCurrentDirectory(this.sampleName)));
+        this.workingDirectory = new File(this.dataFiler.getWorkingDirectoryFor(sampleName));
+        loadDirectory();
     }
 
     @Override
     public void newDataSaved(ImagePlus image) {
-        loadDirectory(new File(Constants.defaultFileSaveFolder + WorkingDirectory.getCurrentDirectory(this.sampleName)));
+        loadDirectory();
     }
 }

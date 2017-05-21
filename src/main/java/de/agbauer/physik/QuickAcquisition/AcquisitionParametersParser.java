@@ -4,7 +4,8 @@ package de.agbauer.physik.QuickAcquisition;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParameters;
 
 import java.io.File;
+import java.io.IOException;
 
-public interface AcquisitionParameterParser {
-    AcquisitionParameters parse(File file) throws Exception;
+public interface AcquisitionParametersParser {
+    AcquisitionParameters parse(File file) throws IOException;
 }

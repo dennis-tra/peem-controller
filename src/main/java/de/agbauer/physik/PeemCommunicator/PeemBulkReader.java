@@ -1,5 +1,8 @@
 package de.agbauer.physik.PeemCommunicator;
 
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.PeemCurrents;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.PeemVoltages;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,24 +17,24 @@ public class PeemBulkReader {
     }
 
 
-    public Map<PeemProperty, String> getAllVoltages() throws IOException {
+    public PeemVoltages getAllVoltages() throws IOException {
         logger.info("Reading all peemVoltages...");
-        return getAllPropertiesForQuantity(PeemQuantity.VOLTAGE);
+        return new PeemVoltages(getAllPropertiesForQuantity(PeemQuantity.VOLTAGE));
     }
 
-    public Map<PeemProperty, String> getAllCurrents() throws IOException{
+    public PeemCurrents getAllCurrents() throws IOException{
         logger.info("Reading all currents...");
-        return getAllPropertiesForQuantity(PeemQuantity.CURRENT);
+        return new PeemCurrents(getAllPropertiesForQuantity(PeemQuantity.CURRENT));
     }
 
-    private Map<PeemProperty, String> getAllPropertiesForQuantity(PeemQuantity quantity) throws IOException {
+    private Map<PeemProperty, Double> getAllPropertiesForQuantity(PeemQuantity quantity) throws IOException {
 
         PeemProperty[] peemProperties = PeemProperty.values();
 
-        Map<PeemProperty, String> map = new HashMap<PeemProperty, String>();
+        Map<PeemProperty, Double> map = new HashMap<>();
         for (PeemProperty property: peemProperties) {
             String val = peemCommunicator.getProperty(property, quantity);
-            map.put(property, val);
+            map.put(property, Double.parseDouble(val));
         }
 
         return map;

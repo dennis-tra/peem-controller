@@ -1,8 +1,6 @@
 package de.agbauer.physik.QuickAcquisition;
 
-import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParameters;
-import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.CameraData;
-import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.GeneralAcquisitionData;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.*;
 import de.agbauer.physik.PeemCommunicator.PeemBulkReader;
 import de.agbauer.physik.PeemCommunicator.PeemCommunicator;
 import de.agbauer.physik.PeemCommunicator.PeemProperty;
@@ -24,10 +22,10 @@ class AcquisitionParametersCollector {
 
         PeemBulkReader bulkReader = new PeemBulkReader(this.peemCommunicator);
 
-        Map<PeemProperty, String> allVoltages = bulkReader.getAllVoltages();
-        Map<PeemProperty, String> allCurrents = bulkReader.getAllCurrents();
+        PeemVoltages peemVoltages = bulkReader.getAllVoltages();
+        PeemCurrents peemCurrents = bulkReader.getAllCurrents();
 
-        AcquisitionParameters ap = new AcquisitionParameters(generalData, allVoltages, allCurrents, cameraData);
+        AcquisitionParameters ap = new AcquisitionParameters(generalData, peemVoltages, peemCurrents, cameraData);
 
         return ap;
     }

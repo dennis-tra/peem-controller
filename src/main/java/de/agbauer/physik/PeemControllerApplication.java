@@ -45,6 +45,8 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private PresetController presetController;
     private SerialConnectionHandler serialConnectionHandler = new RxTxConnectionHandler();
 
+    private DataFiler dataFiler = new DataFilerPeemLab();
+
     public static void main(String[] args) {
         PeemControllerApplication app = new PeemControllerApplication();
         app.onPluginSelected();
@@ -72,7 +74,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     }
 
     private void initPeemHistory() {
-        peemHistoryController = new PEEMHistoryController(mainWindow.peemHistoryForm);
+        peemHistoryController = new PEEMHistoryController(mainWindow.peemHistoryForm, dataFiler);
     }
 
     private void initGeneralInformation() {
@@ -81,25 +83,26 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
     private void initObservers() {
 
-        SampleNameObserver sampleNameObserver = new SampleNameObserver(new SampleNameChangeListener[]{
-                peemHistoryController, optimisationSeriesController, quickAcquisitionController, peemStateController
+        SampleNameChangeObserver sampleNameChangeObserver = new SampleNameChangeObserver(new SampleNameChangeListener[] {
+                peemHistoryController, optimisationSeriesController, quickAcquisitionController
         });
 
-        generalInformationController.addObserver(sampleNameObserver);
+        generalInformationController.addObserver(sampleNameChangeObserver);
         generalInformationController.notifyObservers();
+
 
 
         NewDataSavedObserver singleAcquisitionObserver = new NewDataSavedObserver(new DataSaveListeners[]{
                 peemHistoryController
         });
-
         quickAcquisitionController.addObserver(singleAcquisitionObserver);
-        peemStateController.addObserver(singleAcquisitionObserver);
+
+
 
         AcquisitionParamsLoadObserver paramsLoadObserver = new AcquisitionParamsLoadObserver(new AcquisitionParamsLoadListener[]{
-                peemStateController
+                peemStateController, presetController
         });
-
+        peemStateController.addObserver(paramsLoadObserver);
         presetController.addObserver(paramsLoadObserver);
         peemHistoryController.addObserver(paramsLoadObserver);
     }
@@ -153,7 +156,6 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     }
 
     private void initQuickAcquisition() {
-        DataFiler dataFiler = new DataFilerPeemLab();
         AcquisitionSaver fileSaver = new QuickAcquisitionSaver(peemCommunicator, dataFiler);
         quickAcquisitionController = new QuickAcquisitionController(studio, fileSaver, mainWindow.quickAcquisitionForm);
     }

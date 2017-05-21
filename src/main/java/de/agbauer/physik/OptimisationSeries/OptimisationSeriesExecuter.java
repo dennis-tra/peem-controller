@@ -4,6 +4,7 @@ import de.agbauer.physik.Constants;
 import de.agbauer.physik.Gif.GifSender;
 import de.agbauer.physik.PeemCommunicator.*;
 
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.PeemVoltages;
 import ij.ImagePlus;
 import mmcorej.CMMCore;
 import org.micromanager.PropertyMap;
@@ -53,7 +54,7 @@ class OptimisationSeriesExecuter {
         peemCommunicator.getProperty(property, PeemQuantity.VOLTAGE);
 
         PeemBulkReader bulkReader = new PeemBulkReader(peemCommunicator);
-        Map<PeemProperty, String> peemProperties = bulkReader.getAllVoltages();
+        PeemVoltages peemVoltages = bulkReader.getAllVoltages();
 
         Datastore store = studio.data().createRAMDatastore();
         DisplayWindow window = studio.displays().createDisplay(store);
@@ -76,23 +77,22 @@ class OptimisationSeriesExecuter {
             logger.info("Slack: Acquiring image " + imageNumber + "/" + values.size() + ". " + property.displayName() + " = " + value + " V");
 
             Image image = studio.getSnapLiveManager().snap(false).get(0);
-
-            PropertyMap.PropertyMapBuilder propertyMapBuilder = studio.data().getPropertyMapBuilder();
-            propertyMapBuilder.putDouble(property.cmdString(), Double.valueOf(value));
-
-            for (Map.Entry<PeemProperty, String> entry : peemProperties.entrySet()) {
-                propertyMapBuilder.putString(entry.getKey().displayName(), entry.getValue());
-            }
-
-            Metadata.MetadataBuilder metadataBuilder = studio.data().getMetadataBuilder();
-            metadataBuilder.positionName(property.cmdString() + " = " + value);
-            metadataBuilder.userData(propertyMapBuilder.build());
+//            PropertyMap.PropertyMapBuilder propertyMapBuilder = studio.data().getPropertyMapBuilder();
+//            propertyMapBuilder.putDouble(property.cmdString(), Double.valueOf(value));
+//
+//            for (Map.Entry<PeemProperty, String> entry : peemProperties.entrySet()) {
+//                propertyMapBuilder.putString(entry.getKey().displayName(), entry.getValue());
+//            }
+//
+//            Metadata.MetadataBuilder metadataBuilder = studio.data().getMetadataBuilder();
+//            metadataBuilder.positionName(property.cmdString() + " = " + value);
+//            metadataBuilder.userData(propertyMapBuilder.build());
 
             Coords.CoordsBuilder coordsBuilder = studio.data().getCoordsBuilder();
             coordsBuilder.z(i);
 
             image = image.copyAtCoords(coordsBuilder.build());
-            image = image.copyWithMetadata(metadataBuilder.build());
+//            image = image.copyWithMetadata(metadataBuilder.build());
 
             store.putImage(image);
 

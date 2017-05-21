@@ -3,11 +3,11 @@ package de.agbauer.physik.Observers;
 import java.util.Observable;
 import java.util.Observer;
 
-public class SampleNameObserver implements Observer {
+public class SampleNameChangeObserver implements Observer {
 
     private SampleNameChangeListener[] listeners;
 
-    public SampleNameObserver(SampleNameChangeListener[] listeners) {
+    public SampleNameChangeObserver(SampleNameChangeListener[] listeners) {
         this.listeners = listeners;
     }
 
