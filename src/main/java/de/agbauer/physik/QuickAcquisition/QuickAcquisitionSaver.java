@@ -28,7 +28,7 @@ public class QuickAcquisitionSaver implements AcquisitionSaver {
         FileLocations fileLocations = filer.setAcquisitionParams(ap);
 
         ImageSaver imageSaver = new ImageSaver();
-        imageSaver.save(cameraData.imagePlus, fileLocations.tifImageFilePath);
+        imageSaver.save(ap, cameraData.imagePlus, fileLocations.tifImageFilePath);
 
         AcquisitionParametersFormatter apFormatter = new AcquisitionParametersPowershellFormatter();
         AcquisitionParametersSaver apSaver = new AcquisitionParametersSaver(apFormatter);

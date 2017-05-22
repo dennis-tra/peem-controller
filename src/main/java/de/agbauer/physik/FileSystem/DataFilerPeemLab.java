@@ -23,6 +23,12 @@ public class DataFilerPeemLab implements DataFiler {
 
         fileLocations.tifImageFilePath = absFileName + ".tif";
         fileLocations.peemParametersFilePath = absFileName + "_PARAMS.txt";
+
+        File directory = new File(fileLocations.workingDirectory);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
         return fileLocations;
     }
 
@@ -75,6 +81,18 @@ public class DataFilerPeemLab implements DataFiler {
     public String generateScopeName(String sampleName) {
         String yearStr = new SimpleDateFormat("yyyyMMdd").format(new Date());
         return yearStr + "_" + sampleName;
+    }
+
+    @Override
+    public String logLocation() {
+
+        SimpleDateFormat date = new SimpleDateFormat("yyyyMMdd");
+
+        Date now = new Date();
+
+        String dateStr = date.format(now);
+        return Constants.defaultLogFolder + dateStr + ".log";
+
     }
 
     public boolean isParamsTextFile(File file) {

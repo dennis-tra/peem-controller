@@ -8,6 +8,7 @@ public interface DataFiler {
     FileLocations setAcquisitionParams(AcquisitionParameters ap);
     String getWorkingDirectoryFor(String sampleName);
     String generateScopeName(String sampleName);
+    String logLocation();
     int calculateImageNumber(String sampleName);
     boolean isParamsTextFile(File file);
 }

@@ -36,7 +36,7 @@ class OptimisationSeriesExecuter {
         String deviceLabel = Constants.cameraDevice;
 
         double exposureTimeInSeconds = optimisationSeriesParameters.exposureTimeInSeconds;
-        ArrayList<Float> values = optimisationSeriesParameters.values;
+        ArrayList<Double> values = optimisationSeriesParameters.values;
         PeemProperty property = optimisationSeriesParameters.property;
 
         logger.info("Slack: Starting optimisation series - " + optimisationSeriesParameters.toString());
@@ -68,7 +68,7 @@ class OptimisationSeriesExecuter {
                 throw new IOException("User stopped optimisation series");
             }
 
-            Float value = values.get(i);
+            Double value = values.get(i);
 
             final int imageNumber = i + 1;
 

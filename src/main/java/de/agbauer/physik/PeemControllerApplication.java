@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
 @SpringBootApplication
@@ -122,6 +123,14 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         logger.addHandler(imageJLogHandler);
         logger.addHandler(slackLogHandler);
         logger.addHandler(consoleLogHandler);
+
+        try {
+            FileHandler fileLogHandler = new FileHandler(dataFiler.logLocation());
+            fileLogHandler.setFormatter(new ConsoleLogFormatter());
+            logger.addHandler(fileLogHandler);
+        } catch (IOException e) {
+            logger.warning("Could not initialize file logger: " + e.getMessage());
+        }
     }
 
     private void initPEEMConnection() {

@@ -4,6 +4,7 @@ import de.agbauer.physik.Constants;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.PeemVoltages;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,33 +17,59 @@ public class PresetFileSaver {
     public void save(PeemVoltages peemVoltages) throws IOException {
         logger.info("Saving current parameters as preset...");
 
-        // ask for preset name
-        String presetName = (String)JOptionPane.showInputDialog(
-                null,
-                "Enter the preset name: ",
-                "Save preset",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                null,
-                "untitled");
+        String yearStr = new SimpleDateFormat("yyyyMMdd").format(new Date());
+        File defaultDir = new File(Constants.defaultPresetSaveFolder);
 
-        String workingDirectory = Constants.defaultPresetSaveFolder;
+        JFileChooser jfc = new JFileChooser(defaultDir){
+            @Override
+            public void approveSelection(){
+                File f = getSelectedFile();
+                f = new File(ensurePstExtension(f.toString()));
+                if(f.exists() && getDialogType() == SAVE_DIALOG){
+                    int result = JOptionPane.showConfirmDialog(this,"The file exists, overwrite?","Existing file",JOptionPane.YES_NO_OPTION);
+                    switch(result){
+                        case JOptionPane.YES_OPTION:
+                            super.approveSelection();
+                            return;
+                        case JOptionPane.NO_OPTION:
+                            return;
+                    }
+                }
+                super.approveSelection();
+            }
+        };
 
-        File workDir = new File(workingDirectory);
-        if (!workDir.exists() && !workDir.mkdirs()) {
-            throw new IOException("Couldn't create directory "+ workingDirectory);
+        jfc.setDialogTitle("Save preset");
+        jfc.setSelectedFile(new File( yearStr + "_"));
+        jfc.setFileFilter(new FileNameExtensionFilter("Preset file","pst"));
+
+        int returnValue = jfc.showSaveDialog(null);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            File presetFile = jfc.getSelectedFile();
+
+            String filePath = presetFile.toString();
+
+            filePath = ensurePstExtension(filePath);
+
+
+            FileOutputStream os = new FileOutputStream(filePath);
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            oos.writeObject(peemVoltages);
+            oos.close();
+
+            logger.info("Saved peem params to " + filePath + ".pst");
+        } else {
+            logger.info("User cancelled saving preset");
         }
 
-        String yearStr = new SimpleDateFormat("yyyyMMdd").format(new Date());
+    }
 
-        String filePath = workingDirectory + yearStr + "_" + presetName;
-
-        FileOutputStream os = new FileOutputStream(filePath + ".pst");
-        ObjectOutputStream oos = new ObjectOutputStream(os);
-        oos.writeObject(peemVoltages);				// Here we write the actual serializable data into the file
-        oos.close();
-
-        logger.info("Saved peem params to " + filePath + ".pst");
+    private String ensurePstExtension(String filePath) {
+        if (!filePath.endsWith(".pst")) {
+            filePath += ".pst";
+        }
+        return filePath;
     }
 
 }

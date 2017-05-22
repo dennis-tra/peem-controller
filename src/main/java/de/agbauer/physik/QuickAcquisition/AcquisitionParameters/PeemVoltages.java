@@ -3,6 +3,7 @@ package de.agbauer.physik.QuickAcquisition.AcquisitionParameters;
 import de.agbauer.physik.PeemCommunicator.PeemProperty;
 
 import java.io.Serializable;
+import java.util.AbstractList;
 import java.util.Map;
 
 public class PeemVoltages implements Serializable {
@@ -31,4 +32,34 @@ public class PeemVoltages implements Serializable {
         this.stigmatorSx = allVoltages.get(PeemProperty.STIGMATOR_X);
         this.stigmatorSy = allVoltages.get(PeemProperty.STIGMATOR_Y);
     }
+
+    public Double get(PeemProperty peemProperty) {
+        switch (peemProperty) {
+            case EXTRACTOR:
+                return this.extractor;
+            case FOCUS:
+                return this.focus;
+            case COLUMN:
+                return this.column;
+            case PROJECTIVE_1:
+                return this.projective1;
+            case PROJECTIVE_2:
+                return this.projective2;
+            case MCP:
+                return this.mcp;
+            case SCREEN:
+                return this.screen;
+            case DEFLECTOR_X:
+                return this.stigmatorVx;
+            case DEFLECTOR_Y:
+                return this.stigmatorVy;
+            case STIGMATOR_X:
+                return this.stigmatorSx;
+            case STIGMATOR_Y:
+                return this.stigmatorSy;
+            default:
+                return null;
+        }
+    }
+
 }

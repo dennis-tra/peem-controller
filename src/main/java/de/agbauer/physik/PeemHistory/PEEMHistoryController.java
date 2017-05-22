@@ -9,6 +9,7 @@ import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParam
 import de.agbauer.physik.QuickAcquisition.AcquisitionParametersPowershellParser;
 import ij.ImagePlus;
 
+import javax.swing.*;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -59,7 +60,17 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
             }
         });
 
-        this.form.loadButton.addActionListener(e -> loadParamsFromTable());
+        this.form.historyTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    JTable target = (JTable)e.getSource();
+                    int rowIndex = target.getSelectedRow();
+                    loadParamsFromRowWithIndex(rowIndex);
+                    target.clearSelection();
+                }
+            }
+        });
     }
 
     private void setColumnWidths() {
@@ -99,11 +110,8 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
         }
     }
 
-    //Looks up the selected line in the HistoryTable and sends the according params from the dataModel
-    //to the Observer (AcquisitionParamsLoadObserver)
-    private void loadParamsFromTable(){
-        int selectedParameters = form.historyTable.getSelectedRow();
-        PeemVoltages peemVoltages = dataModel.acquisitionParameters[selectedParameters].peemVoltages;
+    private void loadParamsFromRowWithIndex(int index){
+        PeemVoltages peemVoltages = dataModel.acquisitionParameters[index].peemVoltages;
 
         this.setChanged();
         notifyObservers(peemVoltages);

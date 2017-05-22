@@ -67,13 +67,13 @@ public class GifSender {
     }
 
 
-    public void sendGifAsync(ArrayList<Float> values, PeemProperty property) {
+    public void sendGifAsync(ArrayList<Double> values, PeemProperty property) {
         CompletableFuture.runAsync(() -> {
             try {
                 File gifFile = createGifFromTmpFiles(tmpImages);
 
-                Float firstVal = values.get(0);
-                Float lastVal = values.get(values.size() - 1);
+                Double firstVal = values.get(0);
+                Double lastVal = values.get(values.size() - 1);
                 String title = "Optimisation series " + property.displayName() + " (from " + firstVal.toString() + " V to " + lastVal.toString() + " V).";
 
                 sendImageToSlack(title, gifFile);

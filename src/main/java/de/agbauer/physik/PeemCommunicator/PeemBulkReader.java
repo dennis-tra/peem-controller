@@ -16,7 +16,6 @@ public class PeemBulkReader {
         this.peemCommunicator = peemCommunicator;
     }
 
-
     public PeemVoltages getAllVoltages() throws IOException {
         logger.info("Reading all peemVoltages...");
         return new PeemVoltages(getAllPropertiesForQuantity(PeemQuantity.VOLTAGE));

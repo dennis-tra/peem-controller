@@ -5,11 +5,8 @@ import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 
 import java.util.ArrayList;
 
-/**
- * Created by dennis on 29/01/2017.
- */
 public class OptimisationSeriesParameters {
-    ArrayList<Float> values;
+    ArrayList<Double> values;
     boolean saveImages;
     boolean sendNotification;
     PeemProperty property;
@@ -42,7 +39,7 @@ public class OptimisationSeriesParameters {
         return (getTotalTimeInMinutes() - Math.floor(getTotalTimeInMinutes())) * 60;
     }
 
-    private ArrayList<Float> generateMeasurementValuesFrom(float startingValue, float endingValue, float stepSizeValue) throws ValueException {
+    private ArrayList<Double> generateMeasurementValuesFrom(double startingValue, double endingValue, double stepSizeValue) throws ValueException {
 
         if (stepSizeValue <= 0) {
             throw new ValueException("Step size can't be less than zero");
@@ -56,8 +53,8 @@ public class OptimisationSeriesParameters {
             throw new ValueException("Step size can't be bigger than measurement interval");
         }
 
-        ArrayList<Float> measurementValues = new ArrayList<>();
-        for (float value = startingValue; value < endingValue; value += stepSizeValue) {
+        ArrayList<Double> measurementValues = new ArrayList<>();
+        for (double value = startingValue; value < endingValue; value += stepSizeValue) {
             measurementValues.add(value);
         }
         measurementValues.add(endingValue);

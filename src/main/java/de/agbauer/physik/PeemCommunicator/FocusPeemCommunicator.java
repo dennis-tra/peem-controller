@@ -16,7 +16,7 @@ public class FocusPeemCommunicator implements PeemCommunicator {
         this.outputStream = outputStream;
     }
 
-    public synchronized void setProperty(PeemProperty property, Float value) throws IOException {
+    public synchronized void setProperty(PeemProperty property, Double value) throws IOException {
         String valueStr = String.format(Locale.ROOT, "%.2f", value);
         String commandStr = "set " + property.setCmdString() + " " + valueStr + "\r";
 
@@ -33,8 +33,16 @@ public class FocusPeemCommunicator implements PeemCommunicator {
 
     private void sendCommand(String commandStr) throws IOException {
         logger.info("Sending command: '" + commandStr + "'");
+
         byte[] command = commandStr.getBytes();
         this.outputStream.write(command);
+
+        logger.info("Waiting for response from PEEM");
+        String response = this.readPeemBlockingUntilMessageReceived();
+
+        if (!(response.startsWith("#40"))) {
+            throw new IOException("Received fault error code: " + response);
+        }
     }
 
     private void flushInputStream() {

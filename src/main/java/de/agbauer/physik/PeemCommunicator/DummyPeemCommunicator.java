@@ -4,7 +4,7 @@ import java.io.IOException;
 
 public class DummyPeemCommunicator implements PeemCommunicator {
 
-    public void setProperty(PeemProperty property, Float value) throws IOException {
+    public void setProperty(PeemProperty property, Double value) throws IOException {
 
     }
 

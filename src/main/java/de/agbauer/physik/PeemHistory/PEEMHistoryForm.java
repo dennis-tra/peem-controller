@@ -7,7 +7,6 @@ public class PEEMHistoryForm {
     private JPanel peemHistoryPanel;
     private JScrollPane historyScrollPane;
     JTable historyTable;
-    JButton loadButton;
     JLabel directoryLabel;
 
     public PEEMHistoryForm() {

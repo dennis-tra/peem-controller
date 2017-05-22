@@ -5,6 +5,7 @@ import de.agbauer.physik.Observers.AcquisitionParamsLoadListener;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.PeemVoltages;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,7 +49,9 @@ public class PresetController extends Observable implements AcquisitionParamsLoa
 
     private void loadButtonClicked(ActionEvent actionEvent){
 
-        JFileChooser fc = new JFileChooser();
+        JFileChooser fc = new JFileChooser(new File(Constants.defaultPresetSaveFolder));
+        fc.setFileFilter(new FileNameExtensionFilter("Preset file","pst"));
+
         int returnVal = fc.showOpenDialog(null);
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {

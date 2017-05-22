@@ -23,4 +23,25 @@ public class PeemCurrents implements Serializable {
         this.mcp = allCurrents.get(PeemProperty.MCP);
         this.screen = allCurrents.get(PeemProperty.SCREEN);
     }
+
+    public Double get(PeemProperty peemProperty) {
+        switch (peemProperty) {
+            case EXTRACTOR:
+                return this.extractor;
+            case FOCUS:
+                return this.focus;
+            case COLUMN:
+                return this.column;
+            case PROJECTIVE_1:
+                return this.projective1;
+            case PROJECTIVE_2:
+                return this.projective2;
+            case MCP:
+                return this.mcp;
+            case SCREEN:
+                return this.screen;
+            default:
+                return null;
+        }
+    }
 }

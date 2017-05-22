@@ -9,9 +9,6 @@ import de.agbauer.physik.QuickAcquisition.QuickAcquisitionForm;
 
 import javax.swing.*;
 
-/**
- * Created by dennis on 09/02/2017.
- */
 public class MainWindow extends JFrame {
     private JPanel rootPanel;
     JLabel statusBarLabel;
