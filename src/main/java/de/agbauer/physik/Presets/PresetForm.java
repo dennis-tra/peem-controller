@@ -11,4 +11,5 @@ public class PresetForm {
     JButton a3LensButton;
     JButton loadButton;
     JButton saveButton;
+    JButton saveModeButton;
 }

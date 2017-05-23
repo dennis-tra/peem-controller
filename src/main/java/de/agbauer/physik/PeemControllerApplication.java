@@ -71,7 +71,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     }
 
     private void initPresetController(){
-        presetController = new PresetController(mainWindow.presetForm);
+        presetController = new PresetController(peemCommunicator, mainWindow.presetForm);
     }
 
     private void initPeemHistory() {

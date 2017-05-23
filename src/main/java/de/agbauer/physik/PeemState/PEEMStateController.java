@@ -13,6 +13,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Observable;
 import java.util.concurrent.CompletableFuture;
@@ -61,16 +62,18 @@ public class PEEMStateController extends Observable implements AcquisitionParams
         PeemBulkSetter bulkSetter = new PeemBulkSetter(peemCommunicator);
         PeemVoltages peemVoltages = peemVoltagesFromTextFields();
 
-        try {
-            if (peemVoltages == null) {
-                throw new IOException("Could not parse text field values");
-            }
+        CompletableFuture.runAsync(() -> {
+            try {
+                if (peemVoltages == null) {
+                    throw new IOException("Could not parse text field values");
+                }
 
-            bulkSetter.setAllVoltages(peemVoltages);
-            logger.info("Finished setting all peem voltages");
-        } catch (IOException e) {
-            logger.warning("Error while setting PEEM parameters: " + e.getMessage());
-        }
+                bulkSetter.setAllVoltages(peemVoltages);
+                logger.info("Finished setting all peem voltages");
+            } catch (IOException e) {
+                logger.warning("Error while setting PEEM parameters: " + e.getMessage());
+            }
+        });
     }
 
     private void setPropertyFromTextField(PeemProperty property, JTextField textField) {
@@ -108,36 +111,39 @@ public class PEEMStateController extends Observable implements AcquisitionParams
     }
 
     private void readAllButtonClicked(ActionEvent actionEvent) {
-        try {
-            PeemBulkReader bulkReader = new PeemBulkReader(peemCommunicator);
-            PeemVoltages peemVoltages = bulkReader.getAllVoltages();
+        CompletableFuture.runAsync(() -> {
+            try {
+                PeemBulkReader bulkReader = new PeemBulkReader(peemCommunicator);
+                PeemVoltages peemVoltages = bulkReader.getAllVoltages();
 
-            this.notifyObservers();
+                notifyObservers();
 
-            updateUIWithVoltages(peemVoltages);
+                updateUIWithVoltages(peemVoltages);
 
-            logger.info("Read all properties!");
+                logger.info("Read all properties!");
 
-        } catch (IOException e) {
-            logger.warning("Couldn't read all params: " + e.getMessage());
-        }
+            } catch (IOException e) {
+                logger.warning("Couldn't read all params: " + e.getMessage());
+            }
+        });
+
     }
 
     private void updateUIWithVoltages(PeemVoltages peemVoltages) {
         String format = "%.1f";
         String longDecformat = "%.3f";
 
-        peemStateForm.extTextField.setText(String.format(format, peemVoltages.extractor));
-        peemStateForm.focusTextField.setText(String.format(format, peemVoltages.focus));
-        peemStateForm.colTextField.setText(String.format(format, peemVoltages.column));
-        peemStateForm.p1TextField.setText(String.format(format, peemVoltages.projective1));
-        peemStateForm.p2TextField.setText(String.format(format, peemVoltages.projective2));
-        peemStateForm.vxTextField.setText(String.format(longDecformat, peemVoltages.stigmatorVx));
-        peemStateForm.vyTextField.setText(String.format(longDecformat, peemVoltages.stigmatorVy));
-        peemStateForm.sxTextField.setText(String.format(longDecformat, peemVoltages.stigmatorSx));
-        peemStateForm.syTextField.setText(String.format(longDecformat, peemVoltages.stigmatorSy));
-        peemStateForm.mcpTextfield.setText(String.format(format, peemVoltages.mcp));
-        peemStateForm.scrTextField.setText(String.format(format, peemVoltages.screen));
+        peemStateForm.extTextField.setText(String.format(Locale.ROOT, format, peemVoltages.extractor));
+        peemStateForm.focusTextField.setText(String.format(Locale.ROOT, format, peemVoltages.focus));
+        peemStateForm.colTextField.setText(String.format(Locale.ROOT, format, peemVoltages.column));
+        peemStateForm.p1TextField.setText(String.format(Locale.ROOT, format, peemVoltages.projective1));
+        peemStateForm.p2TextField.setText(String.format(Locale.ROOT, format, peemVoltages.projective2));
+        peemStateForm.vxTextField.setText(String.format(Locale.ROOT, longDecformat, peemVoltages.stigmatorVx));
+        peemStateForm.vyTextField.setText(String.format(Locale.ROOT, longDecformat, peemVoltages.stigmatorVy));
+        peemStateForm.sxTextField.setText(String.format(Locale.ROOT, longDecformat, peemVoltages.stigmatorSx));
+        peemStateForm.syTextField.setText(String.format(Locale.ROOT, longDecformat, peemVoltages.stigmatorSy));
+        peemStateForm.mcpTextfield.setText(String.format(Locale.ROOT, format, peemVoltages.mcp));
+        peemStateForm.scrTextField.setText(String.format(Locale.ROOT, format, peemVoltages.screen));
     }
 
     @Override

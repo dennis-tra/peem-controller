@@ -109,6 +109,9 @@ public class AcquisitionParametersPowershellParser implements AcquisitionParamet
 
     static private String parseGeneralInformationLine(String line, String key) {
         String sub = line.substring(key.length()).trim();
+        if (sub.endsWith(" ms")) {
+            sub = sub.replace(" ms", "");
+        }
         return empty(sub) ? null : sub;
     }
 

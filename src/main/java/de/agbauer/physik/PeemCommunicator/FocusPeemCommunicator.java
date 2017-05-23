@@ -17,10 +17,34 @@ public class FocusPeemCommunicator implements PeemCommunicator {
     }
 
     public synchronized void setProperty(PeemProperty property, Double value) throws IOException {
+        this.flushInputStream();
+
         String valueStr = String.format(Locale.ROOT, "%.2f", value);
         String commandStr = "set " + property.setCmdString() + " " + valueStr + "\r";
-
         this.sendCommand(commandStr);
+
+        // The PEEM won't return any status codes after setting stigmator values...
+        switch (property) {
+            case STIGMATOR_X:
+            case STIGMATOR_Y:
+            case DEFLECTOR_X:
+            case DEFLECTOR_Y:
+                logger.info("Not waiting for response. Sleep for 500 ms instead..." + property.displayName());
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    logger.warning("Sleep was interrupted: " + e.getMessage());
+                }
+                return;
+        }
+
+        logger.info("Waiting for response from PEEM for " + property.displayName());
+
+        String response = this.readPeemBlockingUntilMessageReceived();
+
+        if (!(response.startsWith("#40"))) {
+            throw new IOException("Received fault error code: " + response);
+        }
     }
 
     public synchronized String getProperty(PeemProperty property, PeemQuantity quantity) throws IOException {
@@ -32,20 +56,14 @@ public class FocusPeemCommunicator implements PeemCommunicator {
     }
 
     private void sendCommand(String commandStr) throws IOException {
-        logger.info("Sending command: '" + commandStr + "'");
+        logger.info("Sending command: " + commandStr);
 
         byte[] command = commandStr.getBytes();
         this.outputStream.write(command);
-
-        logger.info("Waiting for response from PEEM");
-        String response = this.readPeemBlockingUntilMessageReceived();
-
-        if (!(response.startsWith("#40"))) {
-            throw new IOException("Received fault error code: " + response);
-        }
     }
 
     private void flushInputStream() {
+        logger.info("Flushing serial input stream...");
         byte[] buffer = new byte[1024];
         try {
             while ( this.inputStream.read(buffer) > 0 ) { }
