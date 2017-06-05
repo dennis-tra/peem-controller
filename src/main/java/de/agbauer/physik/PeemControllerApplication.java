@@ -1,8 +1,10 @@
 package de.agbauer.physik;
 
+import de.agbauer.physik.FieldOfViewInspectorPlugin.FieldOfViewPlugin;
 import de.agbauer.physik.FileSystem.DataFiler;
 import de.agbauer.physik.FileSystem.DataFilerPeemLab;
 import de.agbauer.physik.Logging.*;
+import de.agbauer.physik.MaxCountInspectorPlugin.MaxCountPlugin;
 import de.agbauer.physik.Observers.*;
 import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationController;
@@ -34,6 +36,9 @@ import java.util.logging.Logger;
 public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private Studio studio;
+    private MaxCountPlugin maxCountPlugin;
+    private FieldOfViewPlugin fieldOfViewPlugin;
+
 
 	private MainWindow mainWindow;
 
@@ -51,11 +56,11 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     public static void main(String[] args) {
         PeemControllerApplication app = new PeemControllerApplication();
         app.onPluginSelected();
+
 	}
 
     @Override
     public void onPluginSelected() {
-
 		mainWindow = new MainWindow();
 
         initLogHandlers();
@@ -101,7 +106,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 
 
         AcquisitionParamsLoadObserver paramsLoadObserver = new AcquisitionParamsLoadObserver(new AcquisitionParamsLoadListener[]{
-                peemStateController, presetController
+                peemStateController, presetController, fieldOfViewPlugin
         });
         peemStateController.addObserver(paramsLoadObserver);
         presetController.addObserver(paramsLoadObserver);
@@ -180,6 +185,10 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
 	@Override
 	public void setContext(Studio studio) {
 		this.studio = studio;
+
+        this.maxCountPlugin = (MaxCountPlugin) this.studio.plugins().getInspectorPlugins().get(MaxCountPlugin.class.getName());
+        this.fieldOfViewPlugin = (FieldOfViewPlugin) this.studio.plugins().getInspectorPlugins().get(FieldOfViewPlugin.class.getName());
+
         System.setProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT %4$s %2$s %5$s%6$s%n");
     }
 
