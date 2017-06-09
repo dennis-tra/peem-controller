@@ -16,7 +16,7 @@ import org.micromanager.display.DisplayWindow;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 class OptimisationSeriesExecuter {
@@ -77,22 +77,23 @@ class OptimisationSeriesExecuter {
             logger.info("Slack: Acquiring image " + imageNumber + "/" + values.size() + ". " + property.displayName() + " = " + value + " V");
 
             Image image = studio.getSnapLiveManager().snap(false).get(0);
-//            PropertyMap.PropertyMapBuilder propertyMapBuilder = studio.data().getPropertyMapBuilder();
-//            propertyMapBuilder.putDouble(property.cmdString(), Double.valueOf(value));
-//
-//            for (Map.Entry<PeemProperty, String> entry : peemProperties.entrySet()) {
-//                propertyMapBuilder.putString(entry.getKey().displayName(), entry.getValue());
-//            }
-//
-//            Metadata.MetadataBuilder metadataBuilder = studio.data().getMetadataBuilder();
-//            metadataBuilder.positionName(property.cmdString() + " = " + value);
-//            metadataBuilder.userData(propertyMapBuilder.build());
+            PropertyMap.PropertyMapBuilder propertyMapBuilder = studio.data().getPropertyMapBuilder();
+            propertyMapBuilder.putDouble(property.cmdString(), value);
+
+
+            for (PeemProperty peemProperty : PeemProperty.values()) {
+                propertyMapBuilder.putString(peemProperty.displayName(), String.format(Locale.ROOT, ".1f", peemVoltages.get(peemProperty)));
+            }
+
+            Metadata.MetadataBuilder metadataBuilder = studio.data().getMetadataBuilder();
+            metadataBuilder.positionName(property.cmdString() + " = " + value);
+            metadataBuilder.userData(propertyMapBuilder.build());
 
             Coords.CoordsBuilder coordsBuilder = studio.data().getCoordsBuilder();
             coordsBuilder.z(i);
 
             image = image.copyAtCoords(coordsBuilder.build());
-//            image = image.copyWithMetadata(metadataBuilder.build());
+            image = image.copyWithMetadata(metadataBuilder.build());
 
             store.putImage(image);
 
