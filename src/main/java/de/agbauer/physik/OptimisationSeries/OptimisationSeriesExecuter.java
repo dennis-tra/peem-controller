@@ -82,7 +82,7 @@ class OptimisationSeriesExecuter {
 
 
             for (PeemProperty peemProperty : PeemProperty.values()) {
-                propertyMapBuilder.putString(peemProperty.displayName(), String.format(Locale.ROOT, ".1f", peemVoltages.get(peemProperty)));
+                propertyMapBuilder.putString(peemProperty.displayName(), String.format(Locale.ROOT, "%.1f", peemVoltages.get(peemProperty)));
             }
 
             Metadata.MetadataBuilder metadataBuilder = studio.data().getMetadataBuilder();
