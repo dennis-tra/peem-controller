@@ -20,6 +20,14 @@ public class AcquisitionParamsLoadObserver implements Observer {
             for (AcquisitionParamsLoadListener listener: listeners) {
                 listener.peemVoltagesUpdated(observable, params);
             }
+        } else if (arg instanceof String && arg == "setting-voltages-start") {
+            for (AcquisitionParamsLoadListener listener: listeners) {
+                listener.peemCommunicationStarted(observable);
+            }
+        } else if (arg instanceof String && arg == "setting-voltages-end") {
+            for (AcquisitionParamsLoadListener listener: listeners) {
+                listener.peemCommunicationFinished(observable);
+            }
         }
     }
 }

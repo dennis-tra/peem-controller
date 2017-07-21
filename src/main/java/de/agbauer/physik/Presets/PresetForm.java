@@ -12,4 +12,15 @@ public class PresetForm {
     JButton loadButton;
     JButton saveButton;
     JButton saveModeButton;
+
+    void enablePresetPanel(boolean b) {
+        lowMagButton.setEnabled(b);
+        apertureButton.setEnabled(b);
+        a1LensButton.setEnabled(b);
+        a2LensButton.setEnabled(b);
+        a3LensButton.setEnabled(b);
+        loadButton.setEnabled(b);
+        saveModeButton.setEnabled(b);
+        saveButton.setEnabled(b);
+    }
 }

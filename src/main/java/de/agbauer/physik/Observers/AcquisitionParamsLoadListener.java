@@ -6,4 +6,6 @@ import java.util.Observable;
 
 public interface AcquisitionParamsLoadListener {
     void peemVoltagesUpdated(Observable sender, PeemVoltages peemVoltages);
+    void peemCommunicationStarted(Observable sender);
+    void peemCommunicationFinished(Observable sender);
 }

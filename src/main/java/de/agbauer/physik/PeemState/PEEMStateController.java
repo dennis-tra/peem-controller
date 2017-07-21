@@ -161,6 +161,16 @@ public class PEEMStateController extends Observable implements AcquisitionParams
     }
 
     @Override
+    public void peemCommunicationStarted(Observable sender) {
+        this.peemStateForm.enableControls(false);
+    }
+
+    @Override
+    public void peemCommunicationFinished(Observable sender) {
+        this.peemStateForm.enableControls(true);
+    }
+
+    @Override
     public void insertUpdate(DocumentEvent e) {
         this.notifyObservers();
     }

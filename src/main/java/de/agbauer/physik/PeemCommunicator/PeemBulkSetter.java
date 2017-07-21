@@ -26,7 +26,7 @@ public class PeemBulkSetter {
 
             try {
                 this.peemCommunicator.setProperty(peemProperty, peemVoltages.get(peemProperty));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 logger.warning("Error while setting " + peemProperty.toString() + ": " + e.getMessage());
             }
         }
