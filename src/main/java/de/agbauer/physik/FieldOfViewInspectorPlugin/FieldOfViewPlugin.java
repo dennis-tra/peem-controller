@@ -50,4 +50,14 @@ public class FieldOfViewPlugin implements InspectorPlugin, SciJavaPlugin, Acquis
     public void peemVoltagesUpdated(Observable sender, PeemVoltages peemVoltages) {
         fieldOfViewInspectorPanel.peemVoltagesUpdated(peemVoltages);
     }
+
+    @Override
+    public void peemCommunicationStarted(Observable sender) {
+
+    }
+
+    @Override
+    public void peemCommunicationFinished(Observable sender) {
+
+    }
 }
