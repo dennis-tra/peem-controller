@@ -42,9 +42,6 @@ public class QuickAcquisitionController extends Observable implements SampleName
         this.form.snapButton.addActionListener(e -> acquireImage(form.snapTextField, form.snapComboBox, (exposureInMs, binning) -> {
             Image image = snapLiveManager.snap(true).get(0);
 
-            // Post to slack if exposure is longer than three minutes
-            logger.info((exposureInMs >= 180000 ? "Slack: @channel " : "") + "Successfully snapped image!");
-
             ImageProcessor ip = studio.data().getImageJConverter().createProcessor(image);
             ImagePlus imagePlus = new ImagePlus(sampleName, ip);
 
