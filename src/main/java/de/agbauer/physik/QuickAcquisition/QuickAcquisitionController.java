@@ -52,6 +52,8 @@ public class QuickAcquisitionController extends Observable implements SampleName
 
                 studio.getAlbum().addImage(image);
 
+                logger.info("Finished acquiring image");
+
             } catch (IOException exc) {
 
                 logger.warning("Failed saving acquisition: " + exc.getMessage());

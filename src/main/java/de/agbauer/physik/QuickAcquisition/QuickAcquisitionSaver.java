@@ -14,6 +14,7 @@ import ij.process.ImageProcessor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 public class QuickAcquisitionSaver implements AcquisitionSaver {
@@ -45,7 +46,7 @@ public class QuickAcquisitionSaver implements AcquisitionSaver {
         AcquisitionParametersSaver apSaver = new AcquisitionParametersSaver(apFormatter);
         apSaver.save(ap, fileLocations.peemParametersFilePath);
 
-        sendImageToSlack(ap, cameraData.imagePlus);
+        sendImageToSlackAsync(ap, cameraData.imagePlus);
 
         return ap;
     }
@@ -66,25 +67,27 @@ public class QuickAcquisitionSaver implements AcquisitionSaver {
     }
 
 
-    private void sendImageToSlack(AcquisitionParameters ap, ImagePlus imagePlus) {
-        try {
-            ImageProcessor imageProcessor = imagePlus.getProcessor();
+    private void sendImageToSlackAsync(AcquisitionParameters ap, ImagePlus imagePlus) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                ImageProcessor imageProcessor = imagePlus.getProcessor();
 
-            File jpegFile = new TmpJpegSaver(imageProcessor).save();
+                File jpegFile = new TmpJpegSaver(imageProcessor).save();
 
-            String imageTitle = String.format("%s (%s): ext/foc %.1f/%.1f, p1/p2: %.1f/%.1f",
-                    ap.generalData.sampleName,
-                    ap.generalData.excitation,
-                    ap.peemVoltages.extractor,
-                    ap.peemVoltages.focus,
-                    ap.peemVoltages.projective1,
-                    ap.peemVoltages.projective2);
-
-            SlackFileUploader sfu = new SlackFileUploader(imageTitle, jpegFile, SlackFileUploader.MediaType.JPEG);
-            sfu.send();
-            logger.info("Sent image to Slack");
-        } catch (Exception e) {
-            logger.warning("Failed sending image to Slack" + e.getMessage());
-        }
+                String imageTitle = String.format("%s (%s %.0fms): ext %.1f foc %.1f; p1 %.1f p2 %.1f",
+                        ap.generalData.sampleName,
+                        ap.generalData.excitation,
+                        ap.cameraData.exposureInMs,
+                        ap.peemVoltages.extractor,
+                        ap.peemVoltages.focus,
+                        ap.peemVoltages.projective1,
+                        ap.peemVoltages.projective2);
+                SlackFileUploader sfu = new SlackFileUploader(imageTitle, jpegFile, SlackFileUploader.MediaType.JPEG);
+                sfu.send();
+                logger.info("Sent image to Slack");
+            } catch (Exception e) {
+                logger.warning("Failed sending image to Slack" + e.getMessage());
+            }
+        });
     }
 }
