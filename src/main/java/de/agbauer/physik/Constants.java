@@ -9,4 +9,5 @@ public class Constants {
     public static final String slackBotToken = "xoxb-164035809249-YC5fdrbc2d9U24muY5xFQpAb";
     public static final String defaultPresetSaveFolder = "F:\\PEEM Messdaten\\peem-controller-presets\\"; // Must have trailing (back)slash
     public static final String defaultLogFolder = "F:\\PEEM Messdaten\\peem-controller-logs\\"; // Must have trailing (back)slash
+    public static final String pathSeparator = "/";
 }
