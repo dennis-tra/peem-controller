@@ -16,7 +16,7 @@ import org.micromanager.display.DisplayWindow;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 import java.util.logging.Logger;
 
 class OptimisationSeriesExecuter {
