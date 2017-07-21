@@ -79,7 +79,7 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
             TableColumn column = columns.nextElement();
             column.setPreferredWidth(37);
         }
-        this.form.historyTable.getColumnModel().getColumn(0).setPreferredWidth(10);
+        this.form.historyTable.getColumnModel().getColumn(0).setPreferredWidth(12);
         this.form.historyTable.getColumnModel().getColumn(1).setPreferredWidth(45);
     }
 
@@ -97,6 +97,7 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
             }
 
             AcquisitionParameters[] arr = new AcquisitionParameters[acquisitionParameters.size()];
+
             dataModel.acquisitionParameters = acquisitionParameters.toArray(arr);
 
         } catch (NullPointerException | IOException exc) {
