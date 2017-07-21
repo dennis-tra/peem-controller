@@ -143,7 +143,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         logger.addHandler(consoleLogHandler);
 
         try {
-            FileHandler fileLogHandler = new FileHandler(dataFiler.logLocation());
+            FileHandler fileLogHandler = new FileHandler(dataFiler.logLocation(), true);
             fileLogHandler.setFormatter(new ConsoleLogFormatter());
             logger.addHandler(fileLogHandler);
         } catch (IOException e) {
