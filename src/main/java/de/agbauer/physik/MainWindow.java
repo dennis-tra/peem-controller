@@ -18,6 +18,7 @@ public class MainWindow extends JFrame {
     GeneralInformationForm generalInformationForm;
     PEEMHistoryForm peemHistoryForm;
     PresetForm presetForm;
+    JButton browseButton;
 
 
     MainWindow() {

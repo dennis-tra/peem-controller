@@ -2,6 +2,8 @@ package de.agbauer.physik.PeemHistory;
 
 import de.agbauer.physik.FileSystem.DataFiler;
 import de.agbauer.physik.Observers.SampleNameChangeListener;
+import de.agbauer.physik.PeemHistoryBrowser.PeemHistoryBrowserController;
+import de.agbauer.physik.PeemHistoryBrowser.PeemHistoryBrowserForm;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.PeemVoltages;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParametersParser;
 import de.agbauer.physik.Observers.DataSaveListeners;
@@ -29,15 +31,14 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
     private DataFiler dataFiler;
     private AcquisitionParametersParser acquisitionParametersParser = new AcquisitionParametersPowershellParser();
     private HistoryDataModel dataModel = new HistoryDataModel();
-
     private File workingDirectory;
-
 
     public PEEMHistoryController(PEEMHistoryForm form, DataFiler dataFiler) {
 
         this.form = form;
         this.dataFiler = dataFiler;
         this.form.historyTable.setModel(dataModel);
+        this.form.historyTable.setAutoCreateRowSorter(dataModel.getRowCount() != 0);
 
         setColumnWidths();
 
@@ -83,13 +84,13 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
         this.form.historyTable.getColumnModel().getColumn(1).setPreferredWidth(45);
     }
 
-    private void loadDirectory() {
+    public void loadDirectory(File directory) {
         try {
 
             List<AcquisitionParameters> acquisitionParameters = new ArrayList<>();
 
             //The next line throws a NullPointerException, but the files are still loaded...?
-            for (File file : this.workingDirectory.listFiles()) {
+            for (File file : directory.listFiles()) {
 
                 if (dataFiler.isParamsTextFile(file)) {
                     acquisitionParameters.add(acquisitionParametersParser.parse(file));
@@ -99,12 +100,12 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
             AcquisitionParameters[] arr = new AcquisitionParameters[acquisitionParameters.size()];
 
             dataModel.acquisitionParameters = acquisitionParameters.toArray(arr);
-
+            this.form.historyTable.setAutoCreateRowSorter(dataModel.getRowCount() != 0);
         } catch (NullPointerException | IOException exc) {
             dataModel.acquisitionParameters = new AcquisitionParameters[]{};
         } finally {
 
-            this.form.directoryLabel.setText("Dir: " + this.workingDirectory.getAbsolutePath());
+            this.form.directoryLabel.setText("Dir: " + directory.getAbsolutePath());
             dataModel.fireTableDataChanged();
             form.historyTable.repaint();
 
@@ -121,11 +122,11 @@ public class PEEMHistoryController extends Observable implements SampleNameChang
     @Override
     public void sampleNameChanged(String sampleName) {
         this.workingDirectory = new File(this.dataFiler.getWorkingDirectoryFor(sampleName));
-        loadDirectory();
+        loadDirectory(this.workingDirectory);
     }
 
     @Override
     public void newDataSaved(ImagePlus image) {
-        loadDirectory();
+        loadDirectory(this.workingDirectory);
     }
 }

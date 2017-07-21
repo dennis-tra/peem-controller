@@ -79,10 +79,16 @@ class OptimisationSeriesExecuter {
 
             Image image = studio.getSnapLiveManager().snap(false).get(0);
 
+            PropertyMap.PropertyMapBuilder propertyMapBuilder = studio.data().getPropertyMapBuilder();
+            Metadata.MetadataBuilder metadataBuilder = studio.data().getMetadataBuilder();
+            metadataBuilder.positionName(property.cmdString() + " = " + value);
+            metadataBuilder.userData(propertyMapBuilder.build());
+
             Coords.CoordsBuilder coordsBuilder = studio.data().getCoordsBuilder();
             coordsBuilder.z(i);
 
             image = image.copyAtCoords(coordsBuilder.build());
+            image = image.copyWithMetadata(metadataBuilder.build());
 
             store.putImage(image);
 

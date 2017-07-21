@@ -20,7 +20,5 @@ public class PEEMHistoryForm {
         Font font2 = directoryLabel.getFont();
         directoryLabel.setFont(new Font(font2.getName(), font2.getStyle(), 8));
 
-        historyTable.setAutoCreateRowSorter(true);
-
     }
 }
