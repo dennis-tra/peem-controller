@@ -57,25 +57,28 @@ public class DataFilerPeemLab implements DataFiler {
         File folder = new File(getWorkingDirectoryFor(sampleName));
         File[] listOfFiles = folder.listFiles();
 
+        int count = 1;
+
         if (listOfFiles == null) {
-            return 1;
+            return count;
         }
 
-        for (int i = listOfFiles.length - 1; i >= 0; i--) {
-            File file = listOfFiles[i];
-
+        for (File file : listOfFiles) {
             if (file.getName().endsWith("_PARAMS.txt")) {
                 String remainingFilename = file.getName().substring(generateScopeName(sampleName).length() + 1);
                 String imageCountStr = remainingFilename.substring(0, remainingFilename.indexOf("_"));
 
                 try {
-                    return Integer.parseInt(imageCountStr) + 1;
-                } catch (NumberFormatException exc) {
+                    int newCount = Integer.parseInt(imageCountStr) + 1;
+                    if (count < newCount) {
+                        count = newCount;
+                    }
+                } catch (NumberFormatException ignored) {
 
                 }
             }
         }
-        return 1;
+        return count;
     }
 
     public String generateScopeName(String sampleName) {
