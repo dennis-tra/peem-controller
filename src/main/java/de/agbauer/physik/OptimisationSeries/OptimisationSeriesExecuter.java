@@ -53,9 +53,6 @@ class OptimisationSeriesExecuter {
         final double currentExposureTimeInSeconds = setExposureAndReturnCurrentExposure(exposureTimeInSeconds);
         peemCommunicator.getProperty(property, PeemQuantity.VOLTAGE);
 
-        PeemBulkReader bulkReader = new PeemBulkReader(peemCommunicator);
-        PeemVoltages peemVoltages = bulkReader.getAllVoltages();
-
         Datastore store = studio.data().createRAMDatastore();
         DisplayWindow window = studio.displays().createDisplay(store);
         window.setCustomTitle("Optimisation series for " + optimisationSeriesParameters.property.displayName());
@@ -70,21 +67,19 @@ class OptimisationSeriesExecuter {
 
             Double value = values.get(i);
 
-            final int imageNumber = i + 1;
-
             peemCommunicator.setProperty(property, value);
 
-            logger.info("Slack: Acquiring image " + imageNumber + "/" + values.size() + ". " + property.displayName() + " = " + value + " V");
+            String msg = String.format("Slack: Acquiring image %d/%d. %s = %.4f V",
+                    i + 1,
+                    values.size(),
+                    property.displayName(),
+                    value);
+
+            logger.info(msg);
 
             Image image = studio.getSnapLiveManager().snap(false).get(0);
+
             PropertyMap.PropertyMapBuilder propertyMapBuilder = studio.data().getPropertyMapBuilder();
-            propertyMapBuilder.putDouble(property.cmdString(), value);
-
-
-            for (PeemProperty peemProperty : PeemProperty.values()) {
-                propertyMapBuilder.putString(peemProperty.displayName(), String.format(Locale.ROOT, "%.1f", peemVoltages.get(peemProperty)));
-            }
-
             Metadata.MetadataBuilder metadataBuilder = studio.data().getMetadataBuilder();
             metadataBuilder.positionName(property.cmdString() + " = " + value);
             metadataBuilder.userData(propertyMapBuilder.build());

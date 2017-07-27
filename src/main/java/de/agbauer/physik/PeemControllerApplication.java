@@ -11,6 +11,7 @@ import de.agbauer.physik.GeneralInformation.GeneralInformationController;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesController;
 import de.agbauer.physik.PeemCommunicator.*;
 import de.agbauer.physik.PeemHistory.PEEMHistoryController;
+import de.agbauer.physik.PeemHistoryBrowser.PeemHistoryBrowserController;
 import de.agbauer.physik.PeemState.PEEMStateController;
 import de.agbauer.physik.Presets.PresetController;
 import de.agbauer.physik.QuickAcquisition.AcquisitionSaver;
@@ -24,6 +25,8 @@ import org.scijava.plugin.SciJavaPlugin;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -73,6 +76,16 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         initPresetController();
         initObservers();
         initWindowListener();
+        initButtonListener();
+    }
+
+    private void initButtonListener() {
+        mainWindow.browseButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                new PeemHistoryBrowserController(dataFiler);
+            }
+        });
     }
 
     private void initPresetController(){
@@ -130,7 +143,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         logger.addHandler(consoleLogHandler);
 
         try {
-            FileHandler fileLogHandler = new FileHandler(dataFiler.logLocation());
+            FileHandler fileLogHandler = new FileHandler(dataFiler.logLocation(), true);
             fileLogHandler.setFormatter(new ConsoleLogFormatter());
             logger.addHandler(fileLogHandler);
         } catch (IOException e) {
@@ -147,6 +160,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
             OutputStream outputStream = serialConnectionHandler.getOutputStream();
 
             peemCommunicator =  new FocusPeemCommunicator(inputStream, outputStream);
+
 
         } catch (IOException e) {
 

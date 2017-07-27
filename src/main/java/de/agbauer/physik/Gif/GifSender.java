@@ -1,11 +1,8 @@
 package de.agbauer.physik.Gif;
 
-import de.agbauer.physik.Constants;
+import de.agbauer.physik.FileSystem.TmpJpegSaver;
+import de.agbauer.physik.Logging.SlackFileUploader;
 import de.agbauer.physik.PeemCommunicator.PeemProperty;
-import ij.io.FileSaver;
-import ij.ImagePlus;
-import ij.process.ImageProcessor;
-import okhttp3.*;
 import org.micromanager.data.*;
 
 import org.micromanager.data.Image;
@@ -20,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
-import java.util.stream.IntStream;
 
 public class GifSender {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -33,33 +29,9 @@ public class GifSender {
 
     public void addImage(Image image) {
         try {
-            ImageProcessor ip = this.imageJConverter.createProcessor(image);
-            int[] histogram = ip.getHistogram();
-            int sum = IntStream.of(histogram).sum();
-            int tenPercent = Math.round(sum * 0.1f);
 
-            int tmpSum = 0;
-            int upperLimit = 250;
+            File jpegFile = new TmpJpegSaver(image, imageJConverter).save();
 
-            for (int i = histogram.length - 1; i >= 0; i--) {
-                tmpSum += histogram[i];
-
-                if (tmpSum > tenPercent) {
-                    upperLimit = i;
-                    break;
-                }
-            }
-
-            ip.setMinAndMax(40, upperLimit);
-            ImagePlus imagePlus = new ImagePlus("", ip);
-
-            FileSaver.setJpegQuality(40);
-            FileSaver fileSaver = new FileSaver(imagePlus);
-
-            File jpegFile = File.createTempFile("jpegFile", Long.toString(System.nanoTime()));
-            jpegFile.deleteOnExit();
-
-            fileSaver.saveAsJpeg(jpegFile.getAbsolutePath());
             tmpImages.add(jpegFile);
         } catch (IOException e) {
             e.printStackTrace();
@@ -76,7 +48,9 @@ public class GifSender {
                 Double lastVal = values.get(values.size() - 1);
                 String title = "Optimisation series " + property.displayName() + " (from " + firstVal.toString() + " V to " + lastVal.toString() + " V).";
 
-                sendImageToSlack(title, gifFile);
+                SlackFileUploader sfu = new SlackFileUploader(title, gifFile, SlackFileUploader.MediaType.GIF);
+                sfu.send();
+
             } catch (Exception e) {
                 logger.warning("Could not save or send gif to slack channel " + e.getMessage());
             }
@@ -105,24 +79,5 @@ public class GifSender {
         writer.close();
         output.close();
         return gifFile;
-    }
-
-    private void sendImageToSlack(String title, File imageFile) throws Exception {
-        logger.info("Sending gif to slack channel #peem-lab");
-        OkHttpClient client = new OkHttpClient();
-
-        RequestBody requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("file", title, RequestBody.create(MediaType.parse("image/gif"), imageFile))
-                .addFormDataPart("token", Constants.slackBotToken)
-                .addFormDataPart("filename", title)
-                .addFormDataPart("channels", "#peem-lab")
-                .build();
-
-        Request request = new Request.Builder().url("https://slack.com/api/files.upload")
-                .post(requestBody).build();
-
-        Response response = client.newCall(request).execute();
-        response.body().close();
-
     }
 }

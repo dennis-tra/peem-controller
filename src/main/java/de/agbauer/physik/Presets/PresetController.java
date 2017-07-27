@@ -45,16 +45,23 @@ public class PresetController extends Observable implements AcquisitionParamsLoa
         this.loadPreset(presetFile);
 
         PeemBulkSetter bulkSetter = new PeemBulkSetter(peemCommunicator);
+
         CompletableFuture.runAsync(() -> {
+
+            this.setChanged();
+            notifyObservers("setting-voltages-start");
+
             try {
                 if (peemVoltages == null) {
-                    throw new IOException("Could not parse text field values");
+                    throw new IOException("Could not parse text field values or preset file could not be loaded.");
                 }
-
                 bulkSetter.setAllVoltages(peemVoltages);
                 logger.info("Finished setting all peem voltages");
             } catch (IOException e) {
                 logger.warning("Error while setting PEEM parameters: " + e.getMessage());
+            } finally {
+                this.setChanged();
+                notifyObservers("setting-voltages-end");
             }
         });
     }
@@ -87,12 +94,12 @@ public class PresetController extends Observable implements AcquisitionParamsLoa
             FileInputStream is = new FileInputStream(presetFile);
             ObjectInputStream ois = new ObjectInputStream(is);
 
-            PeemVoltages loadedVoltages = (PeemVoltages) ois.readObject();
+            this.peemVoltages = (PeemVoltages) ois.readObject();
 
             ois.close();
 
             this.setChanged();
-            notifyObservers(loadedVoltages);
+            notifyObservers(this.peemVoltages);
 
             logger.info("Loaded preset from file: " + presetFile);
         } catch(NullPointerException | ClassNotFoundException | IOException e){
@@ -105,5 +112,15 @@ public class PresetController extends Observable implements AcquisitionParamsLoa
         if (sender == this) return;
         this.presetForm.saveButton.setEnabled(peemVoltages != null);
         this.peemVoltages = peemVoltages;
+    }
+
+    @Override
+    public void peemCommunicationStarted(Observable sender) {
+        this.presetForm.enablePresetPanel(false);
+    }
+
+    @Override
+    public void peemCommunicationFinished(Observable sender) {
+        this.presetForm.enablePresetPanel(true);
     }
 }
