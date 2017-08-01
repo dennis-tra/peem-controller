@@ -8,6 +8,7 @@ import de.agbauer.physik.PeemCommunicator.*;
 
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParameters;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.CameraData;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.GeneralAcquisitionData;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.PeemVoltages;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParametersCollector;
 import de.agbauer.physik.QuickAcquisition.QuickAcquisitionSaver;
@@ -165,7 +166,17 @@ class OptimisationSeriesExecuter {
                     // to create the AcqusitionParameters to the value.
                     voltageMap.put(property, values.get(i));
                     PeemVoltages apVoltages = new PeemVoltages(voltageMap);
-                    AcquisitionParameters ap = new AcquisitionParameters(finalAp.generalData, apVoltages,
+
+                    // The sample name is expanded by "OptSeries" and the optimised property.
+                    // This determines the saving folder
+                    GeneralAcquisitionData genData =
+                            new GeneralAcquisitionData(
+                                    finalAp.generalData.sampleName + "_OptSeries_" + property,
+                                    finalAp.generalData.excitation,
+                                    finalAp.generalData.aperture,
+                                    finalAp.generalData.note);
+
+                    AcquisitionParameters ap = new AcquisitionParameters(genData, apVoltages,
                             finalAp.peemCurrents,
                             new CameraData(images.get(i), finalAp.cameraData.exposureInMs, finalAp.cameraData.binning));
 
@@ -177,8 +188,8 @@ class OptimisationSeriesExecuter {
 
             // The actual saving of the images and voltages embedded in the AcquisitionParameters
             QuickAcquisitionSaver saver = new QuickAcquisitionSaver(peemCommunicator, new DataFilerPeemLab());
-            for(AcquisitionParameters ap : params){
-                saver.save(ap);
+            for(int i = 0; i < params.size(); i++){
+                saver.save(params.get(i), values.get(i));
             }
 
         }catch (Exception e) {

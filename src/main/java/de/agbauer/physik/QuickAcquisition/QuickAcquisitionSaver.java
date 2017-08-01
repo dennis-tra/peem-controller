@@ -52,18 +52,57 @@ public class QuickAcquisitionSaver implements AcquisitionSaver {
     }
 
     //Overloading for the OptimisationSeries (which already provides AcquisitionParameters)
-    public AcquisitionParameters save(AcquisitionParameters ap) throws IOException {
-
-        FileLocations fileLocations = filer.setAcquisitionParams(ap);
+    public AcquisitionParameters save(AcquisitionParameters ap, Double propertyValue ) throws IOException {
 
         embedAcquisitonParameters(ap.cameraData, ap);
 
+        // This has mostly been copied from the DataFilerPeemLab calculateImageNumber function,
+        // which isn't applicable, since the scopeName is generated for the sampleName + propertyValue,
+        // while the directory is generated only for the sampleName (the directory name doesn't include
+        // the propertyValue, otherwise there would be a folder for every single image)
+        File folder = new File(filer.getWorkingDirectoryFor(ap.generalData.sampleName));
+        File[] listOfFiles = folder.listFiles();
+
+        int imageNumber = 1;
+
+        if(listOfFiles != null){
+            for (File file : listOfFiles) {
+                if (file.getName().endsWith("_PARAMS.txt")) {
+                    String remainingFilename =
+                            file.getName().substring(filer.generateScopeName(ap.generalData.sampleName
+                                    + "_" + propertyValue).length() + 1);
+                    String imageCountStr = remainingFilename.substring(0, remainingFilename.indexOf("_"));
+
+                    int newCount = Integer.parseInt(imageCountStr) + 1;
+                    if (imageNumber < newCount) {
+                        imageNumber = newCount;
+                    }
+                }
+            }
+        }
+
+        File directory = new File(filer.getWorkingDirectoryFor(ap.generalData.sampleName));
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
         ImageSaver imageSaver = new ImageSaver();
-        imageSaver.save(ap, ap.cameraData.imagePlus, fileLocations.tifImageFilePath);
+        imageSaver.save(ap, ap.cameraData.imagePlus,
+                filer.getWorkingDirectoryFor(ap.generalData.sampleName)
+                        + filer.generateScopeName(ap.generalData.sampleName) + "_"
+                        + propertyValue + "_"
+                        + imageNumber + "_"
+                        + ap.generalData.excitation + ".tif");
 
         AcquisitionParametersFormatter apFormatter = new AcquisitionParametersPowershellFormatter();
         AcquisitionParametersSaver apSaver = new AcquisitionParametersSaver(apFormatter);
-        apSaver.save(ap, fileLocations.peemParametersFilePath);
+        apSaver.save(ap,
+                filer.getWorkingDirectoryFor(ap.generalData.sampleName)
+                + filer.generateScopeName(ap.generalData.sampleName) + "_"
+                + propertyValue + "_"
+                + imageNumber + "_"
+                + ap.generalData.excitation
+                + "_PARAMS.txt");
 
         sendImageToSlackAsync(ap, ap.cameraData.imagePlus);
 
