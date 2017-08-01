@@ -51,6 +51,25 @@ public class QuickAcquisitionSaver implements AcquisitionSaver {
         return ap;
     }
 
+    //Overloading for the OptimisationSeries (which already provides AcquisitionParameters)
+    public AcquisitionParameters save(AcquisitionParameters ap) throws IOException {
+
+        FileLocations fileLocations = filer.setAcquisitionParams(ap);
+
+        embedAcquisitonParameters(ap.cameraData, ap);
+
+        ImageSaver imageSaver = new ImageSaver();
+        imageSaver.save(ap, ap.cameraData.imagePlus, fileLocations.tifImageFilePath);
+
+        AcquisitionParametersFormatter apFormatter = new AcquisitionParametersPowershellFormatter();
+        AcquisitionParametersSaver apSaver = new AcquisitionParametersSaver(apFormatter);
+        apSaver.save(ap, fileLocations.peemParametersFilePath);
+
+        sendImageToSlackAsync(ap, ap.cameraData.imagePlus);
+
+        return ap;
+    }
+
     private void embedAcquisitonParameters(CameraData cameraData, AcquisitionParameters ap) {
 
         cameraData.imagePlus.setProperty("Sample Name", ap.generalData.sampleName);
