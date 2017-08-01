@@ -23,6 +23,7 @@ public class OptimisationSeriesController extends Observable implements Document
     private PeemCommunicator peemCommunicator;
     private Studio studio;
     private OptimisationSeriesExecuter optimisationSeriesExecuter;
+    private String sampleName;
 
 
     public OptimisationSeriesController(Studio studio, PeemCommunicator peemCommunicator, OptimisationSeriesForm form) {
@@ -96,7 +97,7 @@ public class OptimisationSeriesController extends Observable implements Document
         try {
             OptimisationSeriesParameters optimisationSeriesParameters = getCurrentOptimisationParameters();
 
-            optimisationSeriesExecuter = new OptimisationSeriesExecuter(studio, peemCommunicator);
+            optimisationSeriesExecuter = new OptimisationSeriesExecuter(studio, peemCommunicator, sampleName);
 
             CompletableFuture.runAsync(() -> {
                 try {
@@ -177,6 +178,7 @@ public class OptimisationSeriesController extends Observable implements Document
 
     @Override
     public void sampleNameChanged(String sampleName) {
+        this.sampleName = sampleName;
         this.form.setEnabledState(!empty(sampleName));
     }
 
