@@ -142,7 +142,7 @@ class OptimisationSeriesExecuter {
             ImagePlus dummyImage = images.get(0);
             CameraData dummyData = new CameraData(dummyImage, (float) (exposureTimeInSeconds * 1000),
                     Integer.parseInt(currentBinning));
-            AcquisitionParameters finalAp = apc.collect(sampleName, dummyData, true);
+            AcquisitionParameters finalAp = apc.collect(sampleName, dummyData);
 
             // The images list should have the same amount of elements as the values list at this point.
             // This params list is supposed to hold the AcqusitionParameters associated to the values of
