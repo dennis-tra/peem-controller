@@ -14,6 +14,7 @@ import ij.process.ImageProcessor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
@@ -52,59 +53,45 @@ public class QuickAcquisitionSaver implements AcquisitionSaver {
     }
 
     //Overloading for the OptimisationSeries (which already provides AcquisitionParameters)
-    public AcquisitionParameters save(AcquisitionParameters ap, Double propertyValue ) throws IOException {
+    public ArrayList<AcquisitionParameters> save(ArrayList<AcquisitionParameters> ap, ArrayList<Double> propertyValues ) throws IOException {
 
-        embedAcquisitonParameters(ap.cameraData, ap);
+        // The initial optSeries is number one, if the according folder already exists, it is checked,
+        // if the second optSeries also exists and so on...
+        // If (for example) there are already four optSeries recorded, the fifth one shouldn't exist yet.
+        // The number five is then the number of the curent optSeries
+        int optSeriesNumber = 1;
+        File directory = new File(filer.getWorkingDirectoryFor(ap.get(0).generalData.sampleName)
+                + "series_" + optSeriesNumber + File.separator);
 
-        // This has mostly been copied from the DataFilerPeemLab calculateImageNumber function,
-        // which isn't applicable, since the scopeName is generated for the sampleName + propertyValue,
-        // while the directory is generated only for the sampleName (the directory name doesn't include
-        // the propertyValue, otherwise there would be a folder for every single image)
-        File folder = new File(filer.getWorkingDirectoryFor(ap.generalData.sampleName));
-        File[] listOfFiles = folder.listFiles();
-
-        int imageNumber = 1;
-
-        if(listOfFiles != null){
-            for (File file : listOfFiles) {
-                if (file.getName().endsWith("_PARAMS.txt")) {
-                    String remainingFilename =
-                            file.getName().substring(filer.generateScopeName(ap.generalData.sampleName
-                                    + "_" + propertyValue).length() + 1);
-                    String imageCountStr = remainingFilename.substring(0, remainingFilename.indexOf("_"));
-
-                    int newCount = Integer.parseInt(imageCountStr) + 1;
-                    if (imageNumber < newCount) {
-                        imageNumber = newCount;
-                    }
-                }
-            }
+        while(directory.exists()){
+            optSeriesNumber++;
+            directory = new File(filer.getWorkingDirectoryFor(ap.get(0).generalData.sampleName)
+                    + "series_" + optSeriesNumber + File.separator);
         }
 
-        File directory = new File(filer.getWorkingDirectoryFor(ap.generalData.sampleName));
-        if (!directory.exists()) {
-            directory.mkdirs();
+        directory.mkdirs();
+
+        // This loop saves all images to the SAME subfolder. In order to do this, it is necessary for this
+        // saving function to take all parameters and propertyValues as a list. Otherwise there would be
+        // a new subfolder for every image.
+        for(int i = 0; i < ap.size(); i++){
+            embedAcquisitonParameters(ap.get(i).cameraData, ap.get(i));
+
+            String fileString = filer.getWorkingDirectoryFor(ap.get(i).generalData.sampleName)
+                                + "series_" + optSeriesNumber + File.separator
+                                + filer.generateScopeName(ap.get(i).generalData.sampleName) + "_"
+                                + propertyValues.get(i) + "_"
+                                + ap.get(i).generalData.excitation;
+
+            ImageSaver imageSaver = new ImageSaver();
+            imageSaver.save(ap.get(i), ap.get(i).cameraData.imagePlus,fileString + ".tif");
+
+            AcquisitionParametersFormatter apFormatter = new AcquisitionParametersPowershellFormatter();
+            AcquisitionParametersSaver apSaver = new AcquisitionParametersSaver(apFormatter);
+            apSaver.save(ap.get(i),fileString + "_PARAMS.txt");
+
+            sendImageToSlackAsync(ap.get(i), ap.get(i).cameraData.imagePlus);
         }
-
-        ImageSaver imageSaver = new ImageSaver();
-        imageSaver.save(ap, ap.cameraData.imagePlus,
-                filer.getWorkingDirectoryFor(ap.generalData.sampleName)
-                        + filer.generateScopeName(ap.generalData.sampleName) + "_"
-                        + propertyValue + "_"
-                        + imageNumber + "_"
-                        + ap.generalData.excitation + ".tif");
-
-        AcquisitionParametersFormatter apFormatter = new AcquisitionParametersPowershellFormatter();
-        AcquisitionParametersSaver apSaver = new AcquisitionParametersSaver(apFormatter);
-        apSaver.save(ap,
-                filer.getWorkingDirectoryFor(ap.generalData.sampleName)
-                + filer.generateScopeName(ap.generalData.sampleName) + "_"
-                + propertyValue + "_"
-                + imageNumber + "_"
-                + ap.generalData.excitation
-                + "_PARAMS.txt");
-
-        sendImageToSlackAsync(ap, ap.cameraData.imagePlus);
 
         return ap;
     }

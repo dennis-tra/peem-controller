@@ -148,7 +148,7 @@ class OptimisationSeriesExecuter {
             // The images list should have the same amount of elements as the values list at this point.
             // This params list is supposed to hold the AcqusitionParameters associated to the values of
             // the optimisation series.
-            List<AcquisitionParameters> params = new ArrayList<>();
+            ArrayList<AcquisitionParameters> params = new ArrayList<>();
 
             // Since the PeemVoltages fields are private and we want to change only one property
             // (the one to be optimised), a new map is put together to be able to initialise a brand new
@@ -188,9 +188,7 @@ class OptimisationSeriesExecuter {
 
             // The actual saving of the images and voltages embedded in the AcquisitionParameters
             QuickAcquisitionSaver saver = new QuickAcquisitionSaver(peemCommunicator, new DataFilerPeemLab());
-            for(int i = 0; i < params.size(); i++){
-                saver.save(params.get(i), values.get(i));
-            }
+            saver.save(params,values);
 
         }catch (Exception e) {
             //If the user denies to enter any general data (or denies to save) during the collection
