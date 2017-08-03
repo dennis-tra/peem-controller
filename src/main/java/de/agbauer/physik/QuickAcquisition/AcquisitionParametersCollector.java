@@ -9,14 +9,14 @@ import javax.swing.*;
 import java.io.IOException;
 import java.util.Map;
 
-class AcquisitionParametersCollector {
+public class AcquisitionParametersCollector {
     private final PeemCommunicator peemCommunicator;
 
-    AcquisitionParametersCollector(PeemCommunicator peemCommunicator) {
+    public AcquisitionParametersCollector(PeemCommunicator peemCommunicator) {
         this.peemCommunicator = peemCommunicator;
     }
 
-    AcquisitionParameters collect(String sampleName, CameraData cameraData) throws IOException {
+    public AcquisitionParameters collect(String sampleName, CameraData cameraData) throws IOException {
 
         GeneralAcquisitionData generalData = askForExcitationApertureAndNote(sampleName);
 

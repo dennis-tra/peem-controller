@@ -14,6 +14,7 @@ import ij.process.ImageProcessor;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
@@ -47,6 +48,50 @@ public class QuickAcquisitionSaver implements AcquisitionSaver {
         apSaver.save(ap, fileLocations.peemParametersFilePath);
 
         sendImageToSlackAsync(ap, cameraData.imagePlus);
+
+        return ap;
+    }
+
+    //Overloading for the OptimisationSeries (which already provides AcquisitionParameters)
+    public ArrayList<AcquisitionParameters> save(ArrayList<AcquisitionParameters> ap, ArrayList<Double> propertyValues ) throws IOException {
+
+        // The initial optSeries is number one, if the according folder already exists, it is checked,
+        // if the second optSeries also exists and so on...
+        // If (for example) there are already four optSeries recorded, the fifth one shouldn't exist yet.
+        // The number five is then the number of the curent optSeries
+        int optSeriesNumber = 1;
+        File directory = new File(filer.getWorkingDirectoryFor(ap.get(0).generalData.sampleName)
+                + "series_" + optSeriesNumber + File.separator);
+
+        while(directory.exists()){
+            optSeriesNumber++;
+            directory = new File(filer.getWorkingDirectoryFor(ap.get(0).generalData.sampleName)
+                    + "series_" + optSeriesNumber + File.separator);
+        }
+
+        directory.mkdirs();
+
+        // This loop saves all images to the SAME subfolder. In order to do this, it is necessary for this
+        // saving function to take all parameters and propertyValues as a list. Otherwise there would be
+        // a new subfolder for every image.
+        for(int i = 0; i < ap.size(); i++){
+            embedAcquisitonParameters(ap.get(i).cameraData, ap.get(i));
+
+            String fileString = filer.getWorkingDirectoryFor(ap.get(i).generalData.sampleName)
+                                + "series_" + optSeriesNumber + File.separator
+                                + filer.generateScopeName(ap.get(i).generalData.sampleName) + "_"
+                                + propertyValues.get(i) + "_"
+                                + ap.get(i).generalData.excitation;
+
+            ImageSaver imageSaver = new ImageSaver();
+            imageSaver.save(ap.get(i), ap.get(i).cameraData.imagePlus,fileString + ".tif");
+
+            AcquisitionParametersFormatter apFormatter = new AcquisitionParametersPowershellFormatter();
+            AcquisitionParametersSaver apSaver = new AcquisitionParametersSaver(apFormatter);
+            apSaver.save(ap.get(i),fileString + "_PARAMS.txt");
+
+            sendImageToSlackAsync(ap.get(i), ap.get(i).cameraData.imagePlus);
+        }
 
         return ap;
     }
