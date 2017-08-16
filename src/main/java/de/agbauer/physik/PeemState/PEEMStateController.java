@@ -68,7 +68,7 @@ public class PEEMStateController extends Observable implements AcquisitionParams
                     throw new IOException("Could not parse text field values");
                 }
 
-                bulkSetter.setAllVoltages(peemVoltages);
+                bulkSetter.setAllVoltages(peemVoltages, true);
                 logger.info("Finished setting all peem voltages");
             } catch (IOException e) {
                 logger.warning("Error while setting PEEM parameters: " + e.getMessage());

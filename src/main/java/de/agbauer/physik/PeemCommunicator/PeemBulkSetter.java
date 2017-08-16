@@ -14,7 +14,7 @@ public class PeemBulkSetter {
         this.peemCommunicator = peemCommunicator;
     }
 
-    public void setAllVoltages(PeemVoltages peemVoltages) throws IOException{
+    public void setAllVoltages(PeemVoltages peemVoltages, boolean setStigmatorAndDeflector) throws IOException{
         logger.info("Setting all voltages...");
         PeemProperty[] peemProperties = PeemProperty.values();
 
@@ -23,6 +23,12 @@ public class PeemBulkSetter {
 
         for (PeemProperty peemProperty: peemProperties) {
             if (peemProperty == PeemProperty.MCP) continue;
+                if(!setStigmatorAndDeflector){
+                    if (peemProperty == PeemProperty.STIGMATOR_X) continue;
+                    if (peemProperty == PeemProperty.STIGMATOR_Y) continue;
+                    if (peemProperty == PeemProperty.DEFLECTOR_X) continue;
+                    if (peemProperty == PeemProperty.DEFLECTOR_Y) continue;
+                }
 
             try {
                 this.peemCommunicator.setProperty(peemProperty, peemVoltages.get(peemProperty));

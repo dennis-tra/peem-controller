@@ -55,7 +55,7 @@ public class PresetController extends Observable implements AcquisitionParamsLoa
                 if (peemVoltages == null) {
                     throw new IOException("Could not parse text field values or preset file could not be loaded.");
                 }
-                bulkSetter.setAllVoltages(peemVoltages);
+                bulkSetter.setAllVoltages(peemVoltages, false);
                 logger.info("Finished setting all peem voltages");
             } catch (IOException e) {
                 logger.warning("Error while setting PEEM parameters: " + e.getMessage());
