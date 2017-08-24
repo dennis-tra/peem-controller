@@ -48,7 +48,7 @@ public class OptimisationSeriesForm {
     }
 
     private void enableCheckboxes(boolean enabled) {
-        saveSeriesCheckBox.setEnabled(false);
+        saveSeriesCheckBox.setEnabled(enabled);
         sendNotificationCheckBox.setEnabled(enabled);
     }
 

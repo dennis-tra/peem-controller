@@ -105,7 +105,10 @@ public class OptimisationSeriesController extends Observable implements Document
             CompletableFuture.runAsync(() -> {
                 try {
                     List<ImagePlus> images = optimisationSeriesExecuter.startSeries(optimisationSeriesParameters);
-                    fileSaver.save(sampleName, optimisationSeriesParameters, images);
+
+                    if (this.form.saveSeriesCheckBox.isSelected()) {
+                        fileSaver.save(sampleName, optimisationSeriesParameters, images);
+                    }
 
                 } catch (Exception e1) {
                     throw new CompletionException(e1);
