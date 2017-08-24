@@ -31,15 +31,11 @@ class OptimisationSeriesExecuter {
     private CMMCore mmCore;
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
     private boolean shouldStop = false;
-    private String sampleName;
-    private AcquisitionParametersCollector apc;
 
-    OptimisationSeriesExecuter(Studio studio, PeemCommunicator communicator, String sampleName) {
+    OptimisationSeriesExecuter(Studio studio, PeemCommunicator communicator) {
         this.studio = studio;
         this.mmCore = studio.getCMMCore();
         this.peemCommunicator = communicator;
-        this.sampleName = sampleName;
-        apc = new AcquisitionParametersCollector(peemCommunicator);
     }
 
     List<ImagePlus> startSeries(OptimisationSeriesParameters optimisationSeriesParameters) throws Exception {
@@ -126,75 +122,7 @@ class OptimisationSeriesExecuter {
 
         gifSender.sendGifAsync(values, property);
 
-        //Only full optimisation series are supposed to be saved
-        if(!shouldStop) {
-            saveImagesInList(images, currentBinning, currentExposureTimeInSeconds, values, property);
-        }
-
         return images;
-    }
-
-
-    private void saveImagesInList(List<ImagePlus> images, String currentBinning, double exposureTimeInSeconds,
-                                  ArrayList<Double> values, PeemProperty property){
-        try {
-            //The dummyImage and dummyData are used to obtain the PeemCurrents and Voltages
-            //at the end of the optimisation series
-            ImagePlus dummyImage = images.get(0);
-            CameraData dummyData = new CameraData(dummyImage, (float) (exposureTimeInSeconds * 1000),
-                    Integer.parseInt(currentBinning));
-            AcquisitionParameters finalAp = apc.collect(sampleName, dummyData);
-
-            // The images list should have the same amount of elements as the values list at this point.
-            // This params list is supposed to hold the AcqusitionParameters associated to the values of
-            // the optimisation series.
-            ArrayList<AcquisitionParameters> params = new ArrayList<>();
-
-            // Since the PeemVoltages fields are private and we want to change only one property
-            // (the one to be optimised), a new map is put together to be able to initialise a brand new
-            // PeemProperty with the correct values for the respective image
-            Map<PeemProperty, Double> voltageMap = new HashMap<>();
-            for (PeemProperty prop : PeemProperty.values()){
-              voltageMap.put(prop, finalAp.peemVoltages.get(prop));
-            }
-
-            // If the dimensions differ from each other, there will be an ArrayOutOfBoundsException
-            if (images.size() == values.size()) {
-                for (int i = 0; i < images.size(); i++) {
-                    // For every value in the optimisation value list the optimised property is changed in the
-                    // HashMap, then a new PeemVoltages object is created. Finally, the PeemVoltages are used
-                    // to create the AcqusitionParameters to the value.
-                    voltageMap.put(property, values.get(i));
-                    PeemVoltages apVoltages = new PeemVoltages(voltageMap);
-
-                    // The sample name is expanded by "OptSeries" and the optimised property.
-                    // This determines the saving folder
-                    GeneralAcquisitionData genData =
-                            new GeneralAcquisitionData(
-                                    finalAp.generalData.sampleName + "_OptSeries_" + property,
-                                    finalAp.generalData.excitation,
-                                    finalAp.generalData.aperture,
-                                    finalAp.generalData.note);
-
-                    AcquisitionParameters ap = new AcquisitionParameters(genData, apVoltages,
-                            finalAp.peemCurrents,
-                            new CameraData(images.get(i), finalAp.cameraData.exposureInMs, finalAp.cameraData.binning));
-
-                    params.add(ap);
-                }
-            }else{
-                throw new Exception("Images and values must have the same dimension.");
-            }
-
-            // The actual saving of the images and voltages embedded in the AcquisitionParameters
-            QuickAcquisitionSaver saver = new QuickAcquisitionSaver(peemCommunicator, new DataFilerPeemLab());
-            saver.save(params,values);
-
-        }catch (Exception e) {
-            //If the user denies to enter any general data (or denies to save) during the collection
-            //of the AcquisitionParameters
-            return;
-        }
     }
 
     private String setCameraBinningReturnCurrentBinning(int binning) throws Exception {

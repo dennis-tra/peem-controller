@@ -6,7 +6,7 @@ import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParam
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-class AcquisitionParametersPowershellFormatter implements AcquisitionParametersFormatter {
+public class AcquisitionParametersPowershellFormatter implements AcquisitionParametersFormatter {
 
     public String format(AcquisitionParameters parameters) {
         String txtParams = "";

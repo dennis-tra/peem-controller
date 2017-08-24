@@ -12,11 +12,11 @@ public class AcquisitionParametersSaver {
 
     private AcquisitionParametersFormatter formatter;
 
-    AcquisitionParametersSaver(AcquisitionParametersFormatter formatter) {
+    public AcquisitionParametersSaver(AcquisitionParametersFormatter formatter) {
         this.formatter = formatter;
     }
 
-    void save(AcquisitionParameters ap, String filePath) throws IOException {
+    public void save(AcquisitionParameters ap, String filePath) throws IOException {
 
         logger.info("Saving peem params to " + filePath);
 

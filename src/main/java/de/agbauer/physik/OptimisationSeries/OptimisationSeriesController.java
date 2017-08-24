@@ -4,6 +4,7 @@ import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.PeemCommunicator.PeemCommunicator;
 import de.agbauer.physik.PeemCommunicator.PeemProperty;
 import de.agbauer.physik.PeemCommunicator.PeemQuantity;
+import ij.ImagePlus;
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.micromanager.Studio;
 
@@ -11,7 +12,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.Observable;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.logging.Logger;
@@ -19,6 +20,7 @@ import java.util.logging.Logger;
 public class OptimisationSeriesController extends Observable implements DocumentListener, SampleNameChangeListener {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
+    private OptimisationSeriesSaver fileSaver;
     private OptimisationSeriesForm form;
     private PeemCommunicator peemCommunicator;
     private Studio studio;
@@ -26,7 +28,8 @@ public class OptimisationSeriesController extends Observable implements Document
     private String sampleName;
 
 
-    public OptimisationSeriesController(Studio studio, PeemCommunicator peemCommunicator, OptimisationSeriesForm form) {
+    public OptimisationSeriesController(Studio studio, PeemCommunicator peemCommunicator, OptimisationSeriesSaver fileSaver, OptimisationSeriesForm form) {
+        this.fileSaver = fileSaver;
         this.form = form;
         this.studio = studio;
         this.peemCommunicator = peemCommunicator;
@@ -97,11 +100,13 @@ public class OptimisationSeriesController extends Observable implements Document
         try {
             OptimisationSeriesParameters optimisationSeriesParameters = getCurrentOptimisationParameters();
 
-            optimisationSeriesExecuter = new OptimisationSeriesExecuter(studio, peemCommunicator, sampleName);
+            optimisationSeriesExecuter = new OptimisationSeriesExecuter(studio, peemCommunicator);
 
             CompletableFuture.runAsync(() -> {
                 try {
-                    optimisationSeriesExecuter.startSeries(optimisationSeriesParameters);
+                    List<ImagePlus> images = optimisationSeriesExecuter.startSeries(optimisationSeriesParameters);
+                    fileSaver.save(sampleName, optimisationSeriesParameters, images);
+
                 } catch (Exception e1) {
                     throw new CompletionException(e1);
                 }
@@ -125,6 +130,7 @@ public class OptimisationSeriesController extends Observable implements Document
             seriesEnded();
         }
     }
+
 
     private void seriesEnded() {
         logger.info("Optimisation series ended");

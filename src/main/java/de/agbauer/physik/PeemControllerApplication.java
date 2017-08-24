@@ -9,6 +9,7 @@ import de.agbauer.physik.Observers.*;
 import de.agbauer.physik.Observers.SampleNameChangeListener;
 import de.agbauer.physik.GeneralInformation.GeneralInformationController;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesController;
+import de.agbauer.physik.OptimisationSeries.OptimisationSeriesSaver;
 import de.agbauer.physik.PeemCommunicator.*;
 import de.agbauer.physik.PeemHistory.PEEMHistoryController;
 import de.agbauer.physik.PeemHistoryBrowser.PeemHistoryBrowserController;
@@ -180,7 +181,8 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     }
 
     private void initOptimisationSeries() {
-        optimisationSeriesController = new OptimisationSeriesController(studio, peemCommunicator, mainWindow.optimisationSeriesForm);
+        OptimisationSeriesSaver fileSaver = new OptimisationSeriesSaver(peemCommunicator, dataFiler);
+        optimisationSeriesController = new OptimisationSeriesController(studio, peemCommunicator, fileSaver, mainWindow.optimisationSeriesForm);
     }
 
     private void initQuickAcquisition() {
