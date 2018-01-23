@@ -19,6 +19,7 @@ public class MainWindow extends JFrame {
     PEEMHistoryForm peemHistoryForm;
     PresetForm presetForm;
     JButton browseButton;
+    private JTabbedPane tabbedPane2;
 
 
     MainWindow() {
