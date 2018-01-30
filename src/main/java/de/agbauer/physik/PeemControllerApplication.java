@@ -107,7 +107,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private void initObservers() {
 
         SampleNameChangeObserver sampleNameChangeObserver = new SampleNameChangeObserver(new SampleNameChangeListener[] {
-                peemHistoryController, optimisationSeriesController, quickAcquisitionController
+                peemHistoryController, optimisationSeriesController, quickAcquisitionController, timeResolvedController
         });
 
         generalInformationController.addObserver(sampleNameChangeObserver);

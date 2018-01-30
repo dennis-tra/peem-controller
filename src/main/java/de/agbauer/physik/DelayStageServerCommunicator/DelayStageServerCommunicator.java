@@ -45,7 +45,7 @@ public class DelayStageServerCommunicator {
         receivingStream.read(answerArray, 0, answerLength);
         String answer = new String(answerArray);
 
-        logger.info("Delaystage Server answered ("+String.valueOf(answerLength)+"): " + answer);
+        logger.info("Delaystage Server answered: " + answer);
 
         return answer;
     }
@@ -55,6 +55,16 @@ public class DelayStageServerCommunicator {
         int value = (int) (-femtoSeconds * 5000);
 
         String answer = sendCommand(DelayStageCommands.MOVE_RELATIVE, value);
+        String position = answer.substring(3);
+
+        return Float.parseFloat(position) / 5000;
+    }
+
+    float moveTo(double femtoSeconds) throws IOException {
+
+        int value = (int) (femtoSeconds * 5000);
+
+        String answer = sendCommand(DelayStageCommands.MOVE, value);
         String position = answer.substring(3);
 
         return Float.parseFloat(position) / 5000;

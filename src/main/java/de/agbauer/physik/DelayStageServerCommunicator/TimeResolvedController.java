@@ -1,7 +1,7 @@
 package de.agbauer.physik.DelayStageServerCommunicator;
 
 
-import de.agbauer.physik.OptimisationSeries.OptimisationSeriesParameters;
+import de.agbauer.physik.Observers.SampleNameChangeListener;
 import jdk.nashorn.internal.runtime.regexp.joni.exception.ValueException;
 import org.micromanager.Studio;
 
@@ -11,27 +11,32 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Parameter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Observable;
 import java.util.TimeZone;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.logging.Logger;
 
-public class TimeResolvedController implements DocumentListener {
+public class TimeResolvedController extends Observable implements DocumentListener, SampleNameChangeListener {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     private final TimeResolvedForm timeResolvedForm;
     private final Studio studio;
     private final DelayStageConnectionHandler delayStageConnectionHandler;
     private DelayStageServerCommunicator delayStageServerCommunicator;
+    private TimeResolvedExecuter timeResolvedExecuter;
+    private String sampleName;
 
     public TimeResolvedController(Studio studio, DelayStageConnectionHandler delayStageConnectionHandler, TimeResolvedForm timeResolvedForm) {
         this.studio = studio;
         this.timeResolvedForm = timeResolvedForm;
         this.delayStageConnectionHandler = delayStageConnectionHandler;
 
+        this.timeResolvedForm.startButton.addActionListener(this::startButtonClicked);
         this.timeResolvedForm.startingValueTextField.getDocument().addDocumentListener(this);
         this.timeResolvedForm.endingValueTextField.getDocument().addDocumentListener(this);
         this.timeResolvedForm.stepSizeTextField.getDocument().addDocumentListener(this);
@@ -165,6 +170,77 @@ public class TimeResolvedController implements DocumentListener {
                 timeResolvedForm.exposureTextField.getText(),
                 timeResolvedForm.sendNotificationCheckBox.isSelected()
         );
+    }
+
+    private boolean isMeasuring() {
+        return timeResolvedExecuter != null;
+    }
+
+    private void startButtonClicked(ActionEvent e) {
+        if (isMeasuring()) {
+            stopMeasuring();
+        } else {
+            startMeasuring();
+        }
+    }
+
+    private void stopMeasuring() {
+        timeResolvedExecuter.cancelSeries();
+        timeResolvedForm.setGUIToCancelledSeriesState();
+    }
+
+    private void startMeasuring() {
+        notifyObservers("started-acquisition");
+
+        try {
+            TimeResolvedParameters timeResolvedParameters = getMeasurementParameters();
+
+            timeResolvedExecuter = new TimeResolvedExecuter(studio, getDelayStageServerCommunicator());
+
+            CompletableFuture.runAsync(() -> {
+                try {
+                    timeResolvedExecuter.startSeries(timeResolvedParameters);
+                } catch (Exception e1) {
+                    throw new CompletionException(e1);
+                }
+
+                measurementEnded();
+            }).exceptionally((exc) -> {
+                measurementEnded();
+
+                logger.severe("Slack: Time resolved measurement failed: " + exc.getMessage());
+                return null;
+            });
+
+            timeResolvedForm.setGUIToMeasuringState();
+
+        } catch (NumberFormatException | ValueException exception) {
+            logger.info("Could not read parameters: " + exception.getMessage());
+            measurementEnded();
+
+        } catch (Exception exception) {
+            logger.severe("Slack: Error in time resolved measurement: "+ exception.getMessage());
+            measurementEnded();
+        }
+    }
+
+
+    private void measurementEnded() {
+        logger.info("Time resolved measurement ended");
+
+        notifyObservers("finished-acquisition");
+        timeResolvedExecuter = null;
+        timeResolvedForm.setGUIToInputState();
+    }
+
+    @Override
+    public void sampleNameChanged(String sampleName) {
+        this.sampleName = sampleName;
+        this.timeResolvedForm.setEnabledState(!empty(sampleName));
+    }
+
+    private boolean empty( final String s ) {
+        return s == null || s.trim().isEmpty();
     }
 
 }
