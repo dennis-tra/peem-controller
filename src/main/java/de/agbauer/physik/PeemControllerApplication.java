@@ -1,5 +1,7 @@
 package de.agbauer.physik;
 
+import de.agbauer.physik.DelayStageServerCommunicator.DelayStageConnectionHandler;
+import de.agbauer.physik.DelayStageServerCommunicator.TimeResolvedController;
 import de.agbauer.physik.FieldOfViewInspectorPlugin.FieldOfViewPlugin;
 import de.agbauer.physik.FileSystem.DataFiler;
 import de.agbauer.physik.FileSystem.DataFilerPeemLab;
@@ -28,9 +30,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -56,6 +56,8 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     private SerialConnectionHandler serialConnectionHandler = new RxTxConnectionHandler();
 
     private DataFiler dataFiler = new DataFilerPeemLab();
+    private TimeResolvedController timeResolvedController;
+    private DelayStageConnectionHandler delayStageConnectionHandler = new DelayStageConnectionHandler();
 
     public static void main(String[] args) {
         PeemControllerApplication app = new PeemControllerApplication();
@@ -71,6 +73,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         initPEEMConnection();
         initGeneralInformation();
         initOptimisationSeries();
+        initTimeResolved();
         initQuickAcquisition();
         initPeemState();
         initPeemHistory();
@@ -116,8 +119,6 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
                 peemHistoryController
         });
         quickAcquisitionController.addObserver(singleAcquisitionObserver);
-
-
 
         AcquisitionParamsLoadObserver paramsLoadObserver = new AcquisitionParamsLoadObserver(new AcquisitionParamsLoadListener[]{
                 peemStateController, presetController, fieldOfViewPlugin
@@ -185,6 +186,10 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
         optimisationSeriesController = new OptimisationSeriesController(studio, peemCommunicator, fileSaver, mainWindow.optimisationSeriesForm);
     }
 
+    private void initTimeResolved() {
+        timeResolvedController = new TimeResolvedController(studio, delayStageConnectionHandler, mainWindow.timeResolvedForm);
+    }
+
     private void initQuickAcquisition() {
         AcquisitionSaver fileSaver = new QuickAcquisitionSaver(peemCommunicator, dataFiler);
         quickAcquisitionController = new QuickAcquisitionController(studio, fileSaver, mainWindow.quickAcquisitionForm);
@@ -195,7 +200,7 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     }
 
     private void initWindowListener() {
-        mainWindow.addWindowListener(new PeemControllerWindowListener(serialConnectionHandler));
+        mainWindow.addWindowListener(new PeemControllerWindowListener(serialConnectionHandler, delayStageConnectionHandler));
     }
 
 	@Override

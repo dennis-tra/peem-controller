@@ -1,5 +1,6 @@
 package de.agbauer.physik;
 
+import de.agbauer.physik.DelayStageServerCommunicator.TimeResolvedForm;
 import de.agbauer.physik.GeneralInformation.GeneralInformationForm;
 import de.agbauer.physik.OptimisationSeries.OptimisationSeriesForm;
 import de.agbauer.physik.PeemHistory.PEEMHistoryForm;
@@ -19,7 +20,7 @@ public class MainWindow extends JFrame {
     PEEMHistoryForm peemHistoryForm;
     PresetForm presetForm;
     JButton browseButton;
-    private JTabbedPane tabbedPane2;
+    TimeResolvedForm timeResolvedForm;
 
 
     MainWindow() {
