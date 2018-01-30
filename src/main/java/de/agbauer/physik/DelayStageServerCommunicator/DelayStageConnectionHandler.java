@@ -82,7 +82,8 @@ public class DelayStageConnectionHandler {
 
                     prefs.put(DELAY_STAGE_HOST, newHost);
                     prefs.putInt(DELAY_STAGE_PORT, newPort);
-
+                    savedHost = newHost;
+                    savedPort = newPort;
                 } else {
                     throw new IOException("Could not connect to delay stage server");
                 }
