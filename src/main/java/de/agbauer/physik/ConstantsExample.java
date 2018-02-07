@@ -1,6 +1,6 @@
 package de.agbauer.physik;
 
-public class Constants {
+public class ConstantsExample {
     public static final boolean peemConnected = System.getenv("PEEM_CONNECTED") == "TRUE";
     public static final String version = "v0.5.0";
     public static final String defaultPort = "COM3";
