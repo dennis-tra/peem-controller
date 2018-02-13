@@ -146,11 +146,11 @@ public class TimeResolvedController extends Observable implements DocumentListen
             double restSeconds = Math.floor(timeResolvedParameters.getRestSeconds());
             int imageCount = timeResolvedParameters.values.size();
 
-            // + 1 is a time zone fix I suppose...
             String totalTimeStr = String.format("%.0f:%02.0f:%02.0f", fullHours, restMinutes, restSeconds);
 
             SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
             Date duration = format.parse(totalTimeStr);
+            // + 1 is a time zone fix I suppose...
             Date newDate = new Date(new Date().getTime() + duration.getTime() + 3600000);
 
 
