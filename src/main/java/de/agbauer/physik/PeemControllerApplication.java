@@ -2,6 +2,7 @@ package de.agbauer.physik;
 
 import de.agbauer.physik.DelayStageServerCommunicator.DelayStageConnectionHandler;
 import de.agbauer.physik.DelayStageServerCommunicator.TimeResolvedController;
+import de.agbauer.physik.DelayStageServerCommunicator.TimeResolvedSaver;
 import de.agbauer.physik.FieldOfViewInspectorPlugin.FieldOfViewPlugin;
 import de.agbauer.physik.FileSystem.DataFiler;
 import de.agbauer.physik.FileSystem.DataFilerPeemLab;
@@ -187,7 +188,8 @@ public class PeemControllerApplication implements MenuPlugin, SciJavaPlugin {
     }
 
     private void initTimeResolved() {
-        timeResolvedController = new TimeResolvedController(studio, delayStageConnectionHandler, mainWindow.timeResolvedForm);
+        TimeResolvedSaver fileSaver = new TimeResolvedSaver(peemCommunicator, dataFiler);
+        timeResolvedController = new TimeResolvedController(studio, delayStageConnectionHandler, fileSaver, mainWindow.timeResolvedForm);
     }
 
     private void initQuickAcquisition() {

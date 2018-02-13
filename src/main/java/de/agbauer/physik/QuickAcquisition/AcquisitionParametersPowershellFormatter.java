@@ -25,6 +25,11 @@ public class AcquisitionParametersPowershellFormatter implements AcquisitionPara
         txtParams += String.format("%-16s %s%n", "Date", date);
 
         txtParams += String.format("%-16s %02d%n", "Imagenr", parameters.imageNumber);
+
+        if (parameters.timeOffsetInFs != null) {
+            txtParams += String.format("%-16s %.0fas%n", "timeOffset", parameters.timeOffsetInFs * 1000);
+        }
+
         txtParams += String.format("%-16s %s%n", "Note", parameters.generalData.note);
 
         txtParams += "\r\n\r\nPEEM Parameters below. U is in V, I is in nA.\r\n\r\n";

@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 public class TimeResolvedController extends Observable implements DocumentListener, SampleNameChangeListener {
     private Logger logger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
+    private TimeResolvedSaver fileSaver;
     private final TimeResolvedForm timeResolvedForm;
     private final Studio studio;
     private final DelayStageConnectionHandler delayStageConnectionHandler;
@@ -31,8 +32,9 @@ public class TimeResolvedController extends Observable implements DocumentListen
     private TimeResolvedExecuter timeResolvedExecuter;
     private String sampleName;
 
-    public TimeResolvedController(Studio studio, DelayStageConnectionHandler delayStageConnectionHandler, TimeResolvedForm timeResolvedForm) {
+    public TimeResolvedController(Studio studio, DelayStageConnectionHandler delayStageConnectionHandler, TimeResolvedSaver fileSaver, TimeResolvedForm timeResolvedForm) {
         this.studio = studio;
+        this.fileSaver = fileSaver;
         this.timeResolvedForm = timeResolvedForm;
         this.delayStageConnectionHandler = delayStageConnectionHandler;
 
@@ -195,11 +197,11 @@ public class TimeResolvedController extends Observable implements DocumentListen
         try {
             TimeResolvedParameters timeResolvedParameters = getMeasurementParameters();
 
-            timeResolvedExecuter = new TimeResolvedExecuter(studio, getDelayStageServerCommunicator());
+            timeResolvedExecuter = new TimeResolvedExecuter(studio, getDelayStageServerCommunicator(), fileSaver);
 
             CompletableFuture.runAsync(() -> {
                 try {
-                    timeResolvedExecuter.startSeries(timeResolvedParameters);
+                    timeResolvedExecuter.startSeries(sampleName, timeResolvedParameters);
                 } catch (Exception e1) {
                     throw new CompletionException(e1);
                 }

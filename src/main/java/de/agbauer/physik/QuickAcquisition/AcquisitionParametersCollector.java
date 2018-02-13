@@ -16,6 +16,18 @@ public class AcquisitionParametersCollector {
         this.peemCommunicator = peemCommunicator;
     }
 
+    public AcquisitionParameters collectSilently(CameraData cameraData, GeneralAcquisitionData generalData) throws IOException {
+
+        PeemBulkReader bulkReader = new PeemBulkReader(this.peemCommunicator);
+
+        PeemVoltages peemVoltages = bulkReader.getAllVoltages();
+        PeemCurrents peemCurrents = bulkReader.getAllCurrents();
+
+        AcquisitionParameters ap = new AcquisitionParameters(generalData, peemVoltages, peemCurrents, cameraData);
+
+        return ap;
+    }
+
     public AcquisitionParameters collect(String sampleName, CameraData cameraData) throws IOException {
 
         GeneralAcquisitionData generalData = askForExcitationApertureAndNote(sampleName);

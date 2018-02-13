@@ -14,7 +14,7 @@ public class DelayStageConnectionHandler {
 
     private static final String DELAY_STAGE_HOST = "DELAY_STAGE_HOST";
     private static final String DELAY_STAGE_PORT = "DELAY_STAGE_PORT";
-    private int TIMEOUT = 5000;
+    private int TIMEOUT = 60000;
 
     private final Socket clientSocket;
 

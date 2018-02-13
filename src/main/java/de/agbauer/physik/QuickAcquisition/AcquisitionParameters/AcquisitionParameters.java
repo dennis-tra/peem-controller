@@ -5,6 +5,7 @@ import java.util.Date;
 public class AcquisitionParameters {
 
     public int imageNumber;
+    public Double timeOffsetInFs;
 
     public final Date createdAt;
 

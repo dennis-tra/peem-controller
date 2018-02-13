@@ -52,7 +52,7 @@ public class OptimisationSeriesSaver {
         // (the one to be optimised), a new map is put together to be able to initialise a brand new
         // PeemProperty with the correct values for the respective image
         Map<PeemProperty, Double> voltageMap = new HashMap<>();
-        for (PeemProperty prop : PeemProperty.values()){
+        for (PeemProperty prop : PeemProperty.values()) {
             voltageMap.put(prop, finalAp.peemVoltages.get(prop));
         }
 

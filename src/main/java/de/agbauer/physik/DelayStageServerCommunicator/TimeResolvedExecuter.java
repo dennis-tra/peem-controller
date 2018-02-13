@@ -1,6 +1,7 @@
 package de.agbauer.physik.DelayStageServerCommunicator;
 
 import de.agbauer.physik.Constants;
+import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParameters;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
 import mmcorej.CMMCore;
@@ -25,18 +26,22 @@ class TimeResolvedExecuter {
     private final Studio studio;
     private final CMMCore mmCore;
     private final DelayStageServerCommunicator dssCommunicator;
+    private TimeResolvedSaver fileSaver;
 
-    TimeResolvedExecuter(Studio studio, DelayStageServerCommunicator delayStageServerCommunicator) {
+    TimeResolvedExecuter(Studio studio, DelayStageServerCommunicator delayStageServerCommunicator, TimeResolvedSaver fileSaver) {
         this.studio = studio;
         this.mmCore = studio.getCMMCore();
         this.dssCommunicator = delayStageServerCommunicator;
+        this.fileSaver = fileSaver;
     }
 
-    List<ImagePlus> startSeries(TimeResolvedParameters timeResolvedParameters) throws Exception {
+    List<ImagePlus> startSeries(String sampleName, TimeResolvedParameters timeResolvedParameters) throws Exception {
         String deviceLabel = Constants.cameraDevice;
 
         double exposureTimeInSeconds = timeResolvedParameters.exposureTimeInSeconds;
         ArrayList<Double> values = timeResolvedParameters.values;
+
+        fileSaver.getAcquisitionParameters(sampleName, timeResolvedParameters);
 
         logger.info("Slack: Starting time resolved measurement - " + timeResolvedParameters.toString());
 
@@ -56,6 +61,7 @@ class TimeResolvedExecuter {
         window.setCustomTitle("Time resolved measurement");
 
         List<ImagePlus> images = new ArrayList<>();
+        List<AcquisitionParameters> acquisitionParameters = new ArrayList<>();
 
         for (int i = 0; i < values.size(); i++) {
             if (shouldStop) {
@@ -94,6 +100,9 @@ class TimeResolvedExecuter {
             ImageProcessor ip = studio.data().getImageJConverter().createProcessor(image);
             ImagePlus imagePlus = new ImagePlus(imageTitle, ip);
             images.add(imagePlus);
+
+            AcquisitionParameters ap = fileSaver.save(timeResolvedParameters, imagePlus, i);
+            acquisitionParameters.add(ap);
         }
 
         logger.info("Reset camera exposure to " + currentExposureTimeInSeconds * 1000 + " s");
