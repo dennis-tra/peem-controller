@@ -59,6 +59,12 @@ public class QuickAcquisitionController extends Observable implements SampleName
                 logger.warning("Failed saving acquisition: " + exc.getMessage());
 
             } finally {
+
+                acquireImage(form.liveTextField, form.liveComboBox, (_exposureInMs, _binning) -> {
+                    snapLiveManager.setLiveMode(true);
+                    logger.info("Started live mode... ");
+                });
+
                 setChanged();
                 notifyObservers(imagePlus);
             }

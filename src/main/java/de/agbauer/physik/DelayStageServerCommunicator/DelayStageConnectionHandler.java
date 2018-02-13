@@ -16,19 +16,15 @@ public class DelayStageConnectionHandler {
     private static final String DELAY_STAGE_PORT = "DELAY_STAGE_PORT";
     private int TIMEOUT = 60000;
 
-    private final Socket clientSocket;
+    private Socket clientSocket;
 
     private DataOutputStream sendingStream;
     private BufferedReader receivingStream;
 
-    public DelayStageConnectionHandler() {
-        clientSocket = new Socket();
-    }
-
     public void disconnect() {
         try {
             clientSocket.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.warning("Could not close connection to delay stage server: " + e.getMessage());
         }
     }
@@ -49,6 +45,7 @@ public class DelayStageConnectionHandler {
             try {
                 logger.info("Connection details - Host: " + savedHost + ":" + String.valueOf(savedPort));
 
+                clientSocket = new Socket();
                 clientSocket.setSoTimeout(TIMEOUT); // Timeout for read operations
 
                 InetSocketAddress socketAddress = new InetSocketAddress(savedHost, savedPort);
