@@ -45,15 +45,15 @@ public class TimeResolvedParameters {
 
     private ArrayList<Double> generateMeasurementValuesFrom(double startingValue, double endingValue, double stepSizeValue) throws ValueException {
 
-        if (stepSizeValue <= 0) {
-            throw new ValueException("Step size can't be less than zero");
+        if (endingValue < startingValue && stepSizeValue >= 0) {
+            throw new ValueException("Ending value < Starting Value -> step size can't be less than zero");
         }
 
-        if (endingValue < startingValue) {
-            throw new ValueException("Ending value can't be less than starting value");
+        if (endingValue > startingValue && stepSizeValue <= 0) {
+            throw new ValueException("Ending value > Starting Value -> step size can't be bigger than zero");
         }
 
-        if ((endingValue - startingValue) <= stepSizeValue) {
+        if (Math.abs(endingValue - startingValue) <= Math.abs(stepSizeValue)) {
             throw new ValueException("Step size can't be bigger than measurement interval");
         }
 
