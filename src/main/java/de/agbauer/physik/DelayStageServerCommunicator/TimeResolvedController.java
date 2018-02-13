@@ -66,6 +66,7 @@ public class TimeResolvedController extends Observable implements DocumentListen
 
             float position = communicator.moveRelativeBy(stepSize);
 
+            timeResolvedForm.positionLabel.setText(String.format("%.2f fs", position));
             logger.info(String.format("Delay stage is at position %.4f fs", position));
 
         } catch (NumberFormatException | ValueException | IOException e) {
@@ -80,6 +81,7 @@ public class TimeResolvedController extends Observable implements DocumentListen
 
             float position = communicator.goHome();
 
+            timeResolvedForm.positionLabel.setText(String.format("%.2f fs", position));
             logger.info(String.format("Delay stage is at position %.4f fs", position));
         } catch (IOException e) {
             logger.warning(e.getMessage());
@@ -92,6 +94,7 @@ public class TimeResolvedController extends Observable implements DocumentListen
 
             float position = communicator.defineHome();
 
+            timeResolvedForm.positionLabel.setText(String.format("%.2f fs", position));
             logger.info(String.format("Delay stage is at position %.4f fs", position));
         } catch (IOException e) {
             logger.warning(e.getMessage());
@@ -104,6 +107,7 @@ public class TimeResolvedController extends Observable implements DocumentListen
 
             float position = communicator.getPosition();
 
+            timeResolvedForm.positionLabel.setText(String.format("%.2f fs", position));
             logger.info(String.format("Delay stage is at position %.4f fs", position));
         } catch (IOException e) {
             logger.warning(e.getMessage());

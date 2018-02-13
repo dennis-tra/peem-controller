@@ -16,6 +16,7 @@ public class TimeResolvedForm {
     JButton stepForwardButton;
     JCheckBox sendNotificationCheckBox;
     JTextField manualStepSizeTextField;
+    JLabel positionLabel;
 
     public void setGUIToInputState() {
         this.enableDelayStageControls(true);
