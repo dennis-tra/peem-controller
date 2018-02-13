@@ -43,6 +43,10 @@ public class HistoryDataModel extends AbstractTableModel implements TableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
 
+        if (acquisitionParameters == null || acquisitionParameters.length == 0) {
+            return "";
+        }
+
         AcquisitionParameters parameters = acquisitionParameters[rowIndex];
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
 
