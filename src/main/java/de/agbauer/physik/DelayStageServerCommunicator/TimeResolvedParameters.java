@@ -29,7 +29,7 @@ public class TimeResolvedParameters {
     }
 
     private double getTotalTimeInHours() {
-        return (((float)values.size()) * exposureTimeInSeconds / 60.0 / 24.0);
+        return (((float)values.size()) * exposureTimeInSeconds / 60.0 / 60.0);
     }
 
     double getTotalFullHours() {
@@ -37,7 +37,7 @@ public class TimeResolvedParameters {
     }
 
     double getRestMinutes() {
-        return (getTotalTimeInHours() - Math.floor(getTotalTimeInHours())) * 24;
+        return (getTotalTimeInHours() - Math.floor(getTotalTimeInHours())) * 60;
     }
 
     double getRestSeconds() { return (getTotalTimeInMinutes() - Math.floor(getTotalTimeInMinutes())) * 60;

@@ -142,8 +142,8 @@ public class TimeResolvedController extends Observable implements DocumentListen
             TimeResolvedParameters timeResolvedParameters = getMeasurementParameters();
 
             double fullHours = timeResolvedParameters.getTotalFullHours();
-            double restMinutes = timeResolvedParameters.getRestMinutes();
-            double restSeconds = timeResolvedParameters.getRestSeconds();
+            double restMinutes = Math.floor(timeResolvedParameters.getRestMinutes());
+            double restSeconds = Math.floor(timeResolvedParameters.getRestSeconds());
             int imageCount = timeResolvedParameters.values.size();
 
             // + 1 is a time zone fix I suppose...
