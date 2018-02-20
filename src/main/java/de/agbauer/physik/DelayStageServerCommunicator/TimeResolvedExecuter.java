@@ -7,12 +7,10 @@ import ij.process.ImageProcessor;
 import mmcorej.CMMCore;
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
-import org.micromanager.data.Coords;
-import org.micromanager.data.Datastore;
-import org.micromanager.data.Image;
-import org.micromanager.data.Metadata;
+import org.micromanager.data.*;
 import org.micromanager.display.DisplayWindow;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +106,6 @@ class TimeResolvedExecuter {
         logger.info("Reset camera exposure to " + currentExposureTimeInSeconds * 1000 + " s");
         mmCore.setExposure(currentExposureTimeInSeconds * 1000);
 
-        logger.info("Reset camera binning to " + currentBinning);
         mmCore.setProperty(deviceLabel, "Binning", currentBinning);
 
         if (timeResolvedParameters.sendNotification) {

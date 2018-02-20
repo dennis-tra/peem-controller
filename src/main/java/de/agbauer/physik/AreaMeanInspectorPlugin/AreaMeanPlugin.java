@@ -23,7 +23,7 @@ public class AreaMeanPlugin implements InspectorPlugin, SciJavaPlugin {
 
     @Override
     public String getName() {
-        return "Max Count";
+        return "Area Mean";
     }
 
     @Override
