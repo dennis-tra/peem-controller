@@ -1,9 +1,12 @@
 package de.agbauer.physik.DelayStageServerCommunicator;
 
 import de.agbauer.physik.Constants;
+import de.agbauer.physik.FileSystem.TmpJpegSaver;
+import de.agbauer.physik.Logging.SlackFileUploader;
 import de.agbauer.physik.QuickAcquisition.AcquisitionParameters.AcquisitionParameters;
 import ij.ImagePlus;
 import ij.process.ImageProcessor;
+import ij.process.ImageStatistics;
 import mmcorej.CMMCore;
 import org.micromanager.PropertyMap;
 import org.micromanager.Studio;
@@ -11,9 +14,11 @@ import org.micromanager.data.*;
 import org.micromanager.display.DisplayWindow;
 
 import javax.swing.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.Logger;
 
 
@@ -56,6 +61,7 @@ class TimeResolvedExecuter {
 
         Datastore store = studio.data().createRAMDatastore();
         DisplayWindow window = studio.displays().createDisplay(store);
+
         window.setCustomTitle("Time resolved measurement");
 
         List<ImagePlus> images = new ArrayList<>();
@@ -101,6 +107,10 @@ class TimeResolvedExecuter {
 
             AcquisitionParameters ap = fileSaver.save(timeResolvedParameters, imagePlus, i);
             acquisitionParameters.add(ap);
+
+            if (i % 10 == 0) {
+                sendImageToSlackAsync(ap, imagePlus);
+            }
         }
 
         logger.info("Reset camera exposure to " + currentExposureTimeInSeconds * 1000 + " s");
@@ -135,6 +145,25 @@ class TimeResolvedExecuter {
         mmCore.setProperty(Constants.cameraDevice, "Binning", binning);
 
         return currentBinning;
+    }
+
+    private void sendImageToSlackAsync(AcquisitionParameters ap, ImagePlus imagePlus) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                File jpegFile = new TmpJpegSaver(imagePlus.getProcessor()).save();
+
+                String imageTitle = String.format("%s (%s %.0fms) - Offset %.0fas",
+                        ap.generalData.sampleName,
+                        ap.generalData.excitation,
+                        ap.cameraData.exposureInMs,
+                        ap.timeOffsetInFs * 1e3);
+                SlackFileUploader sfu = new SlackFileUploader(imageTitle, jpegFile, SlackFileUploader.MediaType.JPEG);
+                sfu.send();
+                logger.info("Sent image to Slack");
+            } catch (Exception e) {
+                logger.warning("Failed sending image to Slack" + e.getMessage());
+            }
+        });
     }
 
     private double setExposureAndReturnCurrentExposure(double exposureTimeInSeconds) throws Exception {
