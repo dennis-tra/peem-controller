@@ -3,7 +3,6 @@ package de.agbauer.physik.AreaMeanInspectorPlugin;
 import com.google.common.eventbus.Subscribe;
 import de.agbauer.physik.Constants;
 import ij.ImagePlus;
-import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 import org.jdesktop.swingx.HorizontalLayout;
 import org.jdesktop.swingx.VerticalLayout;
@@ -18,7 +17,6 @@ import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.micromanager.Studio;
-import org.micromanager.data.Datastore;
 import org.micromanager.data.NewImageEvent;
 import org.micromanager.display.DataViewer;
 import org.micromanager.display.DisplayWindow;
@@ -31,7 +29,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.util.logging.Logger;
 
 import static ij.measure.Measurements.MEAN;
@@ -206,21 +203,22 @@ public class AreaMeanInspectorPanel extends InspectorPanel {
     public void onNewImage(NewImageEvent event) {
 
         try {
+            for (DisplayWindow displayWindow: studio.displays().getAllImageWindows()) {
+                if (displayWindow.getDatastore() == event.getDatastore()) {
+                    ImagePlus imagePlus = displayWindow.getImagePlus();
 
-            ImagePlus imagePlus = studio
-                    .getSnapLiveManager()
-                    .getDisplay()
-                    .getImagePlus();
+                    ImageStatistics statistics = imagePlus.getStatistics(MEAN);
+                    int x = series.getItemCount();
+                    double y = statistics.mean;
+                    currentMeanLabel.setText(String.format("Current mean: %.2f", y));
 
-            ImageStatistics statistics = imagePlus.getStatistics(MEAN);
-            int x = series.getItemCount();
-            double y = statistics.mean;
-            currentMeanLabel.setText(String.format("Current mean: %.2f", y));
+                    if (active) {
+                        series.add(x, y);
+                    }
 
-            if (active) {
-                series.add(x, y);
+                    break;
+                }
             }
-
         } catch (Exception e) {
             logger.warning("Area mean plugin error: " + e.getLocalizedMessage());
         }
