@@ -58,8 +58,15 @@ public class TimeResolvedParameters {
         }
 
         ArrayList<Double> measurementValues = new ArrayList<>();
-        for (double value = startingValue; value < endingValue; value += stepSizeValue) {
-            measurementValues.add(value);
+
+        if (startingValue < endingValue) {
+            for (double value = startingValue; value < endingValue; value += stepSizeValue) {
+                measurementValues.add(value);
+            }
+        } else {
+            for (double value = startingValue; value > endingValue; value += stepSizeValue) {
+                measurementValues.add(value);
+            }
         }
         measurementValues.add(endingValue);
 
