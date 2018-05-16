@@ -22,7 +22,7 @@ public class AcquisitionParametersSaver {
 
         String paramsString = formatter.format(ap);
 
-        try (PrintStream out = new PrintStream(new FileOutputStream(filePath))) {
+        try (PrintStream out = new PrintStream(new FileOutputStream(filePath), false, "UTF-8")) {
             out.print(paramsString);
         }
 
